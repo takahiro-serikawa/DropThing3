@@ -373,8 +373,24 @@ namespace DropThing3
         const int AUTO_SAVE_DELAY = 10;
 
         DateTime hot_time;
-        bool hot_flag = false;
-        const double HOT_DELAY = 1.5;
+        bool last_hot_flag = false;
+        double HotDelay = 1.5;
+        Rectangle HotCorner = new Rectangle(0, 0, 100, 50);
+
+        bool HotCornerCheck(Point p)
+        {
+            bool hot_flag = HotCorner.Contains(p);
+            if (!last_hot_flag && hot_flag) {
+                hot_time = DateTime.Now.AddSeconds(HotDelay);
+            }
+            last_hot_flag = hot_flag;
+
+            if (last_hot_flag && DateTime.Now >= hot_time) {
+                last_hot_flag = false;
+                return true;
+            }
+            return false;
+        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -386,18 +402,11 @@ namespace DropThing3
                 }
 
                 // hot corner
-                var p = Control.MousePosition;
-                var r = new Rectangle(0, 0, 100, 50);
-                if (!hot_flag && r.Contains(p)) {
-                    hot_flag = true;
-                    hot_time = DateTime.Now.AddSeconds(HOT_DELAY);
-                } else if (hot_flag && !r.Contains(p))
-                    hot_flag = false;
-
-                if (hot_flag && DateTime.Now >= hot_time) {
-                    hot_flag = false;
+                if (HotCornerCheck(Control.MousePosition)) {
                     this.TopMost = true;
                     this.TopMost = false;
+                    this.Activate();
+                    //this.Focus();
                 }
             } catch (Exception ex) {
                 Console.WriteLine(ex.Message);
