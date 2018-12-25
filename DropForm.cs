@@ -23,9 +23,9 @@ using System.Xml.Serialization;
 // multiple layer
 // other icon size
 // URL item's icon
-// first start settings
 // drop to folder cell
 // TODO: 拡張子登録
+// hot key
 
 namespace DropThing3
 {
@@ -42,6 +42,7 @@ namespace DropThing3
             var ver = asm.GetName().Version;
             AppStatusText(Color.Black, "{0} ver{1}.{2:D2}; {3}",
                "DropThing", ver.Major, ver.Minor, "application launcher");
+            title.Text = string.Format("{0} ver{1}.{2:D2}", "DropThing", ver.Major, ver.Minor);
 
             // parse command line
             string[] aa = Environment.GetCommandLineArgs();
@@ -715,7 +716,7 @@ namespace DropThing3
             } else  if (CurrentItem != null && e.Button == MouseButtons.Left && e.Clicks == 1) {
                 // cell click
                 if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
-                    exprolerItem_Click(null, null);
+                    explorerItem_Click(null, null);
                 else
                     CurrentItem.ProcessStart();
             }
@@ -734,12 +735,17 @@ namespace DropThing3
         private void grid_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) {
-                openItem_Click(null, null);
+                if (e.Control)
+                    explorerItem_Click(null, null);
+                //else if (e.Alt)
+                //    propertyItem_Click(null, null);
+                else
+                    openItem_Click(null, null);
                 e.Handled = true;
             }
         }
 
-        private void exprolerItem_Click(object sender, EventArgs e)
+        private void explorerItem_Click(object sender, EventArgs e)
         {
             if (CurrentItem != null) {
                 Cursor.Current = Cursors.WaitCursor;

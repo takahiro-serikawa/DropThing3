@@ -28,11 +28,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropForm));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exprolerItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -63,8 +64,9 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.title,
             this.openItem,
-            this.exprolerItem,
+            this.explorerItem,
             this.propertyItem,
             this.deleteItem,
             this.toolStripMenuItem1,
@@ -75,27 +77,38 @@
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(166, 214);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 418);
+            // 
+            // title
+            // 
+            this.title.BackColor = System.Drawing.Color.DimGray;
+            this.title.ForeColor = System.Drawing.Color.White;
+            this.title.Image = global::DropThing3.Properties.Resources.icon;
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(212, 38);
+            this.title.Text = "DropThing";
             // 
             // openItem
             // 
             this.openItem.Name = "openItem";
-            this.openItem.ShortcutKeyDisplayString = "[Enter]";
-            this.openItem.Size = new System.Drawing.Size(165, 22);
+            this.openItem.ShortcutKeyDisplayString = "Enter";
+            this.openItem.Size = new System.Drawing.Size(205, 38);
             this.openItem.Text = "&Open ...";
             this.openItem.Click += new System.EventHandler(this.openItem_Click);
             // 
-            // exprolerItem
+            // explorerItem
             // 
-            this.exprolerItem.Name = "exprolerItem";
-            this.exprolerItem.Size = new System.Drawing.Size(165, 22);
-            this.exprolerItem.Text = "&Exproler ...";
-            this.exprolerItem.Click += new System.EventHandler(this.exprolerItem_Click);
+            this.explorerItem.Name = "explorerItem";
+            this.explorerItem.ShortcutKeyDisplayString = "Ctrl+Enter";
+            this.explorerItem.Size = new System.Drawing.Size(205, 38);
+            this.explorerItem.Text = "&Explorer ...";
+            this.explorerItem.Click += new System.EventHandler(this.explorerItem_Click);
             // 
             // propertyItem
             // 
             this.propertyItem.Name = "propertyItem";
-            this.propertyItem.Size = new System.Drawing.Size(165, 22);
+            this.propertyItem.ShortcutKeyDisplayString = "";
+            this.propertyItem.Size = new System.Drawing.Size(205, 38);
             this.propertyItem.Text = "&Property ...";
             this.propertyItem.Click += new System.EventHandler(this.propertyItem_Click);
             // 
@@ -103,14 +116,14 @@
             // 
             this.deleteItem.Name = "deleteItem";
             this.deleteItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.deleteItem.Size = new System.Drawing.Size(165, 22);
+            this.deleteItem.Size = new System.Drawing.Size(212, 38);
             this.deleteItem.Text = "&Delete";
             this.deleteItem.Click += new System.EventHandler(this.deleteItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(209, 6);
             // 
             // layerMenu
             // 
@@ -119,7 +132,7 @@
             this.propertyLayer,
             this.deleteToolStripMenuItem});
             this.layerMenu.Name = "layerMenu";
-            this.layerMenu.Size = new System.Drawing.Size(165, 22);
+            this.layerMenu.Size = new System.Drawing.Size(212, 38);
             this.layerMenu.Text = "&Layer";
             // 
             // addLayerToolStripMenuItem1
@@ -144,31 +157,31 @@
             // settings
             // 
             this.settings.Name = "settings";
-            this.settings.Size = new System.Drawing.Size(165, 22);
+            this.settings.Size = new System.Drawing.Size(212, 38);
             this.settings.Text = "&Settings ...";
             // 
             // exportSettingsToolStripMenuItem
             // 
             this.exportSettingsToolStripMenuItem.Name = "exportSettingsToolStripMenuItem";
-            this.exportSettingsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.exportSettingsToolStripMenuItem.Size = new System.Drawing.Size(212, 38);
             this.exportSettingsToolStripMenuItem.Text = "Export settings ...";
             // 
             // importSettingsToolStripMenuItem
             // 
             this.importSettingsToolStripMenuItem.Name = "importSettingsToolStripMenuItem";
-            this.importSettingsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.importSettingsToolStripMenuItem.Size = new System.Drawing.Size(212, 38);
             this.importSettingsToolStripMenuItem.Text = "Import settings ...";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(209, 6);
             // 
             // quit
             // 
             this.quit.Name = "quit";
             this.quit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quit.Size = new System.Drawing.Size(165, 22);
+            this.quit.Size = new System.Drawing.Size(212, 38);
             this.quit.Text = "e&Xit";
             this.quit.Click += new System.EventHandler(this.quit_Click);
             // 
@@ -194,7 +207,7 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button1.Location = new System.Drawing.Point(1, -3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(42, 25);
+            this.button1.Size = new System.Drawing.Size(76, 42);
             this.button1.TabIndex = 3;
             this.button1.Text = "layer";
             this.button1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -214,7 +227,7 @@
             this.button2.ForeColor = System.Drawing.Color.White;
             this.button2.Location = new System.Drawing.Point(38, -3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(22, 25);
+            this.button2.Size = new System.Drawing.Size(35, 42);
             this.button2.TabIndex = 5;
             this.button2.Text = "*";
             this.button2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -235,14 +248,14 @@
             this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.ColumnHeadersVisible = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.grid.DefaultCellStyle = dataGridViewCellStyle2;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.grid.Location = new System.Drawing.Point(0, 17);
             this.grid.MultiSelect = false;
@@ -352,7 +365,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolStripMenuItem openItem;
         private System.Windows.Forms.ToolStripMenuItem deleteItem;
-        private System.Windows.Forms.ToolStripMenuItem exprolerItem;
+        private System.Windows.Forms.ToolStripMenuItem explorerItem;
         private System.Windows.Forms.ToolStripMenuItem propertyItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.DataGridView grid;
@@ -365,6 +378,7 @@
         private System.Windows.Forms.ToolStripMenuItem importSettingsToolStripMenuItem;
         private System.Windows.Forms.PictureBox hamburger;
         private System.Windows.Forms.Label missing;
+        private System.Windows.Forms.ToolStripMenuItem title;
     }
 }
 
