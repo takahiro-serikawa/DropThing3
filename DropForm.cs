@@ -372,11 +372,25 @@ namespace DropThing3
         /// </summary>
         const int AUTO_SAVE_DELAY = 10;
 
-        DateTime hot_time;
-        bool last_hot_flag = false;
-        double HotDelay = 1.5;
+
+        /// <summary>
+        /// 
+        /// </summary>
         Rectangle HotCorner = new Rectangle(0, 0, 100, 50);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        double HotDelay = 1.5;
+
+        DateTime hot_time;
+        bool last_hot_flag = false;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         bool HotCornerCheck(Point p)
         {
             bool hot_flag = HotCorner.Contains(p);
