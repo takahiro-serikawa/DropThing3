@@ -798,8 +798,9 @@ namespace DropThing3
 
         private void hamburger_Click(object sender, EventArgs e)
         {
-            //var p = grid.PointToScreen(grid.CurrentCell.ContentBounds.Location);
-            contextMenuStrip1.Show(Cursor.Position);
+            var r = grid.GetCellDisplayRectangle(
+               grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex, false);
+            contextMenuStrip1.Show(grid, r.Left+10, r.Top+10);
         }
 
     }
