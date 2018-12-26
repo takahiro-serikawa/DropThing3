@@ -28,7 +28,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropForm));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.title = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,12 +38,7 @@
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.layerMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.addLayerToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.propertyLayer = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settings = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.quit = new System.Windows.Forms.ToolStripMenuItem();
             this.status = new System.Windows.Forms.Label();
@@ -72,12 +67,10 @@
             this.toolStripMenuItem1,
             this.layerMenu,
             this.settings,
-            this.exportSettingsToolStripMenuItem,
-            this.importSettingsToolStripMenuItem,
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 418);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 342);
             // 
             // title
             // 
@@ -127,50 +120,16 @@
             // 
             // layerMenu
             // 
-            this.layerMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addLayerToolStripMenuItem1,
-            this.propertyLayer,
-            this.deleteToolStripMenuItem});
             this.layerMenu.Name = "layerMenu";
-            this.layerMenu.Size = new System.Drawing.Size(212, 38);
+            this.layerMenu.Size = new System.Drawing.Size(205, 38);
             this.layerMenu.Text = "&Layer";
-            // 
-            // addLayerToolStripMenuItem1
-            // 
-            this.addLayerToolStripMenuItem1.Name = "addLayerToolStripMenuItem1";
-            this.addLayerToolStripMenuItem1.Size = new System.Drawing.Size(119, 22);
-            this.addLayerToolStripMenuItem1.Text = "Add";
-            // 
-            // propertyLayer
-            // 
-            this.propertyLayer.Name = "propertyLayer";
-            this.propertyLayer.Size = new System.Drawing.Size(119, 22);
-            this.propertyLayer.Text = "Property";
-            this.propertyLayer.Click += new System.EventHandler(this.propertyLayer_Click);
-            // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
+            this.layerMenu.Click += new System.EventHandler(this.propertyLayer_Click);
             // 
             // settings
             // 
             this.settings.Name = "settings";
             this.settings.Size = new System.Drawing.Size(212, 38);
             this.settings.Text = "&Settings ...";
-            // 
-            // exportSettingsToolStripMenuItem
-            // 
-            this.exportSettingsToolStripMenuItem.Name = "exportSettingsToolStripMenuItem";
-            this.exportSettingsToolStripMenuItem.Size = new System.Drawing.Size(212, 38);
-            this.exportSettingsToolStripMenuItem.Text = "Export settings ...";
-            // 
-            // importSettingsToolStripMenuItem
-            // 
-            this.importSettingsToolStripMenuItem.Name = "importSettingsToolStripMenuItem";
-            this.importSettingsToolStripMenuItem.Size = new System.Drawing.Size(212, 38);
-            this.importSettingsToolStripMenuItem.Text = "Import settings ...";
             // 
             // toolStripMenuItem2
             // 
@@ -248,14 +207,14 @@
             this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.ColumnHeadersVisible = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.grid.DefaultCellStyle = dataGridViewCellStyle3;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.grid.Location = new System.Drawing.Point(0, 17);
             this.grid.MultiSelect = false;
@@ -371,11 +330,6 @@
         private System.Windows.Forms.DataGridView grid;
         private System.Windows.Forms.PictureBox resize;
         private System.Windows.Forms.ToolStripMenuItem layerMenu;
-        private System.Windows.Forms.ToolStripMenuItem addLayerToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem propertyLayer;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exportSettingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importSettingsToolStripMenuItem;
         private System.Windows.Forms.PictureBox hamburger;
         private System.Windows.Forms.Label missing;
         private System.Windows.Forms.ToolStripMenuItem title;

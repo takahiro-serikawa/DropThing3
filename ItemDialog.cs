@@ -49,6 +49,15 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public string WorkingDirectory
+        {
+            get { return dir.Text; }
+            set { dir.Text = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         public bool Popup()
         {

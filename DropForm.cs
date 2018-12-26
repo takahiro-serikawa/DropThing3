@@ -16,11 +16,12 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 
 // TODO
-// application icon
-// internal drag and drop
-// cell drawing too slow
-// multiple dock
 // multiple layer
+// application icon
+// cell drawing too slow
+// undo (delete item, ...)
+
+// multiple dock
 // other icon size
 // URL item's icon
 // drop to folder cell
@@ -211,6 +212,7 @@ namespace DropThing3
             public string caption;
             public string path;
             public string options;
+            public string dir;
             public string attr;
             public int row, col;
 
@@ -266,6 +268,7 @@ namespace DropThing3
             {
                 return path.StartsWith("http://") || path.StartsWith("https://");
             }
+
             /// <summary>
             /// 
             /// </summary>
@@ -274,8 +277,9 @@ namespace DropThing3
             {
                 Cursor.Current = Cursors.WaitCursor;
                 try {
-                    string options = this.options + string.Join(" ", args);
-                    Process.Start(this.path, options);
+                    var info = new ProcessStartInfo(this.path, this.options + string.Join(" ", args));
+                    info.WorkingDirectory = this.dir;
+                    Process.Start(info);
                 } catch (Exception ex) {
                     MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //AppStatusText(Color.Fuchsia, ex.Message);
@@ -772,6 +776,7 @@ namespace DropThing3
                 dlg.ItemCaption = CurrentItem.caption;
                 dlg.FilePath = CurrentItem.path;
                 dlg.CommandOptions = CurrentItem.options;
+                dlg.WorkingDirectory = CurrentItem.dir;
             }
 
             if (dlg.Popup()) {
@@ -783,6 +788,7 @@ namespace DropThing3
                         grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
                 item.caption = dlg.ItemCaption;
                 item.options = dlg.CommandOptions;
+                CurrentItem.dir = dlg.WorkingDirectory;
                 Modified = true;
             }
         }
