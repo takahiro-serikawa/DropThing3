@@ -16,7 +16,7 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 
 // TODO
-// multiple layer
+// multiple tab 
 // application icon
 // cell drawing too slow
 // undo (delete item, ...)
@@ -34,16 +34,25 @@ namespace DropThing3
     {
         // file extension for DropThing settings
         const string DROPTHING_EXT = "dtIII";
+        string root;            // application data
 
         public DropForm()
         {
             InitializeComponent();
             main_form = this;
+
+            string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
             var asm = System.Reflection.Assembly.GetExecutingAssembly();
             var ver = asm.GetName().Version;
             AppStatusText(Color.Black, "{0} ver{1}.{2:D2}; {3}",
-               "DropThing", ver.Major, ver.Minor, "application launcher");
-            title.Text = string.Format("{0} ver{1}.{2:D2}", "DropThing", ver.Major, ver.Minor);
+               app, ver.Major, ver.Minor, "application launcher");
+            title.Text = string.Format("{0} ver{1}.{2:D2}", app, ver.Major, ver.Minor);
+
+            root = Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData)
+               + "\\" + app;
+            Directory.CreateDirectory(root);
+            filename = Path.Combine(root, app+"."+DROPTHING_EXT);
 
             // parse command line
             string[] aa = Environment.GetCommandLineArgs();
@@ -71,8 +80,6 @@ namespace DropThing3
             // restore last settings
             if (filenames.Count > 0)
                 filename = filenames[0];
-            else
-                filename = DefSettFilename();
             if (File.Exists(filename) && !new_settings)
                 LoadSettings();
             else
@@ -80,7 +87,6 @@ namespace DropThing3
             sett.app_version = string.Format("{0}.{1:D2}", ver.Major, ver.Minor);
 
             GridSize(sett.col_count, sett.row_count);
-            //(resize.Image as Bitmap).MakeTransparent(Color.Blue);
             cell_bitmap = CellBitmap();
             Modified = false;
 
@@ -93,12 +99,15 @@ namespace DropThing3
 
             //this.Font.Name = "";
             RegStartup(true);
+
+
         }
 
         private void DropForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
-                switch (MessageBox.Show("DropThing3 quitting\r\nopen next time again?", "DropThing3",
+                switch (MessageBox.Show("DropThing3 quitting\r\n"
+                  + "open next time again?", "DropThing3",
                    MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)) {
                 case DialogResult.No:
                     RegStartup(false);
@@ -115,7 +124,8 @@ namespace DropThing3
                 if (Modified)
                     SaveSettings();
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "FATAL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "FATAL", 
+                   MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -205,7 +215,7 @@ namespace DropThing3
         }
 
 
-        // application layer settings
+        // application settings
 
         public class CellItem: Object
         {
@@ -287,13 +297,33 @@ namespace DropThing3
             }
         }
 
+        public class TabLayer: Object
+        {
+            public uint id;
+            public string title;
+            public Color color0, color1;
+        }
+
         public class DropThingSettings: object
         {
             public string app_version;
             public List<CellItem> cell_list = new List<CellItem>();
+            public List<TabLayer> tab_list = new List<TabLayer>();
+            public uint tab_serial;
 
             public FormWindowState win_state;
             public int left, top, col_count, row_count;
+
+            public DropThingSettings()
+            {
+                TabLayer def_tab = new TabLayer();
+                def_tab.id = tab_serial++;
+                def_tab.title = "untitled";
+                def_tab.color0 = Color.Lime;
+                def_tab.color1 = Color.Green;
+
+                tab_list.Add(def_tab);
+            }
         }
 
         public DropThingSettings sett;
@@ -304,9 +334,11 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        bool Modified {
+        bool Modified
+        {
             get { return modified; }
-            set {
+            set
+            {
                 modified = value;
                 if (modified)
                     modified_time = DateTime.Now;
@@ -372,14 +404,13 @@ namespace DropThing3
                 serializer.Serialize(sw, sett);
             }
 
-            AppStatusText(Color.Black, "saved.");
+            AppStatusText(Color.Black, "auto save done.");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        const int AUTO_SAVE_DELAY = 10;
-
+        const int AUTO_SAVE_DELAY = 60;
 
         /// <summary>
         /// 
@@ -425,8 +456,13 @@ namespace DropThing3
 
                 // hot corner
                 if (HotCornerCheck(Control.MousePosition)) {
+                    this.Opacity = 0;
                     this.TopMost = true;
                     this.TopMost = false;
+                    for (double o = 0; o < 1.0; o+= 0.01) {
+                        System.Threading.Thread.Sleep(10);
+                        this.Opacity = o;
+                    }
                     this.Activate();
                 }
             } catch (Exception ex) {
@@ -525,6 +561,10 @@ namespace DropThing3
         /// <returns></returns>
         Bitmap CellBitmap()
         {
+            brush0 = new SolidBrush(trim_color(color0, +20));
+            brush1 = new SolidBrush(trim_color(color1, -20));
+            resize.BackColor = color0;
+
             var bmp = new Bitmap(W, H);
             using (var g = Graphics.FromImage(bmp))
             using (var light = new Pen(trim_color(color0, +20)))
@@ -674,12 +714,12 @@ namespace DropThing3
             //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
             if (!mouse_down_flag) {
 
-            } else  if (CurrentItem != null && e.Button == MouseButtons.Left && e.Clicks == 1) {
+            } else if (/*CurrentItem != null && */e.Button == MouseButtons.Left && e.Clicks == 1) {
                 // cell click
-                if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+                if (ModifierKeys.HasFlag(Keys.Control))
                     explorerItem_Click(null, null);
                 else
-                    CurrentItem.ProcessStart();
+                    openItem_Click(null, null);
             }
 
             mouse_down_flag = false;
@@ -729,9 +769,8 @@ namespace DropThing3
                     int x = r.X + r.Width/2;
                     int y = r.Y + r.Height/2;
 
-                    g.DrawString(alt, missing.Font, Brushes.Lime, x, y, f);
-                    g.DrawString(alt, missing.Font, Brushes.Green, x-1, y-1, f);
-                    g.DrawString(alt, missing.Font, Brushes.Green, x-1, y-1, f);
+                    g.DrawString(alt, missing.Font, brush0, x, y, f);
+                    g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
                 }
             }
 
@@ -771,10 +810,13 @@ namespace DropThing3
 
         private void explorerItem_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
             if (CurrentItem != null) {
-                Cursor.Current = Cursors.WaitCursor;
                 Process.Start("EXPLORER.EXE", @"/select,""" + CurrentItem.path + @"""");
                 AppStatusText(Color.Black, "explorer {0}", CurrentItem.path);
+            } else {
+                Process.Start("EXPLORER.EXE");
+                AppStatusText(Color.Black, "explorer");
             }
         }
 
@@ -818,16 +860,21 @@ namespace DropThing3
         }
 
         Color color0 = Color.Lime, color1 = Color.Green;
+        Brush brush0, brush1;
 
-        Color BlackOrWhite(Color color, int threshold = 450)
+        Color BlackOrWhite(Color color, int threshold = 400)
         {
             var v = Math.Sqrt(color.R * color.R + color.G * color.G + color.B * color.B);
             return (v >= threshold) ? Color.Black : Color.White;
         }
 
-        private void propertyLayer_Click(object sender, EventArgs e)
+        private void resize_Paint(object sender, PaintEventArgs e)
         {
-            var dlg = new LayerDialog();
+        }
+
+        private void tabItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new TabDialog();
             dlg.Color0 = color0;
             dlg.Color1 = color1;
 

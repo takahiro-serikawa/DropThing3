@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace DropThing3
 {
-    public partial class LayerDialog: Form
+    public partial class TabDialog: Form
     {
-        public LayerDialog()
+        public TabDialog()
         {
             InitializeComponent();
         }
@@ -20,10 +20,10 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        public string LayerCaption
+        public string TabTitle
         {
-            get { return caption.Text; }
-            set { caption.Text = value; }
+            get { return title.Text; }
+            set { title.Text = value; }
         }
 
         /// <summary>
