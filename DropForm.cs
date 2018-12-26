@@ -151,8 +151,10 @@ namespace DropThing3
         {
             Modified |= (grid.ColumnCount != cols) || (grid.RowCount != rows);
 
-            grid.ColumnCount = cols;
-            grid.RowCount = rows;
+            this.MinimumSize = new Size(W, grid.Top + H + status.Height);
+
+            grid.ColumnCount = Math.Max(cols, 1);
+            grid.RowCount = Math.Max(rows, 1);
             foreach (DataGridViewColumn col in grid.Columns) {
                 col.Width = W;
             }
@@ -250,8 +252,9 @@ namespace DropThing3
 
                 try {
                     this.icon = Icon.ExtractAssociatedIcon(this.path);
-                } catch (Exception) {
+                } catch (Exception ex) {
                     this.icon = null;
+                    Console.WriteLine("UpdateIcon(); "+ex.Message);
                 }
 
                 if (this.icon == null) {
@@ -421,10 +424,9 @@ namespace DropThing3
                     this.TopMost = true;
                     this.TopMost = false;
                     this.Activate();
-                    //this.Focus();
                 }
             } catch (Exception ex) {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("timer1: "+ex.Message);
             }
             //Console.WriteLine(Control.MousePosition.ToString());
         }
