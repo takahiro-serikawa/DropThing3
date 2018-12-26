@@ -599,13 +599,98 @@ namespace DropThing3
                     // drop file to icon; execute application
                     item.ProcessStart(names[0]);
                 } else {
-                    // drop file to empty cell; register file to cell
-                    item = NewCellItem(names[0], hit.ColumnIndex, hit.RowIndex);
+                    if (drag_item != null) {
+                        // moving inner form
+                        grid.InvalidateCell(drag_item.col, drag_item.row);
+                        drag_item.col = hit.ColumnIndex;
+                        drag_item.row = hit.RowIndex;
+                        grid.InvalidateCell(hit.ColumnIndex, hit.RowIndex);
+                        Modified = true;
+                    } else {
+                        // drop file to empty cell; register file to cell
+                        item = NewCellItem(names[0], hit.ColumnIndex, hit.RowIndex);
+                    }
                 }
                 AppStatusText(Color.Black, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
             }
+        }        
+
+        CellItem point_item = null;
+
+        private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            // show mouse over cell information
+            point_item = LookupItem(e.ColumnIndex, e.RowIndex);
+            AppStatusText(Color.Black, "[{0},{1}] {2}",
+               e.ColumnIndex, e.RowIndex,
+               (point_item != null) ? point_item.caption + "; " + point_item.path : "");
+            grid.Cursor =  (point_item != null) ? Cursors.Hand : Cursors.Default;
         }
-        
+
+        private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            point_item = LookupItem(e.ColumnIndex, e.RowIndex);
+            AppStatusText(Color.Black, "[{0},{1}] {2}",
+               e.ColumnIndex, e.RowIndex,
+               (point_item != null) ? point_item.caption + "; " + point_item.path : "");
+        }
+
+        bool drag_flag = false;
+
+        private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            //Console.WriteLine("grid_CellMouseDown({0})", estr(e));
+            
+            // select cell on right click too
+            if (e.Button == MouseButtons.Right)
+                grid.CurrentCell = grid[e.ColumnIndex, e.RowIndex];
+
+            if (e.Button == MouseButtons.Left) {
+                // prepare cell drag
+                mouse_down_flag = true;
+                mouse_down_x = e.Location.X;
+                mouse_down_y = e.Location.Y;
+            }
+        }
+
+        CellItem drag_item = null;
+
+        private void grid_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (mouse_down_flag && CurrentItem != null
+             && (e.X < mouse_down_x-5 || e.X > mouse_down_x+5
+              || e.Y < mouse_down_y-5 || e.Y > mouse_down_y+5)) {
+                drag_item = CurrentItem;
+
+                mouse_down_flag = false;
+                string[] files = { CurrentItem.path };
+                var data = new DataObject(DataFormats.FileDrop, files);
+                var dde = grid.DoDragDrop(data, DragDropEffects.Copy);
+            }
+        }
+
+        private void grid_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
+            if (!mouse_down_flag) {
+
+            } else  if (CurrentItem != null && e.Button == MouseButtons.Left && e.Clicks == 1) {
+                // cell click
+                if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+                    explorerItem_Click(null, null);
+                else
+                    CurrentItem.ProcessStart();
+            }
+
+            mouse_down_flag = false;
+        }
+
+        private void grid_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+            if (e.Action == DragAction.Cancel)
+                drag_item = null;
+        }
+
         private void grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             var g = e.Graphics;
@@ -661,73 +746,6 @@ namespace DropThing3
 
             e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
             e.Handled = true;
-        }
-
-        CellItem point_item = null;
-
-        private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            // show mouse over cell information
-            point_item = LookupItem(e.ColumnIndex, e.RowIndex);
-            AppStatusText(Color.Black, "[{0},{1}] {2}",
-               e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.caption + "; " + point_item.path : "");
-            grid.Cursor =  (point_item != null) ? Cursors.Hand : Cursors.Default;
-        }
-
-        private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            point_item = LookupItem(e.ColumnIndex, e.RowIndex);
-            AppStatusText(Color.Black, "[{0},{1}] {2}",
-               e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.caption + "; " + point_item.path : "");
-        }
-
-        bool drag_flag = false;
-
-        private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            //Console.WriteLine("grid_CellMouseDown({0})", estr(e));
-            
-            // select cell on right click too
-            if (e.Button == MouseButtons.Right)
-                grid.CurrentCell = grid[e.ColumnIndex, e.RowIndex];
-
-            if (e.Button == MouseButtons.Left) {
-                // prepare cell drag
-                mouse_down_flag = true;
-                mouse_down_x = e.Location.X;
-                mouse_down_y = e.Location.Y;
-            }
-        }
-
-        private void grid_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (mouse_down_flag && CurrentItem != null
-             && (e.X < mouse_down_x-5 || e.X > mouse_down_x+5
-              || e.Y < mouse_down_y-5 || e.Y > mouse_down_y+5)) {
-                //drag_flag = true;
-                mouse_down_flag = false;
-                string[] files = { CurrentItem.path };
-                var data = new DataObject(DataFormats.FileDrop, files);
-                var dde = grid.DoDragDrop(data, DragDropEffects.Copy);
-            }
-        }
-
-        private void grid_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
-            if (!mouse_down_flag) {
-
-            } else  if (CurrentItem != null && e.Button == MouseButtons.Left && e.Clicks == 1) {
-                // cell click
-                if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
-                    explorerItem_Click(null, null);
-                else
-                    CurrentItem.ProcessStart();
-            }
-
-            mouse_down_flag = false;
         }
 
         // menu handlers
