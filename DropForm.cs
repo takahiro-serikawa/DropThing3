@@ -49,9 +49,12 @@ namespace DropThing3
                app, ver.Major, ver.Minor, "application launcher");
             title.Text = string.Format("{0} ver{1}.{2:D2}", app, ver.Major, ver.Minor);
 
+            Directory.SetCurrentDirectory(@"C:\");
+
             root = Environment.GetFolderPath(
                 Environment.SpecialFolder.LocalApplicationData)
                + "\\" + app;
+
             Directory.CreateDirectory(root);
             filename = Path.Combine(root, app+"."+DROPTHING_EXT);
 
@@ -460,10 +463,8 @@ namespace DropThing3
                     this.Opacity = 0;
                     this.TopMost = true;
                     this.TopMost = false;
-                    for (double o = 0; o < 1.0; o+= 0.01) {
+                    for ( ; this.Opacity < 1.0; this.Opacity += 0.1)
                         System.Threading.Thread.Sleep(10);
-                        this.Opacity = o;
-                    }
                     this.Activate();
                 }
             } catch (Exception ex) {
