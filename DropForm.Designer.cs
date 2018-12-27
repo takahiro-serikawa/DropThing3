@@ -28,9 +28,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropForm));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.title = new System.Windows.Forms.ToolStripMenuItem();
+            this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,10 +47,9 @@
             this.button2 = new System.Windows.Forms.Button();
             this.grid = new System.Windows.Forms.DataGridView();
             this.missing = new System.Windows.Forms.Label();
-            this.openItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.hamburger = new System.Windows.Forms.PictureBox();
             this.resize = new System.Windows.Forms.PictureBox();
+            this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
@@ -70,6 +71,26 @@
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(190, 192);
+            // 
+            // title
+            // 
+            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.title.ForeColor = System.Drawing.Color.White;
+            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
+            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(189, 22);
+            this.title.Text = "DropThing";
+            // 
+            // openItem
+            // 
+            this.openItem.Name = "openItem";
+            this.openItem.ShortcutKeyDisplayString = "Enter";
+            this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openItem.Size = new System.Drawing.Size(189, 22);
+            this.openItem.Text = "&Open ...";
+            this.openItem.Click += new System.EventHandler(this.openItem_Click);
             // 
             // explorerItem
             // 
@@ -229,26 +250,6 @@
             this.missing.Text = "?";
             this.missing.Visible = false;
             // 
-            // openItem
-            // 
-            this.openItem.Name = "openItem";
-            this.openItem.ShortcutKeyDisplayString = "Enter";
-            this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openItem.Size = new System.Drawing.Size(189, 22);
-            this.openItem.Text = "&Open ...";
-            this.openItem.Click += new System.EventHandler(this.openItem_Click);
-            // 
-            // title
-            // 
-            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.title.ForeColor = System.Drawing.Color.White;
-            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
-            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(189, 22);
-            this.title.Text = "DropThing";
-            // 
             // hamburger
             // 
             this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -278,6 +279,13 @@
             this.resize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
             this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
             this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);
+            // 
+            // faviconFetch
+            // 
+            this.faviconFetch.WorkerReportsProgress = true;
+            this.faviconFetch.WorkerSupportsCancellation = true;
+            this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
+            this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
             // DropForm
             // 
@@ -339,6 +347,7 @@
         private System.Windows.Forms.PictureBox hamburger;
         private System.Windows.Forms.Label missing;
         private System.Windows.Forms.ToolStripMenuItem title;
+        private System.ComponentModel.BackgroundWorker faviconFetch;
     }
 }
 

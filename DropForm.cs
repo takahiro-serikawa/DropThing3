@@ -14,6 +14,8 @@ using System.IO;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Xml.Serialization;
+using System.Collections.Concurrent;
+using System.Net;
 
 // TODO
 // multiple tab
@@ -104,7 +106,8 @@ namespace DropThing3
             //this.Font.Name = "";
             RegStartup(true);
 
-
+            cache_path = Path.Combine(root, "favicon_cache");
+            faviconFetch.RunWorkerAsync();
         }
 
         private void DropForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -125,6 +128,8 @@ namespace DropThing3
         private void DropForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             try {
+                faviconFetch.CancelAsync();
+
                 if (Modified)
                     SaveSettings();
             } catch (Exception ex) {
@@ -255,9 +260,19 @@ namespace DropThing3
             public void UpdateIcon()
             {
                 this.attr = "";
-                if (path.StartsWith("http://") || path.StartsWith("https://"))
+                if (path.StartsWith("http://") || path.StartsWith("https://")) {
                     this.attr = "U";
-                else if (Directory.Exists(path))
+                    string cachename = MakeCacheName(path);
+                    if (File.Exists(cachename)) {
+                        try {
+                            this.icon = new Icon(cachename);
+                        } catch (Exception ex) {
+                            this.icon = null;
+                            Console.WriteLine("UpdateIcon(); "+ex.Message);
+                        }
+                    } else
+                        fetch_req.Enqueue(path);
+                } else if (Directory.Exists(path))
                     this.attr = "d";
                 else if (File.Exists(path)) {
                     this.attr = "f";
@@ -266,12 +281,13 @@ namespace DropThing3
                         this.attr += "x";
                 }
 
-                try {
-                    this.icon = Icon.ExtractAssociatedIcon(this.path);
-                } catch (Exception ex) {
-                    this.icon = null;
-                    Console.WriteLine("UpdateIcon(); "+ex.Message);
-                }
+                if (this.icon == null)
+                    try {
+                        this.icon = Icon.ExtractAssociatedIcon(this.path);
+                    } catch (Exception ex) {
+                        this.icon = null;
+                        Console.WriteLine("UpdateIcon(); "+ex.Message);
+                    }
 
                 if (this.icon == null) {
                     this.icon = GetIconAPI.Get(this.path);
@@ -934,6 +950,72 @@ namespace DropThing3
             var r = grid.GetCellDisplayRectangle(
                grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex, false);
             contextMenuStrip1.Show(grid, r.Left+10, r.Top+10);
+        }
+
+        // faviocn fetch in background
+
+        static System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+
+        static string MakeHash(string path)
+        {
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(path);
+            byte[] bs = md5.ComputeHash(data);
+            string s = BitConverter.ToString(bs).Replace("-", "");
+            return s;
+        }
+
+        static string MakeCacheName(string path)
+        {
+            return Path.Combine(cache_path, MakeHash(path)+".ico");
+        }
+
+        static string cache_path;
+        static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
+        static WebClient wc = new WebClient();
+
+        private void faviconFetch_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try {
+                Directory.CreateDirectory(cache_path);
+                string tempname = Path.Combine(cache_path, "downloading.ico");
+
+                for (; ; ) {
+                    if (faviconFetch.CancellationPending) {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    string path;
+                    if (fetch_req.TryDequeue(out path)) {
+                        try {
+                            //if (path.StartsWith("http://") || path.StartsWith("https://"))
+
+                            string cachename = MakeCacheName(path);
+                            if (!File.Exists(cachename)) {
+                                var u = new Uri(path);
+                                string favicon = u.GetLeftPart(UriPartial.Authority) + "/favicon.ico";
+                                wc.DownloadFile(favicon, tempname);
+
+                                File.Move(tempname, cachename);
+                            }
+
+                            faviconFetch.ReportProgress(fetch_req.Count);
+                        } catch (Exception ex) {
+                            Console.WriteLine("fetch error: "+ex.Message);
+                        }
+                    } else
+                        System.Threading.Thread.Sleep(100);
+                }
+            } catch (Exception ex) {
+                Console.WriteLine("faviconFetch give up; "+ex.Message);
+            }
+        }
+
+        private void faviconFetch_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            Console.WriteLine("fetch {0} {1}", e.ProgressPercentage, e.UserState);
+            if (e.ProgressPercentage == 0)
+                grid.Invalidate();
         }
 
     }
