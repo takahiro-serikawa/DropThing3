@@ -1,8 +1,11 @@
 
 # DropThing3
-Application/document launcher for Windows. Imitation of DragThing.
+Application launcher for Windows. Imitation of DragThing.
 
 ## Description
+You can register files, folders, applications and URIs as icons on tile by drag & drop.
+
+and use those icons with single click.
 
 ## Requirement
 OS: Windows7, Windows10
@@ -15,7 +18,7 @@ OS: Windows7, Windows10
 copy DropThing3.exe to your disk.
 
 ## Uninstall
-move DropThing3.exe in trash.
+put DropThing3.exe in trash.
 
 ## Licence
 
@@ -23,4 +26,4 @@ move DropThing3.exe in trash.
 
 ## Author
 
-[T.SERIKAWA](https://github.com/takahiro-serikawa)
+[T. SERIKAWA](https://github.com/takahiro-serikawa)
