@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 // drop to folder cell
 // TODO: 拡張子登録
 // hot key
+// multi drop files
 
 namespace DropThing3
 {
@@ -621,7 +622,8 @@ namespace DropThing3
 
         private void grid_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)
+             || e.Data.GetDataPresent("UniformResourceLocator"))
                 e.Effect = DragDropEffects.Copy;
             else
                 e.Effect = DragDropEffects.None;
@@ -629,11 +631,17 @@ namespace DropThing3
 
         private void grid_DragDrop(object sender, DragEventArgs e)
         {
-            string[] names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            string[] names;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            else if (e.Data.GetDataPresent("UniformResourceLocator"))
+                names = new string[] { e.Data.GetData(DataFormats.Text).ToString() };
+            else
+                return;
 
             var point = grid.PointToClient(new Point(e.X, e.Y));
             var hit = grid.HitTest(point.X, point.Y);
-            if (hit.Type== DataGridViewHitTestType.Cell) {
+            if (hit.Type == DataGridViewHitTestType.Cell) {
                 var item = LookupItem(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
                     // drop file to icon; execute application
