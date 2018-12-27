@@ -636,13 +636,19 @@ namespace DropThing3
         }
 
         // drag and drop to grid
+        bool topmost_on_drag = true;
 
         private void grid_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)
-             || e.Data.GetDataPresent("UniformResourceLocator"))
+             || e.Data.GetDataPresent("UniformResourceLocator")) {
                 e.Effect = DragDropEffects.Copy;
-            else
+
+                if (topmost_on_drag) {
+                    this.TopMost = true;
+                    this.TopMost = false;
+                }
+            } else
                 e.Effect = DragDropEffects.None;
         }
 
