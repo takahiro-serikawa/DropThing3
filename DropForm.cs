@@ -22,9 +22,9 @@ using System.Net;
 // application icon
 // cell drawing too slow
 // undo (delete item, ...)
+// icon cache for removal media
 
 // other icon size
-// URL item's icon
 // drop to folder cell
 // TODO: 拡張子登録
 // hot key
@@ -234,7 +234,8 @@ namespace DropThing3
             public string dir;
             public string attr;
             public int row, col;
-
+            public uint tab;
+            
             [XmlIgnore]
             public Icon icon;
 
@@ -489,6 +490,8 @@ namespace DropThing3
             //Console.WriteLine(Control.MousePosition.ToString());
         }
 
+        uint current_tab = 0;
+
         /// <summary>
         /// 
         /// </summary>
@@ -497,7 +500,9 @@ namespace DropThing3
         /// <returns></returns>
         CellItem LookupItem(int col, int row)
         {
-            var found = sett.cell_list.Where(c => c.col == col && c.row == row);
+            //if (tab == 0)
+            //    tab = current_tab;
+            var found = sett.cell_list.Where(c => c.col == col && c.row == row && c.tab == current_tab);
             if (found.Count() > 0)
                 return found.First();
             return null;
@@ -520,10 +525,26 @@ namespace DropThing3
             var item = new CellItem(path);
             item.col = col;
             item.row = row;
+            item.tab = current_tab;
             sett.cell_list.Add(item);
             grid.InvalidateCell(col, row);
             Modified = true;
             return item;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="col"></param>
+        /// <param name="row"></param>
+        void MoveCell(CellItem item, int col, int row)
+        {
+            grid.InvalidateCell(item.col, item.row);
+            item.col = col;
+            item.row = row;
+            grid.InvalidateCell(col, row);
+            Modified = true;
         }
 
         /// <summary>
@@ -693,11 +714,7 @@ namespace DropThing3
                 } else {
                     if (drag_item != null) {
                         // moving inner form
-                        grid.InvalidateCell(drag_item.col, drag_item.row);
-                        drag_item.col = hit.ColumnIndex;
-                        drag_item.row = hit.RowIndex;
-                        grid.InvalidateCell(hit.ColumnIndex, hit.RowIndex);
-                        Modified = true;
+                        MoveCell(drag_item, hit.ColumnIndex, hit.RowIndex);
                     } else {
                         // drop file to empty cell; register file to cell
                         item = NewCellItem(names[0], hit.ColumnIndex, hit.RowIndex);
