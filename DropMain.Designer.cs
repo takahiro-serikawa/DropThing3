@@ -29,7 +29,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +70,7 @@
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 192);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 214);
             // 
             // title
             // 
@@ -90,6 +90,7 @@
             this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openItem.Size = new System.Drawing.Size(189, 22);
             this.openItem.Text = "&Open ...";
+            this.openItem.ToolTipText = "Open the file of this cell.";
             this.openItem.Click += new System.EventHandler(this.openItem_Click);
             // 
             // explorerItem
@@ -98,6 +99,7 @@
             this.explorerItem.ShortcutKeyDisplayString = "Ctrl+Enter";
             this.explorerItem.Size = new System.Drawing.Size(189, 22);
             this.explorerItem.Text = "&Explorer ...";
+            this.explorerItem.ToolTipText = "Open Explorer and select the file.";
             this.explorerItem.Click += new System.EventHandler(this.explorerItem_Click);
             // 
             // propertyItem
@@ -106,6 +108,7 @@
             this.propertyItem.ShortcutKeyDisplayString = "";
             this.propertyItem.Size = new System.Drawing.Size(189, 22);
             this.propertyItem.Text = "&Property ...";
+            this.propertyItem.ToolTipText = "Open form of CELL settings";
             this.propertyItem.Click += new System.EventHandler(this.propertyItem_Click);
             // 
             // deleteItem
@@ -114,6 +117,7 @@
             this.deleteItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
             this.deleteItem.Size = new System.Drawing.Size(189, 22);
             this.deleteItem.Text = "&Delete";
+            this.deleteItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
             this.deleteItem.Click += new System.EventHandler(this.deleteItem_Click);
             // 
             // toolStripMenuItem1
@@ -126,6 +130,7 @@
             this.tabItem.Name = "tabItem";
             this.tabItem.Size = new System.Drawing.Size(189, 22);
             this.tabItem.Text = "&Tab ...";
+            this.tabItem.ToolTipText = "Open form of TAB settings.";
             this.tabItem.Click += new System.EventHandler(this.tabItem_Click);
             // 
             // settings
@@ -133,6 +138,7 @@
             this.settings.Name = "settings";
             this.settings.Size = new System.Drawing.Size(189, 22);
             this.settings.Text = "&Settings ...";
+            this.settings.ToolTipText = "Open form of DropThing3 settings.";
             // 
             // toolStripMenuItem2
             // 
@@ -145,6 +151,7 @@
             this.quit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.quit.Size = new System.Drawing.Size(189, 22);
             this.quit.Text = "e&Xit";
+            this.quit.ToolTipText = "Quit DropThing3.";
             this.quit.Click += new System.EventHandler(this.quit_Click);
             // 
             // status
@@ -210,14 +217,14 @@
             this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.ColumnHeadersVisible = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.grid.DefaultCellStyle = dataGridViewCellStyle2;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.grid.Location = new System.Drawing.Point(0, 17);
             this.grid.MultiSelect = false;
@@ -287,7 +294,7 @@
             this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
             this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
-            // DropForm
+            // DropMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Gray;
@@ -308,7 +315,7 @@
             this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "DropForm";
+            this.Name = "DropMain";
             this.Text = "DropThing3";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DropForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DropForm_FormClosed);
