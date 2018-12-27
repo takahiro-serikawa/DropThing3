@@ -33,13 +33,13 @@ using System.Net;
 
 namespace DropThing3
 {
-    public partial class DropForm: Form
+    public partial class DropMain: Form
     {
         // file extension for DropThing settings
         const string DROPTHING_EXT = "dtIII";
         string root;            // application data
 
-        public DropForm()
+        public DropMain()
         {
             InitializeComponent();
             main_form = this;
@@ -186,7 +186,7 @@ namespace DropThing3
 
         // message
 
-        static DropForm main_form;
+        static DropMain main_form;
 
         /// <summary>
         /// 

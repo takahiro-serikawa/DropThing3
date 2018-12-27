@@ -124,6 +124,7 @@
             this.apply.TabIndex = 21;
             this.apply.Text = "&Apply";
             this.apply.UseVisualStyleBackColor = true;
+            this.apply.Click += new System.EventHandler(this.apply_Click);
             // 
             // TabDialog
             // 

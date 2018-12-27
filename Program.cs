@@ -19,13 +19,13 @@ namespace DropThing3
 
             Application.ThreadException += Application_ThreadException;
 
-            Application.Run(new DropForm());
+            Application.Run(new DropMain());
         }
 
         private static void Application_ThreadException(object sender,
            System.Threading.ThreadExceptionEventArgs e)
         {
-            DropForm.AppStatusText(System.Drawing.Color.Fuchsia, e.Exception.Message);
+            DropMain.AppStatusText(System.Drawing.Color.Fuchsia, e.Exception.Message);
         }
     }
 }
