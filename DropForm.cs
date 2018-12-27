@@ -16,18 +16,18 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 
 // TODO
-// multiple tab 
+// multiple tab
 // application icon
 // cell drawing too slow
 // undo (delete item, ...)
 
-// multiple dock
 // other icon size
 // URL item's icon
 // drop to folder cell
 // TODO: 拡張子登録
 // hot key
 // multi drop files
+// multiple dock
 
 namespace DropThing3
 {
@@ -629,6 +629,22 @@ namespace DropThing3
                 e.Effect = DragDropEffects.None;
         }
 
+        static string escaped_join(string [] nn)
+        {
+            // zantei
+            string s = "";
+            foreach (var n in nn) {
+                if (s.Length > 0)
+                    s += " ";
+
+                if (n.IndexOf(' ') >= 0)
+                    s += "\"" + n + "\"";
+                else
+                    s += n;
+            }
+            return s;
+        }
+
         private void grid_DragDrop(object sender, DragEventArgs e)
         {
             string[] names;
@@ -644,8 +660,13 @@ namespace DropThing3
             if (hit.Type == DataGridViewHitTestType.Cell) {
                 var item = LookupItem(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
-                    // drop file to icon; execute application
-                    item.ProcessStart(names[0]);
+                    if (item.attr.IndexOf('d') >= 0) {
+                        // drop files to directory
+                        // copy ...? not yet
+                    } else {
+                        // drop files to app icon; execute application
+                        item.ProcessStart(escaped_join(names));
+                    }
                 } else {
                     if (drag_item != null) {
                         // moving inner form
@@ -657,11 +678,12 @@ namespace DropThing3
                     } else {
                         // drop file to empty cell; register file to cell
                         item = NewCellItem(names[0], hit.ColumnIndex, hit.RowIndex);
+                        // TODO accept multiple files
                     }
                 }
                 AppStatusText(Color.Black, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
             }
-        }        
+        }
 
         CellItem point_item = null;
 
