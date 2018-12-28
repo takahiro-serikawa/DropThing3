@@ -255,6 +255,17 @@ namespace DropThing3
                 //this.UpdateIcon();
             }
 
+            public bool HasAttr(char c)
+            {
+                return attr.IndexOf(c) >= 0;
+            }
+
+            public void AddAttr(char c)
+            {
+                if (!HasAttr(c))
+                    attr += c;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -262,7 +273,7 @@ namespace DropThing3
             {
                 this.attr = "";
                 if (path.StartsWith("http://") || path.StartsWith("https://")) {
-                    this.attr = "U";
+                    this.AddAttr('U');
                     string cachename = MakeCacheName(path);
                     if (File.Exists(cachename)) {
                         try {
@@ -274,12 +285,12 @@ namespace DropThing3
                     } else
                         fetch_req.Enqueue(path);
                 } else if (Directory.Exists(path))
-                    this.attr = "d";
+                    this.AddAttr('d');
                 else if (File.Exists(path)) {
-                    this.attr = "f";
+                    this.AddAttr('f');
                     string ext = Path.GetExtension(path);
                     if (executables.IndexOf(ext) >= 0)
-                        this.attr += "x";
+                        this.AddAttr('x');
                 }
 
                 if (this.icon == null)
@@ -500,8 +511,6 @@ namespace DropThing3
         /// <returns></returns>
         CellItem LookupItem(int col, int row)
         {
-            //if (tab == 0)
-            //    tab = current_tab;
             var found = sett.cell_list.Where(c => c.col == col && c.row == row && c.tab == current_tab);
             if (found.Count() > 0)
                 return found.First();
@@ -704,7 +713,7 @@ namespace DropThing3
             if (hit.Type == DataGridViewHitTestType.Cell) {
                 var item = LookupItem(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
-                    if (item.attr.IndexOf('d') >= 0) {
+                    if (item.HasAttr('d')) {
                         // drop files to directory
                         // copy ...? not yet
                     } else {
