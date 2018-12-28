@@ -41,6 +41,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.apply = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // select
@@ -65,18 +66,16 @@
             // 
             // caption
             // 
-            this.caption.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.caption.Location = new System.Drawing.Point(76, 12);
+            this.caption.Location = new System.Drawing.Point(100, 12);
             this.caption.Name = "caption";
-            this.caption.Size = new System.Drawing.Size(276, 23);
+            this.caption.Size = new System.Drawing.Size(100, 23);
             this.caption.TabIndex = 1;
             // 
             // path
             // 
             this.path.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.path.Location = new System.Drawing.Point(76, 37);
+            this.path.Location = new System.Drawing.Point(100, 37);
             this.path.Name = "path";
             this.path.Size = new System.Drawing.Size(276, 23);
             this.path.TabIndex = 3;
@@ -94,7 +93,7 @@
             // 
             this.options.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.options.Location = new System.Drawing.Point(76, 62);
+            this.options.Location = new System.Drawing.Point(100, 62);
             this.options.Name = "options";
             this.options.Size = new System.Drawing.Size(276, 23);
             this.options.TabIndex = 6;
@@ -111,7 +110,7 @@
             // ok
             // 
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(76, 166);
+            this.ok.Location = new System.Drawing.Point(100, 166);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 7;
@@ -121,7 +120,7 @@
             // cancel
             // 
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(157, 166);
+            this.cancel.Location = new System.Drawing.Point(181, 166);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 8;
@@ -137,7 +136,7 @@
             // 
             this.dir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dir.Location = new System.Drawing.Point(76, 87);
+            this.dir.Location = new System.Drawing.Point(100, 87);
             this.dir.Name = "dir";
             this.dir.Size = new System.Drawing.Size(276, 23);
             this.dir.TabIndex = 10;
@@ -164,11 +163,21 @@
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(76, 112);
+            this.textBox1.Location = new System.Drawing.Point(100, 112);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(100, 23);
             this.textBox1.TabIndex = 12;
+            // 
+            // apply
+            // 
+            this.apply.Location = new System.Drawing.Point(19, 166);
+            this.apply.Name = "apply";
+            this.apply.Size = new System.Drawing.Size(75, 23);
+            this.apply.TabIndex = 13;
+            this.apply.Text = "&Apply";
+            this.apply.UseVisualStyleBackColor = true;
+            this.apply.Click += new System.EventHandler(this.apply_Click);
             // 
             // ItemDialog
             // 
@@ -176,6 +185,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(384, 201);
+            this.Controls.Add(this.apply);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.dir);
@@ -216,5 +226,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button apply;
     }
 }

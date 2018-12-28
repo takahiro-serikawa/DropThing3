@@ -58,10 +58,28 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="dlg"></param>
         /// <returns></returns>
-        public bool Popup()
+        public delegate bool ApplyCallback(ItemDialog dlg);
+
+        ApplyCallback callback;
+
+        private void apply_Click(object sender, EventArgs e)
         {
-            return (this.ShowDialog() == DialogResult.OK) && (this.FilePath != "");
+            this.callback(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public bool Popup(ApplyCallback callback)
+        {
+            this.callback = callback;
+
+            bool ret = (this.ShowDialog() == DialogResult.OK) && (this.FilePath != "");
+            return ret && this.callback(this);
         }
 
         private void select_Click(object sender, EventArgs e)

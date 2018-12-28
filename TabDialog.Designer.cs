@@ -42,7 +42,7 @@
             // cancel
             // 
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(190, 126);
+            this.cancel.Location = new System.Drawing.Point(281, 126);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 17;
@@ -52,7 +52,7 @@
             // ok
             // 
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(109, 126);
+            this.ok.Location = new System.Drawing.Point(200, 126);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 16;
@@ -109,7 +109,7 @@
             this.gradation.AutoSize = true;
             this.gradation.Checked = true;
             this.gradation.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.gradation.Location = new System.Drawing.Point(22, 64);
+            this.gradation.Location = new System.Drawing.Point(21, 60);
             this.gradation.Name = "gradation";
             this.gradation.Size = new System.Drawing.Size(77, 19);
             this.gradation.TabIndex = 20;
@@ -118,7 +118,7 @@
             // 
             // apply
             // 
-            this.apply.Location = new System.Drawing.Point(12, 126);
+            this.apply.Location = new System.Drawing.Point(100, 126);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 21;

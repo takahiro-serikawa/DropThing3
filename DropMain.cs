@@ -909,18 +909,24 @@ namespace DropThing3
                 dlg.WorkingDirectory = CurrentItem.dir;
             }
 
-            if (dlg.Popup()) {
-                CellItem item;
-                if (CurrentItem != null)
-                    item = CurrentItem;
-                else 
-                    item = NewCellItem(dlg.FilePath,
-                        grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
-                item.caption = dlg.ItemCaption;
-                item.options = dlg.CommandOptions;
-                CurrentItem.dir = dlg.WorkingDirectory;
-                Modified = true;
+            if (dlg.Popup(ItemApplyCallback)) {
+                // ...
             }
+        }
+
+        bool ItemApplyCallback(ItemDialog dlg)
+        {
+            CellItem item;
+            if (CurrentItem != null)
+                item = CurrentItem;
+            else
+                item = NewCellItem(dlg.FilePath,
+                    grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
+            item.caption = dlg.ItemCaption;
+            item.options = dlg.CommandOptions;
+            item.dir = dlg.WorkingDirectory;
+            Modified = true;
+            return true;
         }
 
         private void grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -948,19 +954,26 @@ namespace DropThing3
             dlg.Color0 = color0;
             dlg.Color1 = color1;
 
-            if (dlg.Popup()) {
-                color0 = dlg.Color0;
-                color1 = dlg.Color1;
-                status.BackColor = color0;
-                status.ForeColor = BlackOrWhite(color0);
-                button1.BackColor = color0;
-                button1.ForeColor = BlackOrWhite(color0);
-                grid.BackgroundColor = color1;
-
-                cell_bitmap = CellBitmap();
-                grid.Invalidate();
-                Modified = false;
+            if (dlg.Popup(TabItemCallback)) {
+                // ..
             }
+        }
+
+        bool TabItemCallback(TabDialog dlg)
+        {
+            color0 = dlg.Color0;
+            color1 = dlg.Color1;
+            status.BackColor = color0;
+            status.ForeColor = BlackOrWhite(color0);
+            button1.BackColor = color0;
+            button1.ForeColor = BlackOrWhite(color0);
+            grid.BackgroundColor = color1;
+
+            cell_bitmap = CellBitmap();
+            grid.Invalidate();
+            Modified = false;
+
+            return true;
         }
 
         private void quit_Click(object sender, EventArgs e)

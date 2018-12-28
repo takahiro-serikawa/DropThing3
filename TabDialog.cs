@@ -47,10 +47,27 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="dlg"></param>
         /// <returns></returns>
-        public bool Popup()
+        public delegate bool ApplyCallback(TabDialog dlg);
+
+        ApplyCallback callback = null;
+
+        private void apply_Click(object sender, EventArgs e)
         {
-            return this.ShowDialog() == DialogResult.OK;
+            this.callback(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool Popup(ApplyCallback callback)
+        {
+            this.callback = callback;
+
+            bool ret = (this.ShowDialog() == DialogResult.OK);
+            return ret && this.callback(this);
         }
 
         private void color0_Click(object sender, EventArgs e)
@@ -69,9 +86,5 @@ namespace DropThing3
             }
         }
 
-        private void apply_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
