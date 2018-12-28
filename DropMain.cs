@@ -93,7 +93,7 @@ namespace DropThing3
             sett.app_version = string.Format("{0}.{1:D2}", ver.Major, ver.Minor);
 
             GridSize(sett.col_count, sett.row_count);
-            cell_bitmap = CellBitmap();
+            FitToGrid();
             Modified = false;
 
             // open other instances
@@ -138,6 +138,8 @@ namespace DropThing3
             }
         }
 
+        // resize
+
         private void resize_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouse_down_flag) {
@@ -151,15 +153,15 @@ namespace DropThing3
         {
             if (e.Button == MouseButtons.Left) {
                 // resize end
-                this.Width = grid.ColumnCount*W;
-                this.Height = grid.RowCount*H + Y0 + status.Height;
+                this.Width = grid.ColumnCount*CellWidth;
+                this.Height = grid.RowCount*CellHeight + Y0 + status.Height;
             }
             mouse_down_flag = false;
         }
 
         private void DropForm_Resize(object sender, EventArgs e)
         {
-            GridSize(grid.Width/W, grid.Height/H);
+            GridSize(grid.Width/CellWidth, grid.Height/CellHeight);
         }
 
         /// <summary>
@@ -171,18 +173,31 @@ namespace DropThing3
         {
             Modified |= (grid.ColumnCount != cols) || (grid.RowCount != rows);
 
-            this.MinimumSize = new Size(W, grid.Top + H + status.Height);
+            CellWidth = sett.caption_visible ? 80 : 2+32+2;
+            CellHeight = sett.caption_visible ? 2+32+17+2 : 2+32+2;
+
+            this.MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
+
+            cell_bitmap = CellBitmap();
 
             grid.ColumnCount = Math.Max(cols, 1);
             grid.RowCount = Math.Max(rows, 1);
             foreach (DataGridViewColumn col in grid.Columns) {
-                col.Width = W;
+                col.Width = CellWidth;
             }
             foreach (DataGridViewRow row in grid.Rows) {
-                row.Height = H;
+                row.Height = CellHeight;
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        void FitToGrid()
+        {
+            this.Width = grid.ColumnCount*CellWidth;
+            this.Height = grid.RowCount*CellHeight + Y0 + status.Height;
+        }
 
         // message
 
@@ -244,8 +259,6 @@ namespace DropThing3
                 icon = null;
             }
 
-            List<string> executables = new List<string>() { ".exe", ".com" };
-
             public CellItem(string path)
             {
                 this.path = path;
@@ -265,6 +278,8 @@ namespace DropThing3
                 if (!HasAttr(c))
                     attr += c;
             }
+
+            List<string> executables = new List<string>() { ".exe", ".com" };
 
             /// <summary>
             /// 
@@ -306,11 +321,6 @@ namespace DropThing3
                 }
             }
 
-            public bool IsUrl()
-            {
-                return path.StartsWith("http://") || path.StartsWith("https://");
-            }
-
             /// <summary>
             /// 
             /// </summary>
@@ -345,6 +355,8 @@ namespace DropThing3
 
             public FormWindowState win_state;
             public int left, top, col_count, row_count;
+
+            public bool caption_visible;
 
             public DropThingSettings()
             {
@@ -391,8 +403,8 @@ namespace DropThing3
             //this.WindowState = dock.win_state;
             this.Left = sett.left;
             this.Top = sett.top;
-            this.Width = sett.col_count * W;
-            this.Height = sett.row_count * H + 17 + 17;
+            //this.Width = sett.col_count * CellWidth;
+            //this.Height = sett.row_count * CellHeight + 17 + 17;
         }
 
         string DefSettFilename()
@@ -570,15 +582,11 @@ namespace DropThing3
         }
 
         // drawing
-        bool caption_visible = false;
+        //bool caption_visible = false;
 
-        //const int TAB_HEIGHT = 17;
         int Y0 { get { return grid.Top; } }
-        //const int W = 2+32+2;
-        //const int H = 2+32+2;
-        int W { get { return caption_visible ? 80 : 2+32+2; } }
-        int H { get { return caption_visible ? 2+32+17+2 : 2+32+2; } }
-        //const int FOOTER_HEIGHT = 17;
+        int CellWidth = 2+32+2;
+        int CellHeight = 2+32+2;
 
         Color trim_color(Color color, int d)
         {
@@ -613,17 +621,17 @@ namespace DropThing3
             brush1 = new SolidBrush(trim_color(color1, -20));
             resize.BackColor = color0;
 
-            var bmp = new Bitmap(W, H);
+            var bmp = new Bitmap(CellWidth, CellHeight);
             using (var g = Graphics.FromImage(bmp))
             using (var light = new Pen(trim_color(color0, +20)))
             using (var dark = new Pen(trim_color(color1, -20)))
             using (var brush = new LinearGradientBrush(g.VisibleClipBounds,
                color0, color1, LinearGradientMode.Vertical)) {
                 g.FillRectangle(brush, g.VisibleClipBounds);
-                g.DrawLine(light, 0, 0, W, 0);
-                g.DrawLine(light, 0, 0, 0, H);
-                g.DrawLine(dark, 0, H-1, W, H-1);
-                g.DrawLine(dark, W-1, 0, W-1, H-1);
+                g.DrawLine(light, 0, 0, CellWidth, 0);
+                g.DrawLine(light, 0, 0, 0, CellHeight);
+                g.DrawLine(dark, 0, CellHeight-1, CellWidth, CellHeight-1);
+                g.DrawLine(dark, CellWidth-1, 0, CellWidth-1, CellHeight-1);
             }
             return bmp;
         }
@@ -839,7 +847,7 @@ namespace DropThing3
                 else {
                     //g.DrawIcon(SystemIcons.Question, e.CellBounds.X+2, e.CellBounds.Y+2);
 
-                    string alt = item.IsUrl() ? "URL" : "?";
+                    string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
                     f.Alignment = StringAlignment.Center;
                     f.LineAlignment = StringAlignment.Center;
@@ -854,7 +862,7 @@ namespace DropThing3
             }
 
             // draw item caption
-            if (item != null && caption_visible) {
+            if (item != null && sett.caption_visible) {
                 var m = g.MeasureString(item.caption, this.Font);
                 Color color = BlackOrWhite(color1);
                 float x = e.CellBounds.Left + (e.CellBounds.Width-m.Width)/2;
@@ -962,13 +970,14 @@ namespace DropThing3
             var dlg = new TabDialog();
             dlg.Color0 = color0;
             dlg.Color1 = color1;
+            //dlg.ShowItemCaption = sett.caption_visible;
 
-            if (dlg.Popup(TabItemCallback)) {
+            if (dlg.Popup(TabApplyCallback)) {
                 // ..
             }
         }
 
-        bool TabItemCallback(TabDialog dlg)
+        bool TabApplyCallback(TabDialog dlg)
         {
             color0 = dlg.Color0;
             color1 = dlg.Color1;
@@ -977,10 +986,13 @@ namespace DropThing3
             button1.BackColor = color0;
             button1.ForeColor = BlackOrWhite(color0);
             grid.BackgroundColor = color1;
+            //sett.caption_visible = dlg.ShowItemCaption;
 
-            cell_bitmap = CellBitmap();
+            GridSize(grid.ColumnCount, grid.RowCount);
+            FitToGrid();
+            //cell_bitmap = CellBitmap();
             grid.Invalidate();
-            Modified = false;
+            Modified = true;
 
             return true;
         }
