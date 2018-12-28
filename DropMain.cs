@@ -712,9 +712,12 @@ namespace DropThing3
             string[] names;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            else if (e.Data.GetDataPresent("UniformResourceLocator"))
-                names = new string[] { e.Data.GetData(DataFormats.Text).ToString() };
-            else
+            else if (e.Data.GetDataPresent("UniformResourceLocator")) {
+                string url = e.Data.GetData(DataFormats.Text).ToString();
+                if (!url.StartsWith("http"))    // http or https
+                    url = "http://" + url;
+                names = new string[] { url };
+            } else
                 return;
 
             var point = grid.PointToClient(new Point(e.X, e.Y));
