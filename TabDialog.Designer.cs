@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.cancel = new System.Windows.Forms.Button();
             this.ok = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -37,6 +38,8 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.gradation = new System.Windows.Forms.CheckBox();
             this.apply = new System.Windows.Forms.Button();
+            this.caption = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // cancel
@@ -126,12 +129,25 @@
             this.apply.UseVisualStyleBackColor = true;
             this.apply.Click += new System.EventHandler(this.apply_Click);
             // 
+            // caption
+            // 
+            this.caption.AutoSize = true;
+            this.caption.Checked = true;
+            this.caption.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.caption.Location = new System.Drawing.Point(273, 11);
+            this.caption.Name = "caption";
+            this.caption.Size = new System.Drawing.Size(92, 19);
+            this.caption.TabIndex = 22;
+            this.caption.Text = "item caption";
+            this.caption.UseVisualStyleBackColor = true;
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 161);
+            this.Controls.Add(this.caption);
             this.Controls.Add(this.apply);
             this.Controls.Add(this.gradation);
             this.Controls.Add(this.color1);
@@ -142,7 +158,9 @@
             this.Controls.Add(this.title);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Yu Gothic UI", 9F);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(300, 170);
             this.Name = "TabDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -164,5 +182,7 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.CheckBox gradation;
         private System.Windows.Forms.Button apply;
+        private System.Windows.Forms.CheckBox caption;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

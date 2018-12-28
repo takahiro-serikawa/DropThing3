@@ -153,8 +153,7 @@ namespace DropThing3
         {
             if (e.Button == MouseButtons.Left) {
                 // resize end
-                this.Width = grid.ColumnCount*CellWidth;
-                this.Height = grid.RowCount*CellHeight + Y0 + status.Height;
+                FitToGrid();
             }
             mouse_down_flag = false;
         }
@@ -195,8 +194,10 @@ namespace DropThing3
         /// </summary>
         void FitToGrid()
         {
-            this.Width = grid.ColumnCount*CellWidth;
-            this.Height = grid.RowCount*CellHeight + Y0 + status.Height;
+            //this.Width = grid.ColumnCount*CellWidth;
+            //this.Height = grid.RowCount*CellHeight + Y0 + status.Height;
+            this.Size = new Size(grid.ColumnCount*CellWidth,
+                                 grid.RowCount*CellHeight + Y0 + status.Height);
         }
 
         // message
@@ -842,11 +843,10 @@ namespace DropThing3
                 if (item.icon == null)
                     item.UpdateIcon();
 
-                if (item.icon != null)
-                    g.DrawIcon(item.icon, e.CellBounds.X+2, e.CellBounds.Y+2);
-                else {
-                    //g.DrawIcon(SystemIcons.Question, e.CellBounds.X+2, e.CellBounds.Y+2);
-
+                if (item.icon != null) {
+                    int ix = e.CellBounds.X + (e.CellBounds.Width - item.icon.Width)/2;
+                    g.DrawIcon(item.icon, ix/*e.CellBounds.X+2*/, e.CellBounds.Y+2);
+                } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
                     f.Alignment = StringAlignment.Center;
@@ -865,9 +865,13 @@ namespace DropThing3
             if (item != null && sett.caption_visible) {
                 var m = g.MeasureString(item.caption, this.Font);
                 Color color = BlackOrWhite(color1);
-                float x = e.CellBounds.Left + (e.CellBounds.Width-m.Width)/2;
-                float y = e.CellBounds.Top + 2+32;
-                g.DrawString(item.caption, this.Font, new SolidBrush(color), x, y);
+                //float x = e.CellBounds.Left + (e.CellBounds.Width-m.Width)/2;
+                //float y = e.CellBounds.Top + 2+32;
+                //g.DrawString(item.caption, this.Font, new SolidBrush(color), x, y);
+                var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + 2+32, e.CellBounds.Width, m.Height);
+                var f = new StringFormat();
+                f.Alignment = StringAlignment.Center;
+                g.DrawString(item.caption, this.Font, new SolidBrush(color), rect, f);
             }
 
             e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
@@ -970,7 +974,7 @@ namespace DropThing3
             var dlg = new TabDialog();
             dlg.Color0 = color0;
             dlg.Color1 = color1;
-            //dlg.ShowItemCaption = sett.caption_visible;
+            dlg.ShowItemCaption = sett.caption_visible;
 
             if (dlg.Popup(TabApplyCallback)) {
                 // ..
@@ -982,11 +986,11 @@ namespace DropThing3
             color0 = dlg.Color0;
             color1 = dlg.Color1;
             status.BackColor = color0;
-            status.ForeColor = BlackOrWhite(color0);
+            status.ForeColor = BlackOrWhite(color0, 250);
             button1.BackColor = color0;
             button1.ForeColor = BlackOrWhite(color0);
             grid.BackgroundColor = color1;
-            //sett.caption_visible = dlg.ShowItemCaption;
+            sett.caption_visible = dlg.ShowItemCaption;
 
             GridSize(grid.ColumnCount, grid.RowCount);
             FitToGrid();

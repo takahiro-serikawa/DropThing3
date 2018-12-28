@@ -47,6 +47,15 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public bool ShowItemCaption
+        {
+            get { return caption.Checked; }
+            set { caption.Checked = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
         public delegate bool ApplyCallback(TabDialog dlg);
