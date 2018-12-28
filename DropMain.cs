@@ -106,7 +106,7 @@ namespace DropThing3
             //this.Font.Name = "";
             RegStartup(true);
 
-            cache_path = Path.Combine(root, "favicon_cache");
+            cache_path = Path.Combine(root, "icon_cache");
             faviconFetch.RunWorkerAsync();
         }
 
