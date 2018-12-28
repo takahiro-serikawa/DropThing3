@@ -744,6 +744,8 @@ namespace DropThing3
                 }
                 AppStatusText(Color.Black, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
             }
+
+            drag_item = null;
         }
 
         CellItem point_item = null;
