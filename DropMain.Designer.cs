@@ -71,7 +71,7 @@
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(190, 192);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 214);
             // 
             // title
             // 
@@ -81,15 +81,15 @@
             this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
             this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(189, 22);
+            this.title.Size = new System.Drawing.Size(204, 22);
             this.title.Text = "DropThing";
             // 
             // openItem
             // 
             this.openItem.Name = "openItem";
-            this.openItem.ShortcutKeyDisplayString = "Enter";
+            this.openItem.ShortcutKeyDisplayString = "ENTER";
             this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openItem.Size = new System.Drawing.Size(189, 22);
+            this.openItem.Size = new System.Drawing.Size(204, 22);
             this.openItem.Text = "&Open ...";
             this.openItem.ToolTipText = "Open the file of this cell.";
             this.openItem.Click += new System.EventHandler(this.openItem_Click);
@@ -97,8 +97,8 @@
             // explorerItem
             // 
             this.explorerItem.Name = "explorerItem";
-            this.explorerItem.ShortcutKeyDisplayString = "Ctrl+Enter";
-            this.explorerItem.Size = new System.Drawing.Size(189, 22);
+            this.explorerItem.ShortcutKeyDisplayString = "Ctrl+ENTER";
+            this.explorerItem.Size = new System.Drawing.Size(204, 22);
             this.explorerItem.Text = "&Explorer ...";
             this.explorerItem.ToolTipText = "Open Explorer and select the file.";
             this.explorerItem.Click += new System.EventHandler(this.explorerItem_Click);
@@ -106,8 +106,8 @@
             // propertyItem
             // 
             this.propertyItem.Name = "propertyItem";
-            this.propertyItem.ShortcutKeyDisplayString = "";
-            this.propertyItem.Size = new System.Drawing.Size(189, 22);
+            this.propertyItem.ShortcutKeyDisplayString = "Shift+ENTER";
+            this.propertyItem.Size = new System.Drawing.Size(204, 22);
             this.propertyItem.Text = "&Property ...";
             this.propertyItem.ToolTipText = "Open form of CELL settings";
             this.propertyItem.Click += new System.EventHandler(this.propertyItem_Click);
@@ -116,7 +116,7 @@
             // 
             this.deleteItem.Name = "deleteItem";
             this.deleteItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.deleteItem.Size = new System.Drawing.Size(189, 22);
+            this.deleteItem.Size = new System.Drawing.Size(204, 22);
             this.deleteItem.Text = "&Delete";
             this.deleteItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
             this.deleteItem.Click += new System.EventHandler(this.deleteItem_Click);
@@ -124,12 +124,12 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(186, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(201, 6);
             // 
             // tabItem
             // 
             this.tabItem.Name = "tabItem";
-            this.tabItem.Size = new System.Drawing.Size(189, 22);
+            this.tabItem.Size = new System.Drawing.Size(204, 22);
             this.tabItem.Text = "&Tab ...";
             this.tabItem.ToolTipText = "Open form of TAB settings.";
             this.tabItem.Click += new System.EventHandler(this.tabItem_Click);
@@ -137,20 +137,20 @@
             // settings
             // 
             this.settings.Name = "settings";
-            this.settings.Size = new System.Drawing.Size(189, 22);
+            this.settings.Size = new System.Drawing.Size(204, 22);
             this.settings.Text = "&Settings ...";
             this.settings.ToolTipText = "Open form of DropThing3 settings.";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(186, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(201, 6);
             // 
             // quit
             // 
             this.quit.Name = "quit";
             this.quit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quit.Size = new System.Drawing.Size(189, 22);
+            this.quit.Size = new System.Drawing.Size(204, 22);
             this.quit.Text = "e&Xit";
             this.quit.ToolTipText = "Quit DropThing3.";
             this.quit.Click += new System.EventHandler(this.quit_Click);

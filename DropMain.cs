@@ -838,8 +838,9 @@ namespace DropThing3
                 // cell click
                 if (ModifierKeys.HasFlag(Keys.Control))
                     explorerItem_Click(null, null);
-                else
-                    openItem_Click(null, null);
+                else if(ModifierKeys.HasFlag(Keys.Shift))
+                    propertyItem_Click(null, null);
+                openItem_Click(null, null);
             }
 
             mouse_down_flag = false;
@@ -923,8 +924,8 @@ namespace DropThing3
             if (e.KeyCode == Keys.Enter) {
                 if (e.Control)
                     explorerItem_Click(null, null);
-                //else if (e.Alt)
-                //    propertyItem_Click(null, null);
+                else if (e.Shift)
+                    propertyItem_Click(null, null);
                 else
                     openItem_Click(null, null);
                 e.Handled = true;
