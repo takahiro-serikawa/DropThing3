@@ -136,7 +136,7 @@ namespace DropThing3
                 if (Modified)
                     SaveSettings();
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "FATAL", 
+                MessageBox.Show(ex.Message, "FATAL",
                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -257,7 +257,7 @@ namespace DropThing3
             public string attr;
             public int row, col;
             public uint tab;
-            
+
             [XmlIgnore]
             public Icon icon;
 
@@ -271,7 +271,7 @@ namespace DropThing3
             {
                 this.path = path;
                 //this.text = Path.GetFileNameWithoutExtension(path);
-                this.caption = Path.GetFileName(path);
+                //this.caption = Path.GetFileName(path);
 
                 //this.UpdateIcon();
             }
@@ -372,6 +372,38 @@ namespace DropThing3
                 } catch (Exception ex) {
                     MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //AppStatusText(Color.Fuchsia, ex.Message);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string DisplayCaption
+            {
+                get
+                {
+                    if (this.caption != "")
+                        return this.caption;
+
+                    // return default caption if not specified
+                    if (this.HasAttr('U')) {
+                        try {
+                            var u = new Uri(this.path);
+                            string[] hh = u.Host.Split('.');
+                            if (hh.Length > 1 && hh[0] == "www")
+                                return hh[1];
+                            return hh[0];
+                        } catch (Exception ex) {
+                        }
+
+                    } else {
+                        string filename = Path.GetFileName(this.path);
+                        if (filename != "")
+                            return filename;
+                    }
+
+                    // return path if something wrong
+                    return this.path;
                 }
             }
         }
@@ -496,7 +528,7 @@ namespace DropThing3
         {
             string dir = Environment.GetFolderPath(
                Environment.SpecialFolder.LocalApplicationData);
-            string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);            
+            string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
             Directory.CreateDirectory(dir+"\\"+app);
             return dir+"\\"+app+"\\"+app+"."+DROPTHING_EXT;
         }
@@ -521,7 +553,7 @@ namespace DropThing3
 
             if (keep_old_settings)
                 try {
-                    string bak_name = Path.ChangeExtension(filename, 
+                    string bak_name = Path.ChangeExtension(filename,
                        DateTime.Now.ToString("yyyyMMdd-hhmmss") + "." + DROPTHING_EXT);
                     File.Move(filename, bak_name);
                 } catch (Exception ex) {
@@ -588,7 +620,7 @@ namespace DropThing3
                     this.Opacity = 0;
                     this.TopMost = true;
                     this.TopMost = false;
-                    for ( ; this.Opacity < 1.0; this.Opacity += 0.1)
+                    for (; this.Opacity < 1.0; this.Opacity += 0.1)
                         System.Threading.Thread.Sleep(10);
                     this.Activate();
                 }
@@ -667,8 +699,6 @@ namespace DropThing3
         }
 
         // drawing
-        //bool caption_visible = false;
-
         int Y0 { get { return grid.Top; } }
         int CellWidth = 2+32+2;
         int CellHeight = 2+32+2;
@@ -699,7 +729,7 @@ namespace DropThing3
         TabLayer CurrentTab
         {
             get { return sett.tab_list[0]; }
-            
+
         }
 
         /// <summary>
@@ -791,7 +821,7 @@ namespace DropThing3
                 e.Effect = DragDropEffects.None;
         }
 
-        static string escaped_join(string [] nn)
+        static string escaped_join(string[] nn)
         {
             // zantei
             string s = "";
@@ -856,7 +886,7 @@ namespace DropThing3
             point_item = LookupItem(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.caption + "; " + point_item.path : "");
+               (point_item != null) ? point_item.DisplayCaption + "; " + point_item.path : "");
             grid.Cursor =  (point_item != null) ? Cursors.Hand : Cursors.Default;
         }
 
@@ -865,7 +895,7 @@ namespace DropThing3
             point_item = LookupItem(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.caption + "; " + point_item.path : "");
+               (point_item != null) ? point_item.DisplayCaption + "; " + point_item.path : "");
 
             // update menu activity
             eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
@@ -878,7 +908,7 @@ namespace DropThing3
         private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             Console.WriteLine("grid_CellMouseDown({0})", estr(e));
-            
+
             // select cell on right click too
             if (e.Button == MouseButtons.Right)
                 grid.CurrentCell = grid[e.ColumnIndex, e.RowIndex];
@@ -988,12 +1018,12 @@ namespace DropThing3
 
             // draw item caption
             if (item != null && sett.caption_visible) {
-                var m = g.MeasureString(item.caption, this.Font);
+                var m = g.MeasureString(item.DisplayCaption, this.Font);
                 Color color = BlackOrWhite(color1, 250);
                 var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + 2+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
-                g.DrawString(item.caption, this.Font, new SolidBrush(color), rect, f);
+                g.DrawString(item.DisplayCaption, this.Font, new SolidBrush(color), rect, f);
             }
 
             e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
