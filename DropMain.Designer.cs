@@ -28,13 +28,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eject = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,11 +47,11 @@
             this.button2 = new System.Windows.Forms.Button();
             this.grid = new System.Windows.Forms.DataGridView();
             this.missing = new System.Windows.Forms.Label();
-            this.hamburger = new System.Windows.Forms.PictureBox();
-            this.resize = new System.Windows.Forms.PictureBox();
             this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.eject = new System.Windows.Forms.ToolStripMenuItem();
+            this.title = new System.Windows.Forms.ToolStripMenuItem();
+            this.hamburger = new System.Windows.Forms.PictureBox();
+            this.resize = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
@@ -75,19 +75,9 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(205, 236);
             // 
-            // title
-            // 
-            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.title.ForeColor = System.Drawing.Color.White;
-            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
-            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(204, 22);
-            this.title.Text = "DropThing";
-            // 
             // openItem
             // 
+            this.openItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.openItem.Name = "openItem";
             this.openItem.ShortcutKeyDisplayString = "ENTER";
             this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
@@ -113,6 +103,15 @@
             this.propertyItem.Text = "&Property ...";
             this.propertyItem.ToolTipText = "Open form of CELL settings";
             this.propertyItem.Click += new System.EventHandler(this.propertyItem_Click);
+            // 
+            // eject
+            // 
+            this.eject.Name = "eject";
+            this.eject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.J)));
+            this.eject.Size = new System.Drawing.Size(204, 22);
+            this.eject.Text = "e&Ject";
+            this.eject.ToolTipText = "Try to eject removal media.";
+            this.eject.Click += new System.EventHandler(this.eject_Click);
             // 
             // deleteItem
             // 
@@ -259,6 +258,24 @@
             this.missing.Text = "?";
             this.missing.Visible = false;
             // 
+            // faviconFetch
+            // 
+            this.faviconFetch.WorkerReportsProgress = true;
+            this.faviconFetch.WorkerSupportsCancellation = true;
+            this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
+            this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
+            // 
+            // title
+            // 
+            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.title.ForeColor = System.Drawing.Color.White;
+            this.title.Image = global::DropThing3.Properties.Resources.app16;
+            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(204, 22);
+            this.title.Text = "DropThing";
+            // 
             // hamburger
             // 
             this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -289,22 +306,6 @@
             this.resize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
             this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
             this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);
-            // 
-            // faviconFetch
-            // 
-            this.faviconFetch.WorkerReportsProgress = true;
-            this.faviconFetch.WorkerSupportsCancellation = true;
-            this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
-            this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
-            // 
-            // eject
-            // 
-            this.eject.Name = "eject";
-            this.eject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.J)));
-            this.eject.Size = new System.Drawing.Size(204, 22);
-            this.eject.Text = "e&Ject";
-            this.eject.ToolTipText = "Try to eject removal media.";
-            this.eject.Click += new System.EventHandler(this.eject_Click);
             // 
             // DropMain
             // 
