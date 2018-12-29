@@ -77,6 +77,7 @@
     <Compile Include="ItemDialog.Designer.cs">
       <DependentUpon>ItemDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Ejector.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

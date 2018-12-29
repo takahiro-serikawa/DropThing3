@@ -797,9 +797,14 @@ namespace DropThing3
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
                (point_item != null) ? point_item.caption + "; " + point_item.path : "");
+
+            // update menu activity
+            eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
+            deleteItem.Enabled = (CurrentItem != null);
+            openItem.Enabled = (CurrentItem != null);
         }
 
-        bool drag_flag = false;
+        //bool drag_flag = false;
 
         private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -1047,6 +1052,15 @@ namespace DropThing3
             this.Close();
         }
 
+        private void eject_Click(object sender, EventArgs e)
+        {
+            string fullpath = Path.GetFullPath(CurrentItem.path);
+            if (fullpath.Length > 1 && fullpath[1] == ':')
+                ParaParaView.Ejector.EjectMedia(fullpath[0]);
+            else
+                Console.WriteLine("eject error: no support path style");
+        }
+
         private void hamburger_Click(object sender, EventArgs e)
         {
             var r = grid.GetCellDisplayRectangle(
@@ -1073,6 +1087,7 @@ namespace DropThing3
 
         static string cache_path;
         static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
+
         static WebClient wc = new WebClient();
 
         private void faviconFetch_DoWork(object sender, DoWorkEventArgs e)

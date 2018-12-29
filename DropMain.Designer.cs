@@ -51,6 +51,7 @@
             this.resize = new System.Windows.Forms.PictureBox();
             this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.eject = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
@@ -64,6 +65,7 @@
             this.openItem,
             this.explorerItem,
             this.propertyItem,
+            this.eject,
             this.deleteItem,
             this.toolStripMenuItem1,
             this.tabItem,
@@ -71,7 +73,7 @@
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 192);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 236);
             // 
             // title
             // 
@@ -295,6 +297,15 @@
             this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
             this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
+            // eject
+            // 
+            this.eject.Name = "eject";
+            this.eject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.J)));
+            this.eject.Size = new System.Drawing.Size(204, 22);
+            this.eject.Text = "e&Ject";
+            this.eject.ToolTipText = "Try to eject removal media.";
+            this.eject.Click += new System.EventHandler(this.eject_Click);
+            // 
             // DropMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -357,6 +368,7 @@
         private System.Windows.Forms.ToolStripMenuItem title;
         private System.ComponentModel.BackgroundWorker faviconFetch;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStripMenuItem eject;
     }
 }
 
