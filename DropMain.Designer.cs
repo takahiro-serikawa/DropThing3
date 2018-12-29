@@ -71,7 +71,7 @@
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 214);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 192);
             // 
             // title
             // 
@@ -235,7 +235,6 @@
             this.grid.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.grid.Size = new System.Drawing.Size(360, 72);
             this.grid.TabIndex = 0;
-            this.grid.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_CellDoubleClick);
             this.grid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_CellEnter);
             this.grid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.grid_CellMouseDown);
             this.grid.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_CellMouseEnter);

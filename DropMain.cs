@@ -803,7 +803,7 @@ namespace DropThing3
 
         private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            //Console.WriteLine("grid_CellMouseDown({0})", estr(e));
+            Console.WriteLine("grid_CellMouseDown({0})", estr(e));
             
             // select cell on right click too
             if (e.Button == MouseButtons.Right)
@@ -818,6 +818,13 @@ namespace DropThing3
         }
 
         CellItem drag_item = null;
+
+#if DEBUG
+        string estr(DataGridViewCellMouseEventArgs e)
+        {
+            return string.Format("clicks={0}, button={1}, delta={2}", e.Clicks, e.Button, e.Delta);
+        }
+#endif
 
         private void grid_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -835,17 +842,23 @@ namespace DropThing3
 
         private void grid_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
-            //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
-            if (!mouse_down_flag) {
+            Console.WriteLine("grid_CellMouseUp({0})", estr(e));
+            //if (!mouse_down_flag) {
 
-            } else if (e.Button == MouseButtons.Left && e.Clicks == 1) {
-                // cell click
-                if (ModifierKeys.HasFlag(Keys.Control))
-                    explorerItem_Click(null, null);
-                else if (ModifierKeys.HasFlag(Keys.Shift))
+            //} else 
+            if (e.Button == MouseButtons.Left) {
+                if (e.Clicks == 1) {
+                    // cell click
+                    if (ModifierKeys.HasFlag(Keys.Control))
+                        explorerItem_Click(null, null);
+                    else if (ModifierKeys.HasFlag(Keys.Shift))
+                        propertyItem_Click(null, null);
+                    else
+                        openItem_Click(null, null);
+                } else if (e.Clicks == 2) {
+                    // cell double click
                     propertyItem_Click(null, null);
-                else
-                    openItem_Click(null, null);
+                }
             }
 
             mouse_down_flag = false;
@@ -986,12 +999,6 @@ namespace DropThing3
             item.dir = dlg.WorkingDirectory;
             Modified = true;
             return true;
-        }
-
-        private void grid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (CurrentItem == null)
-                propertyItem_Click(sender, null);
         }
 
         Color color0 = Color.Lime, color1 = Color.Green;
