@@ -163,7 +163,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(300, 170);
             this.Name = "TabDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "tab property";
             this.ResumeLayout(false);
             this.PerformLayout();
