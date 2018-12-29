@@ -47,6 +47,15 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public bool DrawGradation
+        {
+            get { return gradation.Checked; }
+            set { gradation.Checked = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool ShowItemCaption
         {
             get { return caption.Checked; }

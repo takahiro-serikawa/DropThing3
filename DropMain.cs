@@ -1,21 +1,19 @@
 ﻿// DropThing 3 main form
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using System.IO;
-using System.Drawing.Drawing2D;
 using System.Diagnostics;
-using System.Xml.Serialization;
-using System.Collections.Concurrent;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml.Serialization;
 
 // TODO
 // multiple tab
@@ -377,13 +375,57 @@ namespace DropThing3
         {
             public uint id;
             public string title;
+            [XmlIgnore]
             public Color color0, color1;
+
+            [EditorBrowsable(EditorBrowsableState.Never)]
+            [Browsable(false)]
+            public string xml_color0
+            {
+                get { return ConvertToString(color0); }
+                set { color0 = ConvertFromString<Color>(value); }
+            }
+
+            [EditorBrowsable(EditorBrowsableState.Never)]
+            [Browsable(false)]
+            public string xml_color1
+            {
+                get { return ConvertToString(color1); }
+                set { color1 = ConvertFromString<Color>(value); }
+            }
+
+            public bool draw_gradation;
+
+            public TabLayer()
+            {
+                title = "untitled";
+                color0 = Color.Lime;
+                color1 = Color.Green;
+                draw_gradation = true;
+            }
+
+            static string ConvertToString<T>(T value)
+            {
+                return TypeDescriptor.GetConverter(typeof(T)).ConvertToString(value);
+            }
+
+            static T ConvertFromString<T>(string value)
+            {
+                return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(value);
+            }
         }
 
+        // app settings class (for serialization)
+
+        /// <summary>
+        /// 
+        /// </summary>
         public class DropThingSettings: object
         {
             public string app_version;
             public List<CellItem> cell_list = new List<CellItem>();
+
+            [XmlElement("tab_list2")]
             public List<TabLayer> tab_list = new List<TabLayer>();
             public uint tab_serial;
 
@@ -394,13 +436,6 @@ namespace DropThing3
 
             public DropThingSettings()
             {
-                TabLayer def_tab = new TabLayer();
-                def_tab.id = tab_serial++;
-                def_tab.title = "untitled";
-                def_tab.color0 = Color.Lime;
-                def_tab.color1 = Color.Green;
-
-                tab_list.Add(def_tab);
             }
         }
 
@@ -433,10 +468,26 @@ namespace DropThing3
                 sett = (DropThingSettings)serializer.Deserialize(sr);
             }
 
+            // at least 1 tab
+            if (sett.tab_list.Count <= 0) {
+                TabLayer tab = new TabLayer();
+                tab.id = sett.tab_serial++;
+                tab.title = "untitled";
+                tab.color0 = Color.Lime;
+                tab.color1 = Color.Green;
+                sett.tab_list.Add(tab);
+            }
+
             this.StartPosition = FormStartPosition.Manual;
             //this.WindowState = dock.win_state;
             this.Left = sett.left;
             this.Top = sett.top;
+
+            status.BackColor = CurrentTab.color0;
+            status.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
+            button1.BackColor = CurrentTab.color0;
+            button1.ForeColor = BlackOrWhite(CurrentTab.color0);
+
         }
 
         string DefSettFilename()
@@ -643,22 +694,30 @@ namespace DropThing3
             return Color.FromArgb(r, g, b);
         }
 
+        TabLayer CurrentTab
+        {
+            get { return sett.tab_list[0]; }
+            
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         Bitmap CellBitmap()
         {
-            brush0 = new SolidBrush(trim_color(color0, +20));
-            brush1 = new SolidBrush(trim_color(color1, -20));
-            resize.BackColor = color0;
+            brush0 = new SolidBrush(trim_color(CurrentTab.color0, +20));
+            brush1 = new SolidBrush(trim_color(CurrentTab.color1, -20));
+            resize.BackColor = CurrentTab.color0;
+
+            Color c1 = CurrentTab.draw_gradation ? CurrentTab.color1 : CurrentTab.color0;
 
             var bmp = new Bitmap(CellWidth, CellHeight);
             using (var g = Graphics.FromImage(bmp))
-            using (var light = new Pen(trim_color(color0, +20)))
-            using (var dark = new Pen(trim_color(color1, -20)))
-            using (var brush = new LinearGradientBrush(g.VisibleClipBounds,
-               color0, color1, LinearGradientMode.Vertical)) {
+            using (var light = new Pen(trim_color(CurrentTab.color0, +20)))
+            using (var dark = new Pen(trim_color(CurrentTab.color1, -20)))
+            using (Brush brush = new LinearGradientBrush(g.VisibleClipBounds,
+                CurrentTab.color0, c1, LinearGradientMode.Vertical)) {
                 g.FillRectangle(brush, g.VisibleClipBounds);
                 g.DrawLine(light, 0, 0, CellWidth, 0);
                 g.DrawLine(light, 0, 0, 0, CellHeight);
@@ -884,7 +943,7 @@ namespace DropThing3
 
             // draw focus rectangle
             if (e.State.HasFlag(DataGridViewElementStates.Selected)) {
-                using (var pen = new Pen(BlackOrWhite(color0, 255))) {
+                using (var pen = new Pen(BlackOrWhite(CurrentTab.color0, 255))) {
                     pen.DashStyle = DashStyle.Dot;
                     var r = e.CellBounds;
                     r.Inflate(-2, -2);
@@ -920,7 +979,7 @@ namespace DropThing3
             // draw item caption
             if (item != null && sett.caption_visible) {
                 var m = g.MeasureString(item.caption, this.Font);
-                Color color = BlackOrWhite(color1);
+                Color color = BlackOrWhite(CurrentTab.color1);
                 //float x = e.CellBounds.Left + (e.CellBounds.Width-m.Width)/2;
                 //float y = e.CellBounds.Top + 2+32;
                 //g.DrawString(item.caption, this.Font, new SolidBrush(color), x, y);
@@ -1006,7 +1065,9 @@ namespace DropThing3
             return true;
         }
 
-        Color color0 = Color.Lime, color1 = Color.Green;
+        // tab settings
+        //public bool draw_gradation = true;
+        //Color color0 = Color.Lime, CurrentTab.color1 = Color.Green;
         Brush brush0, brush1;
 
         Color BlackOrWhite(Color color, int threshold = 400)
@@ -1018,8 +1079,9 @@ namespace DropThing3
         private void tabItem_Click(object sender, EventArgs e)
         {
             var dlg = new TabDialog();
-            dlg.Color0 = color0;
-            dlg.Color1 = color1;
+            dlg.Color0 = CurrentTab.color0;
+            dlg.Color1 = CurrentTab.color1;
+            dlg.DrawGradation = CurrentTab.draw_gradation;
             dlg.ShowItemCaption = sett.caption_visible;
 
             if (dlg.Popup(TabApplyCallback)) {
@@ -1029,18 +1091,18 @@ namespace DropThing3
 
         bool TabApplyCallback(TabDialog dlg)
         {
-            color0 = dlg.Color0;
-            color1 = dlg.Color1;
-            status.BackColor = color0;
-            status.ForeColor = BlackOrWhite(color0, 250);
-            button1.BackColor = color0;
-            button1.ForeColor = BlackOrWhite(color0);
-            grid.BackgroundColor = color1;
+            CurrentTab.color0 = dlg.Color0;
+            CurrentTab.color1 = dlg.Color1;
+            status.BackColor = CurrentTab.color0;
+            status.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
+            button1.BackColor = CurrentTab.color0;
+            button1.ForeColor = BlackOrWhite(CurrentTab.color0);
+            grid.BackgroundColor = CurrentTab.color1;
+            CurrentTab.draw_gradation = dlg.DrawGradation;
             sett.caption_visible = dlg.ShowItemCaption;
 
             GridSize(grid.ColumnCount, grid.RowCount);
             FitToGrid();
-            //cell_bitmap = CellBitmap();
             grid.Invalidate();
             Modified = true;
 
