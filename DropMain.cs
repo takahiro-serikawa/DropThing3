@@ -97,6 +97,7 @@ namespace DropThing3
             GridSize(sett.col_count, sett.row_count);
             FitToGrid();
             Modified = false;
+            Modified = false;
 
             // open other instances
             for (int i = 1; i<filenames.Count; i++)
@@ -180,6 +181,10 @@ namespace DropThing3
             this.MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
 
             cell_bitmap = CellBitmap();
+            status.BackColor = color0;
+            status.ForeColor = BlackOrWhite(color0, 250);
+            button1.BackColor = color0;
+            button1.ForeColor = BlackOrWhite(color0, 250);
 
             grid.ColumnCount = Math.Max(cols, 1);
             grid.RowCount = Math.Max(rows, 1);
@@ -433,9 +438,12 @@ namespace DropThing3
             public int left, top, col_count, row_count;
 
             public bool caption_visible;
+            public bool cell_border;
+            public bool transparent;
 
             public DropThingSettings()
             {
+                cell_border = true;
             }
         }
 
@@ -482,12 +490,6 @@ namespace DropThing3
             //this.WindowState = dock.win_state;
             this.Left = sett.left;
             this.Top = sett.top;
-
-            status.BackColor = CurrentTab.color0;
-            status.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
-            button1.BackColor = CurrentTab.color0;
-            button1.ForeColor = BlackOrWhite(CurrentTab.color0);
-
         }
 
         string DefSettFilename()
@@ -706,28 +708,36 @@ namespace DropThing3
         /// <returns></returns>
         Bitmap CellBitmap()
         {
-            brush0 = new SolidBrush(trim_color(CurrentTab.color0, +20));
-            brush1 = new SolidBrush(trim_color(CurrentTab.color1, -20));
-            resize.BackColor = CurrentTab.color0;
+            if (sett.transparent) {
+                color0 = color1 = this.TransparencyKey = Color.FromArgb(12, 34, 56);
+                this.AllowTransparency = true;
+            } else {
+                this.AllowTransparency = false;
+                color0 = CurrentTab.color0;
+                color1 = (CurrentTab.draw_gradation && !sett.transparent)
+                    ? CurrentTab.color1 : color0;
+            }
+            brush0 = new SolidBrush(trim_color(color0, +20));
+            brush1 = new SolidBrush(trim_color(color1, -20));
 
-            Color c1 = CurrentTab.draw_gradation ? CurrentTab.color1 : CurrentTab.color0;
+            resize.BackColor = color0;
 
             var bmp = new Bitmap(CellWidth, CellHeight);
             using (var g = Graphics.FromImage(bmp))
-            using (var light = new Pen(trim_color(CurrentTab.color0, +20)))
-            using (var dark = new Pen(trim_color(CurrentTab.color1, -20)))
+            using (var light = new Pen(trim_color(color0, +20)))
+            using (var dark = new Pen(trim_color(color1, -20)))
             using (Brush brush = new LinearGradientBrush(g.VisibleClipBounds,
-                CurrentTab.color0, c1, LinearGradientMode.Vertical)) {
+                color0, color1, LinearGradientMode.Vertical)) {
                 g.FillRectangle(brush, g.VisibleClipBounds);
-                g.DrawLine(light, 0, 0, CellWidth, 0);
-                g.DrawLine(light, 0, 0, 0, CellHeight);
-                g.DrawLine(dark, 0, CellHeight-1, CellWidth, CellHeight-1);
-                g.DrawLine(dark, CellWidth-1, 0, CellWidth-1, CellHeight-1);
+                if (sett.cell_border) {
+                    g.DrawLine(light, 0, 0, CellWidth, 0);
+                    g.DrawLine(light, 0, 0, 0, CellHeight);
+                    g.DrawLine(dark, 0, CellHeight-1, CellWidth, CellHeight-1);
+                    g.DrawLine(dark, CellWidth-1, 0, CellWidth-1, CellHeight-1);
+                }
             }
             return bmp;
         }
-
-        Bitmap cell_bitmap;
 
         int mouse_down_x, mouse_down_y;
         bool mouse_down_flag = false;
@@ -979,10 +989,7 @@ namespace DropThing3
             // draw item caption
             if (item != null && sett.caption_visible) {
                 var m = g.MeasureString(item.caption, this.Font);
-                Color color = BlackOrWhite(CurrentTab.color1);
-                //float x = e.CellBounds.Left + (e.CellBounds.Width-m.Width)/2;
-                //float y = e.CellBounds.Top + 2+32;
-                //g.DrawString(item.caption, this.Font, new SolidBrush(color), x, y);
+                Color color = BlackOrWhite(color1, 250);
                 var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + 2+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
@@ -1068,7 +1075,9 @@ namespace DropThing3
         // tab settings
         //public bool draw_gradation = true;
         //Color color0 = Color.Lime, CurrentTab.color1 = Color.Green;
+        Color color0, color1;
         Brush brush0, brush1;
+        Bitmap cell_bitmap;
 
         Color BlackOrWhite(Color color, int threshold = 400)
         {
@@ -1083,6 +1092,8 @@ namespace DropThing3
             dlg.Color1 = CurrentTab.color1;
             dlg.DrawGradation = CurrentTab.draw_gradation;
             dlg.ShowItemCaption = sett.caption_visible;
+            dlg.CellBorder = sett.cell_border;
+            dlg.TrasnparentMode = sett.transparent;
 
             if (dlg.Popup(TabApplyCallback)) {
                 // ..
@@ -1096,10 +1107,12 @@ namespace DropThing3
             status.BackColor = CurrentTab.color0;
             status.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
             button1.BackColor = CurrentTab.color0;
-            button1.ForeColor = BlackOrWhite(CurrentTab.color0);
+            button1.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
             grid.BackgroundColor = CurrentTab.color1;
             CurrentTab.draw_gradation = dlg.DrawGradation;
             sett.caption_visible = dlg.ShowItemCaption;
+            sett.cell_border = dlg.CellBorder;
+            sett.transparent = dlg.TrasnparentMode;
 
             GridSize(grid.ColumnCount, grid.RowCount);
             FitToGrid();

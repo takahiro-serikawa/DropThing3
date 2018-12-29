@@ -73,7 +73,7 @@
             this.toolStripMenuItem2,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 236);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 214);
             // 
             // openItem
             // 
@@ -137,6 +137,7 @@
             // 
             // settings
             // 
+            this.settings.Enabled = false;
             this.settings.Name = "settings";
             this.settings.Size = new System.Drawing.Size(204, 22);
             this.settings.Text = "&Settings ...";
@@ -270,7 +271,7 @@
             this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.title.ForeColor = System.Drawing.Color.White;
-            this.title.Image = global::DropThing3.Properties.Resources.app16;
+            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
             this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.title.Name = "title";
             this.title.Size = new System.Drawing.Size(204, 22);

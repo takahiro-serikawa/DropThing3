@@ -40,6 +40,8 @@
             this.apply = new System.Windows.Forms.Button();
             this.caption = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.transparent = new System.Windows.Forms.CheckBox();
+            this.border = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cancel
@@ -141,12 +143,38 @@
             this.caption.Text = "item caption";
             this.caption.UseVisualStyleBackColor = true;
             // 
+            // transparent
+            // 
+            this.transparent.AutoSize = true;
+            this.transparent.Checked = true;
+            this.transparent.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.transparent.Location = new System.Drawing.Point(273, 83);
+            this.transparent.Name = "transparent";
+            this.transparent.Size = new System.Drawing.Size(86, 19);
+            this.transparent.TabIndex = 23;
+            this.transparent.Text = "transparent";
+            this.transparent.UseVisualStyleBackColor = true;
+            // 
+            // border
+            // 
+            this.border.AutoSize = true;
+            this.border.Checked = true;
+            this.border.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.border.Location = new System.Drawing.Point(273, 60);
+            this.border.Name = "border";
+            this.border.Size = new System.Drawing.Size(82, 19);
+            this.border.TabIndex = 24;
+            this.border.Text = "cell border";
+            this.border.UseVisualStyleBackColor = true;
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 161);
+            this.Controls.Add(this.border);
+            this.Controls.Add(this.transparent);
             this.Controls.Add(this.caption);
             this.Controls.Add(this.apply);
             this.Controls.Add(this.gradation);
@@ -164,7 +192,7 @@
             this.MinimumSize = new System.Drawing.Size(300, 170);
             this.Name = "TabDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "tab property";
+            this.Text = "tab property - DropThing";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -184,5 +212,7 @@
         private System.Windows.Forms.Button apply;
         private System.Windows.Forms.CheckBox caption;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox transparent;
+        private System.Windows.Forms.CheckBox border;
     }
 }

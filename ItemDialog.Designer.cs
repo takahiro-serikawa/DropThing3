@@ -47,7 +47,7 @@
             // select
             // 
             this.select.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.select.Location = new System.Drawing.Point(356, 36);
+            this.select.Location = new System.Drawing.Point(436, 36);
             this.select.Name = "select";
             this.select.Size = new System.Drawing.Size(25, 23);
             this.select.TabIndex = 4;
@@ -77,7 +77,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.path.Location = new System.Drawing.Point(100, 37);
             this.path.Name = "path";
-            this.path.Size = new System.Drawing.Size(276, 23);
+            this.path.Size = new System.Drawing.Size(356, 23);
             this.path.TabIndex = 3;
             // 
             // label2
@@ -95,7 +95,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.options.Location = new System.Drawing.Point(100, 62);
             this.options.Name = "options";
-            this.options.Size = new System.Drawing.Size(276, 23);
+            this.options.Size = new System.Drawing.Size(356, 23);
             this.options.TabIndex = 6;
             // 
             // label3
@@ -138,7 +138,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dir.Location = new System.Drawing.Point(100, 87);
             this.dir.Name = "dir";
-            this.dir.Size = new System.Drawing.Size(276, 23);
+            this.dir.Size = new System.Drawing.Size(356, 23);
             this.dir.TabIndex = 10;
             // 
             // label4
@@ -161,8 +161,6 @@
             // 
             // textBox1
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Location = new System.Drawing.Point(100, 112);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
@@ -184,7 +182,7 @@
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
-            this.ClientSize = new System.Drawing.Size(384, 201);
+            this.ClientSize = new System.Drawing.Size(464, 201);
             this.Controls.Add(this.apply);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label5);
@@ -200,11 +198,11 @@
             this.Controls.Add(this.caption);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MinimumSize = new System.Drawing.Size(300, 170);
             this.Name = "ItemDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "item property";
+            this.Text = "item property - DropThing";
             this.ResumeLayout(false);
             this.PerformLayout();
 

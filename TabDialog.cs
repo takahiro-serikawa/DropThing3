@@ -65,6 +65,24 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public bool TrasnparentMode
+        {
+            get { return transparent.Checked; }
+            set { transparent.Checked = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CellBorder
+        {
+            get { return border.Checked; }
+            set { border.Checked = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
         public delegate bool ApplyCallback(TabDialog dlg);
