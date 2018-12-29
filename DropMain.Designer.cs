@@ -285,7 +285,6 @@
             this.resize.TabIndex = 6;
             this.resize.TabStop = false;
             this.toolTip1.SetToolTip(this.resize, "resize window");
-            this.resize.Paint += new System.Windows.Forms.PaintEventHandler(this.resize_Paint);
             this.resize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
             this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
             this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);

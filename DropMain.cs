@@ -20,16 +20,20 @@ using System.Net;
 // TODO
 // multiple tab
 // application icon
+// eject
+
+// hot key
 // cell drawing too slow
 // undo (delete item, ...)
-// icon cache for removal media
-
 // other icon size
 // drop to folder cell
-// TODO: 拡張子登録
-// hot key
 // multi drop files
 // multiple dock
+// TODO: 拡張子登録
+// scan favicon in html
+// double click item
+
+// WM_DEVICECHANGE
 
 namespace DropThing3
 {
@@ -160,7 +164,7 @@ namespace DropThing3
 
         private void DropForm_Resize(object sender, EventArgs e)
         {
-            GridSize(grid.Width/CellWidth, grid.Height/CellHeight);
+            GridSize(grid.Width / CellWidth, grid.Height / CellHeight);
         }
 
         /// <summary>
@@ -194,10 +198,9 @@ namespace DropThing3
         /// </summary>
         void FitToGrid()
         {
-            //this.Width = grid.ColumnCount*CellWidth;
-            //this.Height = grid.RowCount*CellHeight + Y0 + status.Height;
-            this.Size = new Size(grid.ColumnCount*CellWidth,
-                                 grid.RowCount*CellHeight + Y0 + status.Height);
+            this.Size = new Size(
+               grid.ColumnCount * CellWidth,
+             Y0 + grid.RowCount * CellHeight + status.Height);
         }
 
         // message
@@ -287,38 +290,64 @@ namespace DropThing3
             /// </summary>
             public void UpdateIcon()
             {
-                this.attr = "";
-                if (path.StartsWith("http://") || path.StartsWith("https://")) {
-                    this.AddAttr('U');
-                    string cachename = MakeCacheName(path);
-                    if (File.Exists(cachename)) {
-                        try {
-                            this.icon = new Icon(cachename);
-                        } catch (Exception ex) {
-                            this.icon = null;
-                            Console.WriteLine("UpdateIcon(); "+ex.Message);
-                        }
-                    } else
-                        fetch_req.Enqueue(path);
-                } else if (Directory.Exists(path))
-                    this.AddAttr('d');
-                else if (File.Exists(path)) {
-                    this.AddAttr('f');
-                    string ext = Path.GetExtension(path);
-                    if (executables.IndexOf(ext) >= 0)
-                        this.AddAttr('x');
-                }
-
-                if (this.icon == null)
+                // get cache if exists
+                string cachename = MakeCacheName(path);
+                if (this.icon == null && File.Exists(cachename))
                     try {
-                        this.icon = Icon.ExtractAssociatedIcon(this.path);
+                        this.icon = new Icon(cachename);
                     } catch (Exception ex) {
                         this.icon = null;
                         Console.WriteLine("UpdateIcon(); "+ex.Message);
                     }
 
-                if (this.icon == null) {
-                    this.icon = GetIconAPI.Get(this.path);
+                //this.attr = "";
+                if (path.StartsWith("http://") || path.StartsWith("https://")) {
+                    this.AddAttr('U');
+                    if (this.icon == null)
+                        fetch_req.Enqueue(path);
+                } else {
+                    if (Directory.Exists(path))
+                        this.AddAttr('d');
+                    else if (File.Exists(path)) {
+                        this.AddAttr('f');
+                        string ext = Path.GetExtension(path);
+                        if (executables.IndexOf(ext) >= 0)
+                            this.AddAttr('x');
+                    }
+
+                    // removal?
+                    string fullpath = this.path.StartsWith(@"\")
+                        ? this.path : Path.GetFullPath(this.path);
+                    if (fullpath.Length > 1 && fullpath[1] == ':')
+                        try {
+                            var drive = new DriveInfo(fullpath.Substring(0, 1));
+                            switch (drive.DriveType) {
+                            case DriveType.Removable:
+                            case DriveType.CDRom:
+                            case DriveType.Network:
+                                this.AddAttr('J');
+                                break;
+                            }
+                        } catch (Exception ex) {
+                            Console.WriteLine(ex.Message);
+                        }
+
+                    if (this.icon == null)
+                        try {
+                            this.icon = Icon.ExtractAssociatedIcon(this.path);
+                        } catch (Exception ex) {
+                            this.icon = null;
+                            Console.WriteLine("UpdateIcon(); "+ex.Message);
+                        }
+
+                    if (this.icon == null) {
+                        this.icon = GetIconAPI.Get(this.path);
+                    }
+
+                    if (this.icon != null && HasAttr('J') && !File.Exists(cachename)) {
+                        using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
+                            this.icon.Save(stream);
+                    }
                 }
             }
 
@@ -404,8 +433,6 @@ namespace DropThing3
             //this.WindowState = dock.win_state;
             this.Left = sett.left;
             this.Top = sett.top;
-            //this.Width = sett.col_count * CellWidth;
-            //this.Height = sett.row_count * CellHeight + 17 + 17;
         }
 
         string DefSettFilename()
@@ -968,10 +995,6 @@ namespace DropThing3
         {
             var v = Math.Sqrt(color.R * color.R + color.G * color.G + color.B * color.B);
             return (v >= threshold) ? Color.Black : Color.White;
-        }
-
-        private void resize_Paint(object sender, PaintEventArgs e)
-        {
         }
 
         private void tabItem_Click(object sender, EventArgs e)
