@@ -261,6 +261,7 @@ namespace DropThing3
             public CellItem()
             {
                 icon = null;
+                attr = "";
             }
 
             public CellItem(string path)
@@ -274,7 +275,7 @@ namespace DropThing3
 
             public bool HasAttr(char c)
             {
-                return attr.IndexOf(c) >= 0;
+                return attr != null && attr.IndexOf(c) >= 0;
             }
 
             public void AddAttr(char c)
@@ -290,6 +291,9 @@ namespace DropThing3
             /// </summary>
             public void UpdateIcon()
             {
+                if (attr == null)
+                    attr = "";
+
                 // get cache if exists
                 string cachename = MakeCacheName(path);
                 if (this.icon == null && File.Exists(cachename))
@@ -834,13 +838,14 @@ namespace DropThing3
             //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
             if (!mouse_down_flag) {
 
-            } else if (/*CurrentItem != null && */e.Button == MouseButtons.Left && e.Clicks == 1) {
+            } else if (e.Button == MouseButtons.Left && e.Clicks == 1) {
                 // cell click
                 if (ModifierKeys.HasFlag(Keys.Control))
                     explorerItem_Click(null, null);
-                else if(ModifierKeys.HasFlag(Keys.Shift))
+                else if (ModifierKeys.HasFlag(Keys.Shift))
                     propertyItem_Click(null, null);
-                openItem_Click(null, null);
+                else
+                    openItem_Click(null, null);
             }
 
             mouse_down_flag = false;
