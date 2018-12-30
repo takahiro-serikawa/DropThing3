@@ -28,9 +28,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,14 +43,12 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.quit = new System.Windows.Forms.ToolStripMenuItem();
             this.status = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button2 = new System.Windows.Forms.Button();
+            this.addTab = new System.Windows.Forms.Button();
             this.grid = new System.Windows.Forms.DataGridView();
             this.missing = new System.Windows.Forms.Label();
             this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.hamburger = new System.Windows.Forms.PictureBox();
             this.resize = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1.SuspendLayout();
@@ -74,6 +73,17 @@
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(205, 214);
+            // 
+            // title
+            // 
+            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.title.ForeColor = System.Drawing.Color.White;
+            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
+            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(204, 22);
+            this.title.Text = "DropThing";
             // 
             // openItem
             // 
@@ -172,38 +182,27 @@
             this.status.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseMove);
             this.status.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseUp);
             // 
-            // button1
-            // 
-            this.button1.AutoSize = true;
-            this.button1.BackColor = System.Drawing.Color.Lime;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button1.Location = new System.Drawing.Point(2, -3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(58, 42);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "untitled";
-            this.button1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button1.UseVisualStyleBackColor = false;
-            // 
             // timer1
             // 
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // button2
+            // addTab
             // 
-            this.button2.AutoSize = true;
-            this.button2.BackColor = System.Drawing.Color.Blue;
-            this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(54, -3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(35, 42);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "*";
-            this.button2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button2.UseVisualStyleBackColor = false;
+            this.addTab.AutoSize = true;
+            this.addTab.BackColor = System.Drawing.Color.Blue;
+            this.addTab.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.addTab.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.addTab.ForeColor = System.Drawing.Color.White;
+            this.addTab.Location = new System.Drawing.Point(57, 1);
+            this.addTab.Name = "addTab";
+            this.addTab.Size = new System.Drawing.Size(22, 42);
+            this.addTab.TabIndex = 5;
+            this.addTab.Text = "*";
+            this.addTab.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.toolTip1.SetToolTip(this.addTab, "Add new tab.");
+            this.addTab.UseVisualStyleBackColor = false;
+            this.addTab.Click += new System.EventHandler(this.addTab_Click);
             // 
             // grid
             // 
@@ -266,17 +265,6 @@
             this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
             this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
-            // title
-            // 
-            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.title.ForeColor = System.Drawing.Color.White;
-            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
-            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(204, 22);
-            this.title.Text = "DropThing";
-            // 
             // hamburger
             // 
             this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -319,9 +307,8 @@
             this.Controls.Add(this.hamburger);
             this.Controls.Add(this.resize);
             this.Controls.Add(this.grid);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.status);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.addTab);
             this.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -354,9 +341,8 @@
         private System.Windows.Forms.ToolStripMenuItem settings;
         private System.Windows.Forms.ToolStripMenuItem quit;
         private System.Windows.Forms.Label status;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button addTab;
         private System.Windows.Forms.ToolStripMenuItem openItem;
         private System.Windows.Forms.ToolStripMenuItem deleteItem;
         private System.Windows.Forms.ToolStripMenuItem explorerItem;

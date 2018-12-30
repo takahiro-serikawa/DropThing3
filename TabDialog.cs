@@ -122,5 +122,21 @@ namespace DropThing3
             }
         }
 
+        public event EventHandler OnAddNew;
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            if (OnAddNew != null)
+                OnAddNew(this, null);
+        }
+
+        public event EventHandler OnDelete;
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            if (OnDelete != null)
+                OnDelete(this, null);
+        }
+
     }
 }

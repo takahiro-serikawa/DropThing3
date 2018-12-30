@@ -42,6 +42,8 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.transparent = new System.Windows.Forms.CheckBox();
             this.border = new System.Windows.Forms.CheckBox();
+            this.addButton = new System.Windows.Forms.Button();
+            this.deleteButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cancel
@@ -167,12 +169,34 @@
             this.border.Text = "cell border";
             this.border.UseVisualStyleBackColor = true;
             // 
+            // addButton
+            // 
+            this.addButton.Location = new System.Drawing.Point(377, 15);
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(75, 23);
+            this.addButton.TabIndex = 25;
+            this.addButton.Text = "Add &New Tab";
+            this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
+            // 
+            // deleteButton
+            // 
+            this.deleteButton.Location = new System.Drawing.Point(377, 44);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(75, 23);
+            this.deleteButton.TabIndex = 26;
+            this.deleteButton.Text = "&Delete Tab";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 161);
+            this.Controls.Add(this.deleteButton);
+            this.Controls.Add(this.addButton);
             this.Controls.Add(this.border);
             this.Controls.Add(this.transparent);
             this.Controls.Add(this.caption);
@@ -214,5 +238,7 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.CheckBox transparent;
         private System.Windows.Forms.CheckBox border;
+        private System.Windows.Forms.Button addButton;
+        private System.Windows.Forms.Button deleteButton;
     }
 }

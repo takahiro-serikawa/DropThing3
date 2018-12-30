@@ -16,7 +16,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 
 // TODO
-// multiple tab
 
 // hot key
 // cell drawing too slow
@@ -37,7 +36,7 @@ namespace DropThing3
     {
         // file extension for DropThing settings
         const string DROPTHING_EXT = "dtIII";
-        string appdata;            // application data
+        string appdata; // application datacpath
 
         public DropMain()
         {
@@ -84,28 +83,11 @@ namespace DropThing3
             // restore last settings
             if (filenames.Count > 0)
                 filename = filenames[0];
-            if (File.Exists(filename) && !new_settings)
-                LoadSettings();
-            else
-                sett = new DropThingSettings();
+            LoadSettings(new_settings ? "" : filename);
             sett.app_version = string.Format("{0}.{1:D2}", ver.Major, ver.Minor);
 
-            // at least 1 tab
-            if (sett.tab_list.Count <= 0) {
-                TabLayer tab = new TabLayer();
-                tab.id = sett.tab_serial++;
-                tab.title = "untitled";
-                tab.color0 = Color.Lime;
-                tab.color1 = Color.Green;
-                sett.tab_list.Add(tab);
-            }
-
-            GridSize(sett.col_count, sett.row_count);
-            FitToGrid();
-            Modified = false;
-
             // open other instances
-            for (int i = 1; i<filenames.Count; i++)
+            for (int i = 1; i < filenames.Count; i++)
                 Process.Start(Application.ExecutablePath, filenames[i]);
 #if DEBUG
             keep_old_settings = true;
@@ -183,13 +165,13 @@ namespace DropThing3
             CellWidth = sett.caption_visible ? 80 : M+32+M;
             CellHeight = sett.caption_visible ? M+32+17+M : M+32+M;
 
-            this.MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
+            MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
 
             cell_bitmap = CellBitmap();
             status.BackColor = color0;
-            status.ForeColor = BlackOrWhite(color0, 250);
-            button1.BackColor = color0;
-            button1.ForeColor = BlackOrWhite(color0, 250);
+            status.ForeColor = TextColor(color0, 250);
+            CurrentTab.button.BackColor = color0;
+            CurrentTab.button.ForeColor = TextColor(color0, 250);
 
             grid.ColumnCount = Math.Max(cols, 1);
             grid.RowCount = Math.Max(rows, 1);
@@ -253,7 +235,7 @@ namespace DropThing3
 
         // application settings
 
-        public class CellItem: Object
+        public class CellItem: object
         {
             public string caption;
             public string path;
@@ -371,7 +353,6 @@ namespace DropThing3
             {
                 Cursor.Current = Cursors.WaitCursor;
                 try {
-                    //var info = new ProcessStartInfo(this.path, this.options + string.Join(" ", args));
                     var info = new ProcessStartInfo(this.path);
                     info.Arguments = this.options + escaped_join(args);
                     info.WorkingDirectory = this.dir;
@@ -386,41 +367,50 @@ namespace DropThing3
             /// <summary>
             /// 
             /// </summary>
-            public string DisplayCaption
+            public string GetCaption()
             {
-                get
-                {
-                    if (this.caption != "")
-                        return this.caption;
+                if (this.caption != "")
+                    return this.caption;
 
-                    // return default caption if not specified
-                    if (this.HasAttr('U')) {
-                        try {
-                            // www.AAAA. ...co.jp
-                            var u = new Uri(this.path);
-                            string[] hh = u.Host.Split('.');
-                            if (hh.Length > 1 && hh[0] == "www")
-                                return hh[1];
-                            return hh[0];
-                        } catch (Exception ex) {
-                            Console.WriteLine(ex.Message);
-                        }
-                    } else {
-                        string filename = Path.GetFileName(this.path);
-                        if (filename != "")
-                            return filename;
+                // return default caption if not specified
+                if (this.HasAttr('U')) {
+                    try {
+                        // www.AAAA. ...co.jp
+                        var u = new Uri(this.path);
+                        string[] hh = u.Host.Split('.');
+                        if (hh.Length > 1 && hh[0] == "www")
+                            return hh[1];
+                        return hh[0];
+                    } catch (Exception ex) {
+                        Console.WriteLine(ex.Message);
                     }
-
-                    // return path if something wrong
-                    return this.path;
+                } else {
+                    string filename = Path.GetFileName(this.path);
+                    if (filename != "")
+                        return filename;
                 }
+
+                // return path if something wrong
+                return this.path;
             }
+
         }
 
-        public class TabLayer: Object
+        public class TabLayer: object
         {
             public uint id;
-            public string title;
+
+            string _title;
+            public string title
+            {
+                get { return _title; }
+                set
+                {
+                    _title = value;
+                    if (button != null)
+                        button.Text = _title;
+                }
+            }
 
             [XmlIgnore]
             public Color color0, color1;
@@ -441,10 +431,24 @@ namespace DropThing3
                 set { color1 = ConvertFromString<Color>(value); }
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
             public bool draw_gradation;
 
+            /// <summary>
+            /// 
+            /// </summary>
+            public static uint serial = 0;
+
+            /// <summary>
+            /// 
+            /// </summary>
             public TabLayer()
             {
+                id = serial++;
+
+                // default value
                 title = "untitled";
                 color0 = Color.Lime;
                 color1 = Color.Green;
@@ -460,6 +464,9 @@ namespace DropThing3
             {
                 return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(value);
             }
+
+            [XmlIgnore]
+            public Button button;
         }
 
         // app settings class (for serialization)
@@ -474,15 +481,24 @@ namespace DropThing3
 
             [XmlElement("tab_list2")]
             public List<TabLayer> tab_list = new List<TabLayer>();
-            public uint tab_serial;
+
+            public uint tab_serial
+            {
+                get { return TabLayer.serial; }
+                set { TabLayer.serial = value; }
+            }
 
             public FormWindowState win_state;
-            public int left, top, col_count, row_count;
+            public int left, top;
+            public int col_count, row_count;
 
             public bool caption_visible;
             public bool cell_border;
             public bool transparent;
 
+            /// <summary>
+            /// 
+            /// </summary>
             public DropThingSettings()
             {
                 // default values
@@ -492,6 +508,9 @@ namespace DropThing3
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DropThingSettings sett;
         string filename;
         bool modified = false;
@@ -514,26 +533,36 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        void LoadSettings()
+        void LoadSettings(string filename)
         {
-            var serializer = new XmlSerializer(typeof(DropThingSettings));
-            using (var sr = new StreamReader(filename, Encoding.UTF8)) {
-                sett = (DropThingSettings)serializer.Deserialize(sr);
+            if (File.Exists(filename)) {
+                try {
+                    var serializer = new XmlSerializer(typeof(DropThingSettings));
+                    using (var sr = new StreamReader(filename, Encoding.UTF8)) {
+                        sett = (DropThingSettings)serializer.Deserialize(sr);
+                    }
+                } catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                }
+
+                //this.WindowState = dock.win_state;
+                this.StartPosition = FormStartPosition.Manual;
+                this.Left = sett.left;
+                this.Top = sett.top;
+            } else
+                sett = new DropThingSettings();
+
+            if (sett.tab_list.Count > 0)
+                CurrentTab = sett.tab_list[0];
+            else
+                CurrentTab = AddNewTab(null, null); // at least 1 tab
+            foreach (var tab in sett.tab_list) {
+                tab.button = MakeTabButton(tab);
             }
 
-            this.StartPosition = FormStartPosition.Manual;
-            //this.WindowState = dock.win_state;
-            this.Left = sett.left;
-            this.Top = sett.top;
-        }
-
-        string DefSettFilename()
-        {
-            string dir = Environment.GetFolderPath(
-               Environment.SpecialFolder.LocalApplicationData);
-            string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
-            Directory.CreateDirectory(dir+"\\"+app);
-            return dir+"\\"+app+"\\"+app+"."+DROPTHING_EXT;
+            GridSize(sett.col_count, sett.row_count);
+            FitToGrid();
+            Modified = false;
         }
 
         bool keep_old_settings = false;
@@ -543,10 +572,8 @@ namespace DropThing3
         /// </summary>
         void SaveSettings()
         {
-            if (sett == null)
-                sett = new DropThingSettings();
-
-            //filename = DefSettFilename();
+            //if (sett == null)
+            //    sett = new DropThingSettings();
 
             sett.win_state = this.WindowState;
             sett.left = this.Left;
@@ -568,7 +595,6 @@ namespace DropThing3
                 serializer.Serialize(sw, sett);
             }
 
-            AppStatusText(Color.Black, "auto save done.");
         }
 
         /// <summary>
@@ -616,6 +642,7 @@ namespace DropThing3
                 if (Modified && DateTime.Now > modified_time.AddSeconds(AUTO_SAVE_DELAY)) {
                     SaveSettings();
                     Modified = false;
+                    AppStatusText(Color.Black, "auto save done.");
                 }
 
                 // hot corner
@@ -630,10 +657,67 @@ namespace DropThing3
             } catch (Exception ex) {
                 Console.WriteLine("timer1: "+ex.Message);
             }
-            //Console.WriteLine(Control.MousePosition.ToString());
         }
 
-        uint current_tab = 0;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        TabLayer AddNewTab(object sender, EventArgs args)
+        {
+            TabLayer tab = new TabLayer();
+            tab.button = MakeTabButton(tab);
+            sett.tab_list.Add(tab);
+            Modified = true;
+            return tab;
+        }
+
+        void DeleteCurrentTab(object sender, EventArgs args)
+        {
+            if (sett.tab_list.Count > 1) {
+                sett.cell_list.RemoveAll(cell => cell.tab == CurrentTab.id);
+                int index = sett.tab_list.IndexOf(CurrentTab);
+                sett.tab_list.Remove(CurrentTab);
+                CurrentTab = sett.tab_list[index];
+                grid.Invalidate();
+            }
+        }
+
+        Button MakeTabButton(TabLayer tab)
+        {
+            var button = new Button();
+            button.Parent = this;
+            button.AutoSize = true;
+            button.BringToFront();
+            button.Top = 0;
+            button.Tag = tab;
+            button.Left = addTab.Left;
+            addTab.Left += button.Width;
+            button.Click += tabTitle_Click;
+            button.DoubleClick += tabDoubleTitle_Click;
+            button.BackColor = tab.color0;
+            button.BackColor = TextColor(tab.color0);
+            button.Text = tab.title;
+            button.Show();
+            return button;
+        }
+
+        private void tabTitle_Click(object sender, EventArgs e)
+        {
+            var tag = (sender as Button).Tag;
+            if (tag != null) {
+                CurrentTab = tag as TabLayer;
+            }
+        }
+
+        private void tabDoubleTitle_Click(object sender, EventArgs e)
+        {
+            var tag = (sender as Button).Tag;
+            if (tag != null) {
+                //CurrentTab = tag as TabLayer;
+                tabItem_Click(null, null);
+            }
+        }
 
         /// <summary>
         /// 
@@ -643,7 +727,8 @@ namespace DropThing3
         /// <returns></returns>
         CellItem LookupItem(int col, int row)
         {
-            var found = sett.cell_list.Where(c => c.col == col && c.row == row && c.tab == current_tab);
+            var found = sett.cell_list.Where(c => 
+               c.tab == CurrentTab.id && c.col == col && c.row == row);
             if (found.Count() > 0)
                 return found.First();
             return null;
@@ -666,7 +751,7 @@ namespace DropThing3
             var item = new CellItem(path);
             item.col = col;
             item.row = row;
-            item.tab = current_tab;
+            item.tab = CurrentTab.id;
             sett.cell_list.Add(item);
             grid.InvalidateCell(col, row);
             Modified = true;
@@ -730,10 +815,18 @@ namespace DropThing3
             return Color.FromArgb(r, g, b);
         }
 
+        TabLayer curr_tab;
+
+        /// <summary>
+        /// 
+        /// </summary>
         TabLayer CurrentTab
         {
-            get { return sett.tab_list[0]; }
-
+            get { return curr_tab; }
+            set {
+                curr_tab = value;
+                grid.Invalidate();
+            }
         }
 
         /// <summary>
@@ -890,7 +983,7 @@ namespace DropThing3
             point_item = LookupItem(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.DisplayCaption + "; " + point_item.path : "");
+               (point_item != null) ? point_item.GetCaption() + "; " + point_item.path : "");
             grid.Cursor =  (point_item != null) ? Cursors.Hand : Cursors.Default;
         }
 
@@ -899,7 +992,7 @@ namespace DropThing3
             point_item = LookupItem(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.DisplayCaption + "; " + point_item.path : "");
+               (point_item != null) ? point_item.GetCaption() + "; " + point_item.path : "");
 
             // update menu activity
             eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
@@ -987,7 +1080,7 @@ namespace DropThing3
 
             // draw focus rectangle
             if (e.State.HasFlag(DataGridViewElementStates.Selected)) {
-                using (var pen = new Pen(BlackOrWhite(CurrentTab.color0, 255))) {
+                using (var pen = new Pen(TextColor(CurrentTab.color0, 255))) {
                     pen.DashStyle = DashStyle.Dot;
                     var r = e.CellBounds;
                     r.Inflate(-2, -2);
@@ -1022,12 +1115,12 @@ namespace DropThing3
 
             // draw item caption
             if (item != null && sett.caption_visible) {
-                var m = g.MeasureString(item.DisplayCaption, this.Font);
-                Color color = BlackOrWhite(color1, 250);
+                var m = g.MeasureString(item.GetCaption(), this.Font);
+                Color color = TextColor(color1, 250);
                 var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
-                g.DrawString(item.DisplayCaption, this.Font, new SolidBrush(color), rect, f);
+                g.DrawString(item.GetCaption(), this.Font, new SolidBrush(color), rect, f);
             }
 
             e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
@@ -1086,12 +1179,12 @@ namespace DropThing3
                 dlg.WorkingDirectory = CurrentItem.dir;
             }
 
-            if (dlg.Popup(ItemApplyCallback)) {
+            if (dlg.Popup(ItemAcceptCallback)) {
                 // ...
             }
         }
 
-        bool ItemApplyCallback(ItemDialog dlg)
+        bool ItemAcceptCallback(ItemDialog dlg)
         {
             CellItem item;
             if (CurrentItem != null)
@@ -1113,7 +1206,7 @@ namespace DropThing3
         Brush brush0, brush1;
         Bitmap cell_bitmap;
 
-        Color BlackOrWhite(Color color, int threshold = 400)
+        Color TextColor(Color color, int threshold = 400)
         {
             var v = Math.Sqrt(color.R * color.R + color.G * color.G + color.B * color.B);
             return (v >= threshold) ? Color.Black : Color.White;
@@ -1122,6 +1215,7 @@ namespace DropThing3
         private void tabItem_Click(object sender, EventArgs e)
         {
             var dlg = new TabDialog();
+            dlg.TabTitle = CurrentTab.title;
             dlg.Color0 = CurrentTab.color0;
             dlg.Color1 = CurrentTab.color1;
             dlg.DrawGradation = CurrentTab.draw_gradation;
@@ -1129,19 +1223,23 @@ namespace DropThing3
             dlg.CellBorder = sett.cell_border;
             dlg.TrasnparentMode = sett.transparent;
 
-            if (dlg.Popup(TabApplyCallback)) {
+            dlg.OnDelete += DeleteCurrentTab;
+            //dlg.OnAddNew += AddNewTab;
+
+            if (dlg.Popup(TabAcceptCallback)) {
                 // ..
             }
         }
 
-        bool TabApplyCallback(TabDialog dlg)
+        bool TabAcceptCallback(TabDialog dlg)
         {
+            CurrentTab.title = dlg.TabTitle;
             CurrentTab.color0 = dlg.Color0;
             CurrentTab.color1 = dlg.Color1;
             status.BackColor = CurrentTab.color0;
-            status.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
-            button1.BackColor = CurrentTab.color0;
-            button1.ForeColor = BlackOrWhite(CurrentTab.color0, 250);
+            status.ForeColor = TextColor(CurrentTab.color0, 250);
+            CurrentTab.button.BackColor = CurrentTab.color0;
+            CurrentTab.button.ForeColor = TextColor(CurrentTab.color0, 250);
             grid.BackgroundColor = CurrentTab.color1;
             CurrentTab.draw_gradation = dlg.DrawGradation;
             sett.caption_visible = dlg.ShowItemCaption;
@@ -1177,6 +1275,13 @@ namespace DropThing3
             contextMenuStrip1.Show(grid, r.Left+10, r.Top+10);
         }
 
+        private void addTab_Click(object sender, EventArgs e)
+        {
+            CurrentTab = AddNewTab(null, null);
+            GridSize(sett.col_count, sett.row_count);
+            grid.Invalidate();
+        }
+
         // faviocn fetch in background
 
         static System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
@@ -1196,6 +1301,7 @@ namespace DropThing3
 
         static string cache_path;
         static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
+
 
         static WebClient wc = new WebClient();
 
