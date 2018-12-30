@@ -85,9 +85,9 @@ namespace DropThing3
         /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
-        public delegate bool ApplyCallback(TabDialog dlg);
+        public delegate bool AcceptCallback(TabDialog dlg);
 
-        ApplyCallback callback = null;
+        AcceptCallback callback = null;
 
         private void apply_Click(object sender, EventArgs e)
         {
@@ -98,7 +98,7 @@ namespace DropThing3
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool Popup(ApplyCallback callback)
+        public bool Popup(AcceptCallback callback)
         {
             this.callback = callback;
 

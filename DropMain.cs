@@ -17,8 +17,6 @@ using System.Xml.Serialization;
 
 // TODO
 // multiple tab
-// application icon
-// eject
 
 // hot key
 // cell drawing too slow
@@ -39,7 +37,7 @@ namespace DropThing3
     {
         // file extension for DropThing settings
         const string DROPTHING_EXT = "dtIII";
-        string root;            // application data
+        string appdata;            // application data
 
         public DropMain()
         {
@@ -49,18 +47,16 @@ namespace DropThing3
             string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
             var asm = System.Reflection.Assembly.GetExecutingAssembly();
             var ver = asm.GetName().Version;
-            AppStatusText(Color.Black, "{0} ver{1}.{2:D2}; {3}",
+            AppStatusText(Color.Black, "{0} version {1}.{2:D2}; {3}",
                app, ver.Major, ver.Minor, "application launcher");
-            title.Text = string.Format("{0} ver{1}.{2:D2}", app, ver.Major, ver.Minor);
+            title.Text = string.Format("{0} version {1}.{2:D2}", app, ver.Major, ver.Minor);
 
             Directory.SetCurrentDirectory(@"C:\");
 
-            root = Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData)
-               + "\\" + app;
-
-            Directory.CreateDirectory(root);
-            filename = Path.Combine(root, app+"."+DROPTHING_EXT);
+            var a = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            appdata = a + "\\" + app;
+            Directory.CreateDirectory(appdata);
+            filename = Path.Combine(appdata, app+"."+DROPTHING_EXT);
 
             // parse command line
             string[] aa = Environment.GetCommandLineArgs();
@@ -97,7 +93,6 @@ namespace DropThing3
             GridSize(sett.col_count, sett.row_count);
             FitToGrid();
             Modified = false;
-            Modified = false;
 
             // open other instances
             for (int i = 1; i<filenames.Count; i++)
@@ -109,7 +104,7 @@ namespace DropThing3
             //this.Font.Name = "";
             RegStartup(true);
 
-            cache_path = Path.Combine(root, "icon_cache");
+            cache_path = Path.Combine(appdata, "icon_cache");
             faviconFetch.RunWorkerAsync();
         }
 
@@ -366,8 +361,11 @@ namespace DropThing3
             {
                 Cursor.Current = Cursors.WaitCursor;
                 try {
-                    var info = new ProcessStartInfo(this.path, this.options + string.Join(" ", args));
+                    //var info = new ProcessStartInfo(this.path, this.options + string.Join(" ", args));
+                    var info = new ProcessStartInfo(this.path);
+                    info.Arguments = this.options + escaped_join(args);
                     info.WorkingDirectory = this.dir;
+                    //info.Environment
                     Process.Start(info);
                 } catch (Exception ex) {
                     MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -388,14 +386,15 @@ namespace DropThing3
                     // return default caption if not specified
                     if (this.HasAttr('U')) {
                         try {
+                            // www.AAAA. ...co.jp
                             var u = new Uri(this.path);
                             string[] hh = u.Host.Split('.');
                             if (hh.Length > 1 && hh[0] == "www")
                                 return hh[1];
                             return hh[0];
                         } catch (Exception ex) {
+                            Console.WriteLine(ex.Message);
                         }
-
                     } else {
                         string filename = Path.GetFileName(this.path);
                         if (filename != "")
@@ -412,6 +411,7 @@ namespace DropThing3
         {
             public uint id;
             public string title;
+
             [XmlIgnore]
             public Color color0, color1;
 

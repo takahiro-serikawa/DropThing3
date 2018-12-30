@@ -60,9 +60,9 @@ namespace DropThing3
         /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
-        public delegate bool ApplyCallback(ItemDialog dlg);
+        public delegate bool AcceptCallback(ItemDialog dlg);
 
-        ApplyCallback callback;
+        AcceptCallback callback;
 
         private void apply_Click(object sender, EventArgs e)
         {
@@ -74,7 +74,7 @@ namespace DropThing3
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public bool Popup(ApplyCallback callback)
+        public bool Popup(AcceptCallback callback)
         {
             this.callback = callback;
 
@@ -84,13 +84,21 @@ namespace DropThing3
 
         private void select_Click(object sender, EventArgs e)
         {
-            if (path.Text != "")
-                openFileDialog1.FileName = path.Text;
+            if (path.Text != "") {
+                try {
+                    openFileDialog1.InitialDirectory = Path.GetDirectoryName(path.Text);
+                    openFileDialog1.FileName = Path.GetFileName(path.Text);
+                } catch (Exception ex) {
+                    openFileDialog1.FileName = path.Text;
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK) {
                 path.Text = openFileDialog1.FileName;
-                if (caption.Text == "")
+                //if (caption.Text == "")
                     //caption.Text = Path.GetFileNameWithoutExtension(path.Text);
-                    caption.Text = Path.GetFileName(path.Text);
+                //    caption.Text = Path.GetFileName(path.Text);
             }
         }
     }
