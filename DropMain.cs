@@ -90,6 +90,16 @@ namespace DropThing3
                 sett = new DropThingSettings();
             sett.app_version = string.Format("{0}.{1:D2}", ver.Major, ver.Minor);
 
+            // at least 1 tab
+            if (sett.tab_list.Count <= 0) {
+                TabLayer tab = new TabLayer();
+                tab.id = sett.tab_serial++;
+                tab.title = "untitled";
+                tab.color0 = Color.Lime;
+                tab.color1 = Color.Green;
+                sett.tab_list.Add(tab);
+            }
+
             GridSize(sett.col_count, sett.row_count);
             FitToGrid();
             Modified = false;
@@ -170,8 +180,8 @@ namespace DropThing3
         {
             Modified |= (grid.ColumnCount != cols) || (grid.RowCount != rows);
 
-            CellWidth = sett.caption_visible ? 80 : 2+32+2;
-            CellHeight = sett.caption_visible ? 2+32+17+2 : 2+32+2;
+            CellWidth = sett.caption_visible ? 80 : M+32+M;
+            CellHeight = sett.caption_visible ? M+32+17+M : M+32+M;
 
             this.MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
 
@@ -475,7 +485,10 @@ namespace DropThing3
 
             public DropThingSettings()
             {
+                // default values
                 cell_border = true;
+                col_count = 10;
+                row_count = 2;
             }
         }
 
@@ -506,16 +519,6 @@ namespace DropThing3
             var serializer = new XmlSerializer(typeof(DropThingSettings));
             using (var sr = new StreamReader(filename, Encoding.UTF8)) {
                 sett = (DropThingSettings)serializer.Deserialize(sr);
-            }
-
-            // at least 1 tab
-            if (sett.tab_list.Count <= 0) {
-                TabLayer tab = new TabLayer();
-                tab.id = sett.tab_serial++;
-                tab.title = "untitled";
-                tab.color0 = Color.Lime;
-                tab.color1 = Color.Green;
-                sett.tab_list.Add(tab);
             }
 
             this.StartPosition = FormStartPosition.Manual;
@@ -699,9 +702,10 @@ namespace DropThing3
         }
 
         // drawing
+        const int M = 3;
         int Y0 { get { return grid.Top; } }
-        int CellWidth = 2+32+2;
-        int CellHeight = 2+32+2;
+        int CellWidth = M+32+M;
+        int CellHeight = M+32+M;
 
         Color trim_color(Color color, int d)
         {
@@ -1020,7 +1024,7 @@ namespace DropThing3
             if (item != null && sett.caption_visible) {
                 var m = g.MeasureString(item.DisplayCaption, this.Font);
                 Color color = BlackOrWhite(color1, 250);
-                var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + 2+32, e.CellBounds.Width, m.Height);
+                var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
                 g.DrawString(item.DisplayCaption, this.Font, new SolidBrush(color), rect, f);
