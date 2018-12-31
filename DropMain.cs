@@ -170,8 +170,8 @@ namespace DropThing3
             cell_bitmap = CellBitmap();
             status.BackColor = color0;
             status.ForeColor = TextColor(color0, 250);
-            CurrentTab.button.BackColor = color0;
-            CurrentTab.button.ForeColor = TextColor(color0, 250);
+            //CurrentTab.button.BackColor = color0;
+            //CurrentTab.button.ForeColor = TextColor(color0, 250);
 
             grid.ColumnCount = Math.Max(cols, 1);
             grid.RowCount = Math.Max(rows, 1);
@@ -407,8 +407,6 @@ namespace DropThing3
                 set
                 {
                     _title = value;
-                    if (button != null)
-                        button.Text = _title;
                 }
             }
 
@@ -464,9 +462,6 @@ namespace DropThing3
             {
                 return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(value);
             }
-
-            [XmlIgnore]
-            public Button button;
         }
 
         // app settings class (for serialization)
@@ -556,12 +551,13 @@ namespace DropThing3
                 CurrentTab = sett.tab_list[0];
             else
                 CurrentTab = AddNewTab(null, null); // at least 1 tab
-            foreach (var tab in sett.tab_list) {
-                tab.button = MakeTabButton(tab);
-            }
+
+            // tabControl1.TabCount = sett.tab_list;
+            RestoreTabs();
 
             GridSize(sett.col_count, sett.row_count);
             FitToGrid();
+            RestoreTabs();
             Modified = false;
         }
 
@@ -666,8 +662,12 @@ namespace DropThing3
         TabLayer AddNewTab(object sender, EventArgs args)
         {
             TabLayer tab = new TabLayer();
-            tab.button = MakeTabButton(tab);
+            //tab.button = MakeTabButton(tab);
             sett.tab_list.Add(tab);
+            var tabpage = new TabPage(tab.title);
+            tabpage.Tag = tab;
+            tabControl1.TabPages.Add(tabpage);
+            //RestoreTabs();
             Modified = true;
             return tab;
         }
@@ -675,38 +675,17 @@ namespace DropThing3
         void DeleteCurrentTab(object sender, EventArgs args)
         {
             if (sett.tab_list.Count > 1) {
-                sett.cell_list.RemoveAll(cell => cell.tab == CurrentTab.id);
                 int index = sett.tab_list.IndexOf(CurrentTab);
+
+                sett.cell_list.RemoveAll(cell => cell.tab == CurrentTab.id);
                 sett.tab_list.Remove(CurrentTab);
+
+                tabControl1.TabPages.RemoveAt(index);
+
+                if (index >= sett.tab_list.Count) index--;
                 CurrentTab = sett.tab_list[index];
+
                 grid.Invalidate();
-            }
-        }
-
-        Button MakeTabButton(TabLayer tab)
-        {
-            var button = new Button();
-            button.Parent = this;
-            button.AutoSize = true;
-            button.BringToFront();
-            button.Top = 0;
-            button.Tag = tab;
-            button.Left = addTab.Left;
-            addTab.Left += button.Width;
-            button.Click += tabTitle_Click;
-            button.DoubleClick += tabDoubleTitle_Click;
-            button.BackColor = tab.color0;
-            button.BackColor = TextColor(tab.color0);
-            button.Text = tab.title;
-            button.Show();
-            return button;
-        }
-
-        private void tabTitle_Click(object sender, EventArgs e)
-        {
-            var tag = (sender as Button).Tag;
-            if (tag != null) {
-                CurrentTab = tag as TabLayer;
             }
         }
 
@@ -719,7 +698,44 @@ namespace DropThing3
             }
         }
 
+        void RestoreTabs()
+        {
+            int x = 0;
+            for (int i = 0; i < sett.tab_list.Count; i++) {
+                var tab = sett.tab_list[i];
+                TabPage tabpage;
+                if (i < tabControl1.TabPages.Count) {
+                    tabpage = tabControl1.TabPages[i];
+                } else {
+                    tabpage = new TabPage();
+                    tabControl1.TabPages.Add(tabpage);
+                }
+                tabpage.Text = tab.title;
+                tabpage.Tag = tab;
+            }
+            //addTab.Left = x;
+        }
+
+        private void tabControl1_Selected(object sender, TabControlEventArgs e)
+        {
+            Console.WriteLine("{0}", e.Action);
+
+            var tab = e.TabPage.Tag as TabLayer;
+            CurrentTab = tab;
+        }
+
+        private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            Console.WriteLine("tabControl1_DrawItem(, {0})", e.Bounds);
+            var tab = sett.tab_list[e.Index];
+
+            e.Graphics.FillRectangle(new SolidBrush(tab.color0), e.Bounds);
+            e.Graphics.DrawString(tab.title, this.Font, Brushes.Black, e.Bounds.Left+2, e.Bounds.Top+2);
+            //e.DrawFocusRectangle();
+        }
+
         /// <summary>
+        /// 
         /// 
         /// </summary>
         /// <param name="col"></param>
@@ -825,6 +841,7 @@ namespace DropThing3
             get { return curr_tab; }
             set {
                 curr_tab = value;
+                GridSize(grid.ColumnCount, grid.RowCount);
                 grid.Invalidate();
             }
         }
@@ -1238,8 +1255,8 @@ namespace DropThing3
             CurrentTab.color1 = dlg.Color1;
             status.BackColor = CurrentTab.color0;
             status.ForeColor = TextColor(CurrentTab.color0, 250);
-            CurrentTab.button.BackColor = CurrentTab.color0;
-            CurrentTab.button.ForeColor = TextColor(CurrentTab.color0, 250);
+            //CurrentTab.button.BackColor = CurrentTab.color0;
+            //CurrentTab.button.ForeColor = TextColor(CurrentTab.color0, 250);
             grid.BackgroundColor = CurrentTab.color1;
             CurrentTab.draw_gradation = dlg.DrawGradation;
             sett.caption_visible = dlg.ShowItemCaption;
@@ -1301,7 +1318,6 @@ namespace DropThing3
 
         static string cache_path;
         static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
-
 
         static WebClient wc = new WebClient();
 

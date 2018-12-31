@@ -29,7 +29,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,12 +49,13 @@
             this.missing = new System.Windows.Forms.Label();
             this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.hamburger = new System.Windows.Forms.PictureBox();
             this.resize = new System.Windows.Forms.PictureBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.hamburger = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -194,9 +195,9 @@
             this.addTab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.addTab.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.addTab.ForeColor = System.Drawing.Color.White;
-            this.addTab.Location = new System.Drawing.Point(57, 1);
+            this.addTab.Location = new System.Drawing.Point(321, 1);
             this.addTab.Name = "addTab";
-            this.addTab.Size = new System.Drawing.Size(22, 42);
+            this.addTab.Size = new System.Drawing.Size(22, 25);
             this.addTab.TabIndex = 5;
             this.addTab.Text = "*";
             this.addTab.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -219,14 +220,14 @@
             this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.ColumnHeadersVisible = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.grid.DefaultCellStyle = dataGridViewCellStyle10;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.grid.Location = new System.Drawing.Point(0, 17);
             this.grid.MultiSelect = false;
@@ -265,20 +266,6 @@
             this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
             this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
-            // hamburger
-            // 
-            this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.hamburger.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.hamburger.ErrorImage = null;
-            this.hamburger.Image = ((System.Drawing.Image)(resources.GetObject("hamburger.Image")));
-            this.hamburger.Location = new System.Drawing.Point(343, 1);
-            this.hamburger.Name = "hamburger";
-            this.hamburger.Size = new System.Drawing.Size(16, 16);
-            this.hamburger.TabIndex = 7;
-            this.hamburger.TabStop = false;
-            this.toolTip1.SetToolTip(this.hamburger, "popup menu");
-            this.hamburger.Click += new System.EventHandler(this.hamburger_Click);
-            // 
             // resize
             // 
             this.resize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -296,6 +283,34 @@
             this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
             this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.tabControl1.HotTrack = true;
+            this.tabControl1.Location = new System.Drawing.Point(0, -5);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(320, 42);
+            this.tabControl1.TabIndex = 0;
+            this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
+            this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
+            // 
+            // hamburger
+            // 
+            this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.hamburger.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.hamburger.ErrorImage = null;
+            this.hamburger.Image = ((System.Drawing.Image)(resources.GetObject("hamburger.Image")));
+            this.hamburger.Location = new System.Drawing.Point(343, 1);
+            this.hamburger.Name = "hamburger";
+            this.hamburger.Size = new System.Drawing.Size(16, 16);
+            this.hamburger.TabIndex = 7;
+            this.hamburger.TabStop = false;
+            this.toolTip1.SetToolTip(this.hamburger, "popup menu");
+            this.hamburger.Click += new System.EventHandler(this.hamburger_Click);
+            // 
             // DropMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -303,12 +318,13 @@
             this.ClientSize = new System.Drawing.Size(360, 106);
             this.ContextMenuStrip = this.contextMenuStrip1;
             this.ControlBox = false;
-            this.Controls.Add(this.missing);
             this.Controls.Add(this.hamburger);
+            this.Controls.Add(this.missing);
             this.Controls.Add(this.resize);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.status);
             this.Controls.Add(this.addTab);
+            this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -327,8 +343,8 @@
             this.Resize += new System.EventHandler(this.DropForm_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.hamburger)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.resize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hamburger)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -351,12 +367,13 @@
         private System.Windows.Forms.DataGridView grid;
         private System.Windows.Forms.PictureBox resize;
         private System.Windows.Forms.ToolStripMenuItem tabItem;
-        private System.Windows.Forms.PictureBox hamburger;
         private System.Windows.Forms.Label missing;
         private System.Windows.Forms.ToolStripMenuItem title;
         private System.ComponentModel.BackgroundWorker faviconFetch;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem eject;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.PictureBox hamburger;
     }
 }
 
