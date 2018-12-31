@@ -16,6 +16,8 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 
 // TODO
+// change tab order
+// item move to other tab
 
 // hot key
 // cell drawing too slow
@@ -170,8 +172,6 @@ namespace DropThing3
             cell_bitmap = CellBitmap();
             status.BackColor = color0;
             status.ForeColor = TextColor(color0, 250);
-            //CurrentTab.button.BackColor = color0;
-            //CurrentTab.button.ForeColor = TextColor(color0, 250);
 
             grid.ColumnCount = Math.Max(cols, 1);
             grid.RowCount = Math.Max(rows, 1);
@@ -590,7 +590,6 @@ namespace DropThing3
             using (var sw = new StreamWriter(filename, false, Encoding.UTF8)) {
                 serializer.Serialize(sw, sett);
             }
-
         }
 
         /// <summary>
@@ -726,11 +725,13 @@ namespace DropThing3
 
         private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
-            Console.WriteLine("tabControl1_DrawItem(, {0})", e.Bounds);
+           
+            //e.Graphics.Clear(Color.Gray);
+            Console.WriteLine("tabControl1_DrawItem(, {0}, {1}, {2})", e.Bounds, e.BackColor, e.State);
             var tab = sett.tab_list[e.Index];
 
             e.Graphics.FillRectangle(new SolidBrush(tab.color0), e.Bounds);
-            e.Graphics.DrawString(tab.title, this.Font, Brushes.Black, e.Bounds.Left+2, e.Bounds.Top+2);
+            e.Graphics.DrawString(tab.title, this.Font, Brushes.Black, e.Bounds.Left+2, e.Bounds.Top+3);
             //e.DrawFocusRectangle();
         }
 
@@ -741,7 +742,7 @@ namespace DropThing3
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        CellItem LookupItem(int col, int row)
+        CellItem GetItemAt(int col, int row)
         {
             var found = sett.cell_list.Where(c => 
                c.tab == CurrentTab.id && c.col == col && c.row == row);
@@ -750,9 +751,9 @@ namespace DropThing3
             return null;
         }
 
-        CellItem LookupItem(DataGridViewCell cell)
+        CellItem GetItemAt(DataGridViewCell cell)
         {
-            return LookupItem(cell.ColumnIndex, cell.RowIndex);
+            return GetItemAt(cell.ColumnIndex, cell.RowIndex);
         }
 
         /// <summary>
@@ -797,7 +798,7 @@ namespace DropThing3
             get
             {
                 //return curr_item; 
-                return LookupItem(grid.CurrentCell);
+                return GetItemAt(grid.CurrentCell);
             }
             //set { }
         }
@@ -967,9 +968,11 @@ namespace DropThing3
             var point = grid.PointToClient(new Point(e.X, e.Y));
             var hit = grid.HitTest(point.X, point.Y);
             if (hit.Type == DataGridViewHitTestType.Cell) {
-                var item = LookupItem(hit.ColumnIndex, hit.RowIndex);
+                var item = GetItemAt(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
-                    if (item.HasAttr('d')) {
+                    if (item == drag_item)
+                        AppStatusText(Color.Gray, "cancel self drop");
+                    else if (item.HasAttr('d')) {
                         // drop files to directory
                         // copy ...? not yet
                     } else {
@@ -997,7 +1000,7 @@ namespace DropThing3
         private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             // show mouse over cell information
-            point_item = LookupItem(e.ColumnIndex, e.RowIndex);
+            point_item = GetItemAt(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
                (point_item != null) ? point_item.GetCaption() + "; " + point_item.path : "");
@@ -1006,7 +1009,7 @@ namespace DropThing3
 
         private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            point_item = LookupItem(e.ColumnIndex, e.RowIndex);
+            point_item = GetItemAt(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
                (point_item != null) ? point_item.GetCaption() + "; " + point_item.path : "");
@@ -1107,7 +1110,7 @@ namespace DropThing3
             }
 
             // draw item icon
-            var item = LookupItem(e.ColumnIndex, e.RowIndex);
+            var item = GetItemAt(e.ColumnIndex, e.RowIndex);
             if (item != null) {
                 if (item.icon == null)
                     item.UpdateIcon();
