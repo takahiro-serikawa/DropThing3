@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 // TODO
 // change tab order
 // item move to other tab
+// custom tab display
 
 // hot key
 // cell drawing too slow
@@ -173,14 +174,14 @@ namespace DropThing3
             status.BackColor = color0;
             status.ForeColor = TextColor(color0, 250);
 
+            grid.BackgroundColor = CurrentTab.color1;
             grid.ColumnCount = Math.Max(cols, 1);
             grid.RowCount = Math.Max(rows, 1);
-            foreach (DataGridViewColumn col in grid.Columns) {
+            foreach (DataGridViewColumn col in grid.Columns)
                 col.Width = CellWidth;
-            }
-            foreach (DataGridViewRow row in grid.Rows) {
+            foreach (DataGridViewRow row in grid.Rows)
                 row.Height = CellHeight;
-            }
+            grid.Invalidate();
         }
 
         /// <summary>
@@ -661,7 +662,10 @@ namespace DropThing3
         TabLayer AddNewTab(object sender, EventArgs args)
         {
             TabLayer tab = new TabLayer();
-            //tab.button = MakeTabButton(tab);
+
+            // random color
+            tab.color0 = TabDialog.RandomColor();
+            tab.color1 = TabDialog.RandomColor();
             sett.tab_list.Add(tab);
             var tabpage = new TabPage(tab.title);
             tabpage.Tag = tab;
@@ -678,6 +682,7 @@ namespace DropThing3
 
                 sett.cell_list.RemoveAll(cell => cell.tab == CurrentTab.id);
                 sett.tab_list.Remove(CurrentTab);
+                Modified = true;
 
                 tabControl1.TabPages.RemoveAt(index);
 
@@ -843,7 +848,6 @@ namespace DropThing3
             set {
                 curr_tab = value;
                 GridSize(grid.ColumnCount, grid.RowCount);
-                grid.Invalidate();
             }
         }
 
@@ -1256,21 +1260,14 @@ namespace DropThing3
             CurrentTab.title = dlg.TabTitle;
             CurrentTab.color0 = dlg.Color0;
             CurrentTab.color1 = dlg.Color1;
-            status.BackColor = CurrentTab.color0;
-            status.ForeColor = TextColor(CurrentTab.color0, 250);
-            //CurrentTab.button.BackColor = CurrentTab.color0;
-            //CurrentTab.button.ForeColor = TextColor(CurrentTab.color0, 250);
-            grid.BackgroundColor = CurrentTab.color1;
             CurrentTab.draw_gradation = dlg.DrawGradation;
             sett.caption_visible = dlg.ShowItemCaption;
             sett.cell_border = dlg.CellBorder;
             sett.transparent = dlg.TrasnparentMode;
+            Modified = true;
 
             GridSize(grid.ColumnCount, grid.RowCount);
             FitToGrid();
-            grid.Invalidate();
-            Modified = true;
-
             return true;
         }
 
@@ -1299,7 +1296,6 @@ namespace DropThing3
         {
             CurrentTab = AddNewTab(null, null);
             GridSize(sett.col_count, sett.row_count);
-            grid.Invalidate();
         }
 
         // faviocn fetch in background

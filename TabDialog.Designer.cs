@@ -44,6 +44,7 @@
             this.border = new System.Windows.Forms.CheckBox();
             this.addButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
+            this.randomButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cancel
@@ -189,12 +190,23 @@
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
+            // randomButton
+            // 
+            this.randomButton.Location = new System.Drawing.Point(181, 36);
+            this.randomButton.Name = "randomButton";
+            this.randomButton.Size = new System.Drawing.Size(75, 23);
+            this.randomButton.TabIndex = 27;
+            this.randomButton.Text = "random";
+            this.randomButton.UseVisualStyleBackColor = true;
+            this.randomButton.Click += new System.EventHandler(this.random_Click);
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 161);
+            this.Controls.Add(this.randomButton);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.border);
@@ -240,5 +252,6 @@
         private System.Windows.Forms.CheckBox border;
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Button deleteButton;
+        private System.Windows.Forms.Button randomButton;
     }
 }

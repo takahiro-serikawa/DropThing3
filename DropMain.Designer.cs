@@ -174,9 +174,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.status.BackColor = System.Drawing.Color.Lime;
             this.status.Cursor = System.Windows.Forms.Cursors.SizeAll;
-            this.status.Location = new System.Drawing.Point(0, 89);
+            this.status.Location = new System.Drawing.Point(0, 95);
             this.status.Name = "status";
-            this.status.Size = new System.Drawing.Size(360, 17);
+            this.status.Size = new System.Drawing.Size(380, 17);
             this.status.TabIndex = 2;
             this.status.Text = "status text";
             this.status.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
@@ -190,6 +190,7 @@
             // 
             // addTab
             // 
+            this.addTab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.addTab.AutoSize = true;
             this.addTab.BackColor = System.Drawing.Color.Blue;
             this.addTab.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -229,13 +230,13 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.grid.DefaultCellStyle = dataGridViewCellStyle1;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.grid.Location = new System.Drawing.Point(0, 17);
+            this.grid.Location = new System.Drawing.Point(0, 19);
             this.grid.MultiSelect = false;
             this.grid.Name = "grid";
             this.grid.RowHeadersVisible = false;
             this.grid.RowTemplate.Height = 21;
             this.grid.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.grid.Size = new System.Drawing.Size(360, 72);
+            this.grid.Size = new System.Drawing.Size(380, 76);
             this.grid.TabIndex = 0;
             this.grid.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid_CellEnter);
             this.grid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.grid_CellMouseDown);
@@ -273,7 +274,7 @@
             this.resize.Cursor = System.Windows.Forms.Cursors.SizeNWSE;
             this.resize.Image = ((System.Drawing.Image)(resources.GetObject("resize.Image")));
             this.resize.InitialImage = null;
-            this.resize.Location = new System.Drawing.Point(343, 89);
+            this.resize.Location = new System.Drawing.Point(363, 95);
             this.resize.Name = "resize";
             this.resize.Size = new System.Drawing.Size(16, 16);
             this.resize.TabIndex = 6;
@@ -289,7 +290,7 @@
             this.hamburger.Cursor = System.Windows.Forms.Cursors.Hand;
             this.hamburger.ErrorImage = null;
             this.hamburger.Image = ((System.Drawing.Image)(resources.GetObject("hamburger.Image")));
-            this.hamburger.Location = new System.Drawing.Point(343, 1);
+            this.hamburger.Location = new System.Drawing.Point(362, 0);
             this.hamburger.Name = "hamburger";
             this.hamburger.Size = new System.Drawing.Size(16, 16);
             this.hamburger.TabIndex = 7;
@@ -302,10 +303,10 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.tabControl1.Location = new System.Drawing.Point(2, -5);
+            this.tabControl1.Location = new System.Drawing.Point(2, -3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(320, 42);
+            this.tabControl1.Size = new System.Drawing.Size(340, 25);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
             this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
@@ -314,14 +315,14 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.Gray;
-            this.ClientSize = new System.Drawing.Size(360, 106);
+            this.ClientSize = new System.Drawing.Size(380, 112);
             this.ContextMenuStrip = this.contextMenuStrip1;
             this.ControlBox = false;
             this.Controls.Add(this.hamburger);
             this.Controls.Add(this.missing);
             this.Controls.Add(this.resize);
-            this.Controls.Add(this.grid);
             this.Controls.Add(this.status);
+            this.Controls.Add(this.grid);
             this.Controls.Add(this.addTab);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
