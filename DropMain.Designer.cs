@@ -196,11 +196,11 @@
             this.addTab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.addTab.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.addTab.ForeColor = System.Drawing.Color.White;
-            this.addTab.Location = new System.Drawing.Point(321, 1);
+            this.addTab.Location = new System.Drawing.Point(337, 1);
             this.addTab.Name = "addTab";
-            this.addTab.Size = new System.Drawing.Size(22, 25);
+            this.addTab.Size = new System.Drawing.Size(25, 27);
             this.addTab.TabIndex = 5;
-            this.addTab.Text = "*";
+            this.addTab.Text = "+";
             this.addTab.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.toolTip1.SetToolTip(this.addTab, "Add new tab.");
             this.addTab.UseVisualStyleBackColor = false;

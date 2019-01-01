@@ -55,8 +55,8 @@ namespace DropThing3
 
             Directory.SetCurrentDirectory(@"C:\");
 
-            var a = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            appdata = a + "\\" + app;
+            appdata = Environment.GetFolderPath(Environment.SpecialFolder
+               .LocalApplicationData) + "\\" + app;
             Directory.CreateDirectory(appdata);
             filename = Path.Combine(appdata, app+"."+DROPTHING_EXT);
 
@@ -92,9 +92,6 @@ namespace DropThing3
             // open other instances
             for (int i = 1; i < filenames.Count; i++)
                 Process.Start(Application.ExecutablePath, filenames[i]);
-#if DEBUG
-            keep_old_settings = true;
-#endif
 
             //this.Font.Name = "";
             RegStartup(true);
@@ -189,9 +186,11 @@ namespace DropThing3
         /// </summary>
         void FitToGrid()
         {
+            int mx = this.Width - this.ClientSize.Width;
+            int my = this.Height - this.ClientSize.Height;
             this.Size = new Size(
-               grid.ColumnCount * CellWidth,
-             Y0 + grid.RowCount * CellHeight + status.Height);
+               grid.ColumnCount * CellWidth + mx,
+             Y0 + grid.RowCount * CellHeight + status.Height + my);
         }
 
         // message
@@ -311,20 +310,14 @@ namespace DropThing3
                     }
 
                     // removal?
-                    string fullpath = this.path.StartsWith(@"\")
-                        ? this.path : Path.GetFullPath(this.path);
-                    if (fullpath.Length > 1 && fullpath[1] == ':')
-                        try {
-                            var drive = new DriveInfo(fullpath.Substring(0, 1));
-                            switch (drive.DriveType) {
-                            case DriveType.Removable:
-                            case DriveType.CDRom:
-                            case DriveType.Network:
-                                this.AddAttr('J');
-                                break;
-                            }
-                        } catch (Exception ex) {
-                            Console.WriteLine(ex.Message);
+                    var drive = GetDriveInfo();
+                    if (drive != null)
+                        switch (drive.DriveType) {
+                        case DriveType.Removable:
+                        case DriveType.CDRom:
+                        case DriveType.Network:
+                            this.AddAttr('J');
+                            break;
                         }
 
                     if (this.icon == null)
@@ -346,6 +339,18 @@ namespace DropThing3
                 }
             }
 
+            public DriveInfo GetDriveInfo()
+            {
+                try {
+                    string fullpath = Path.GetFullPath(this.path);
+                    if (fullpath[1] == ':')
+                        return new DriveInfo(fullpath.Substring(0, 1));
+                } catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                }
+                return null;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -355,7 +360,7 @@ namespace DropThing3
                 Cursor.Current = Cursors.WaitCursor;
                 try {
                     var info = new ProcessStartInfo(this.path);
-                    info.Arguments = this.options + escaped_join(args);
+                    info.Arguments = this.options + escapedJoin(args);
                     info.WorkingDirectory = this.dir;
                     //info.Environment
                     Process.Start(info);
@@ -363,6 +368,22 @@ namespace DropThing3
                     MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //AppStatusText(Color.Fuchsia, ex.Message);
                 }
+            }
+
+            static string escapedJoin(string[] nn)
+            {
+                // zantei
+                string s = "";
+                foreach (var n in nn) {
+                    if (s.Length > 0)
+                        s += " ";
+
+                    if (n.IndexOf(' ') >= 0)
+                        s += "\"" + n + "\"";
+                    else
+                        s += n;
+                }
+                return s;
             }
 
             /// <summary>
@@ -562,8 +583,6 @@ namespace DropThing3
             Modified = false;
         }
 
-        bool keep_old_settings = false;
-
         /// <summary>
         /// 
         /// </summary>
@@ -577,15 +596,6 @@ namespace DropThing3
             sett.top = this.Top;
             sett.col_count = grid.ColumnCount;
             sett.row_count = grid.RowCount;
-
-            if (keep_old_settings)
-                try {
-                    string bak_name = Path.ChangeExtension(filename,
-                       DateTime.Now.ToString("yyyyMMdd-hhmmss") + "." + DROPTHING_EXT);
-                    File.Move(filename, bak_name);
-                } catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
-                }
 
             var serializer = new XmlSerializer(typeof(DropThingSettings));
             using (var sw = new StreamWriter(filename, false, Encoding.UTF8)) {
@@ -670,7 +680,7 @@ namespace DropThing3
             var tabpage = new TabPage(tab.title);
             tabpage.Tag = tab;
             tabControl1.TabPages.Add(tabpage);
-            //RestoreTabs();
+            //tabControl1.
             Modified = true;
             return tab;
         }
@@ -722,22 +732,19 @@ namespace DropThing3
 
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
         {
-            Console.WriteLine("{0}", e.Action);
-
-            var tab = e.TabPage.Tag as TabLayer;
-            CurrentTab = tab;
+            CurrentTab = e.TabPage.Tag as TabLayer;
         }
 
         private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
-           
             //e.Graphics.Clear(Color.Gray);
             Console.WriteLine("tabControl1_DrawItem(, {0}, {1}, {2})", e.Bounds, e.BackColor, e.State);
             var tab = sett.tab_list[e.Index];
 
             e.Graphics.FillRectangle(new SolidBrush(tab.color0), e.Bounds);
+            //e.Graphics.FillRectangle(new SolidBrush(tab.color0), 
+            //    e.Bounds.Left-2, e.Bounds.Top, e.Bounds.Width+4, e.Bounds.Height);
             e.Graphics.DrawString(tab.title, this.Font, Brushes.Black, e.Bounds.Left+2, e.Bounds.Top+3);
-            //e.DrawFocusRectangle();
         }
 
         /// <summary>
@@ -940,22 +947,6 @@ namespace DropThing3
                 e.Effect = DragDropEffects.None;
         }
 
-        static string escaped_join(string[] nn)
-        {
-            // zantei
-            string s = "";
-            foreach (var n in nn) {
-                if (s.Length > 0)
-                    s += " ";
-
-                if (n.IndexOf(' ') >= 0)
-                    s += "\"" + n + "\"";
-                else
-                    s += n;
-            }
-            return s;
-        }
-
         private void grid_DragDrop(object sender, DragEventArgs e)
         {
             string[] names;
@@ -981,7 +972,7 @@ namespace DropThing3
                         // copy ...? not yet
                     } else {
                         // drop files to app icon; execute application
-                        item.ProcessStart(escaped_join(names));
+                        item.ProcessStart(names);
                     }
                 } else {
                     if (drag_item != null) {
@@ -999,29 +990,37 @@ namespace DropThing3
             drag_item = null;
         }
 
-        CellItem point_item = null;
+        //CellItem point_item = null;
 
         private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             // show mouse over cell information
-            point_item = GetItemAt(e.ColumnIndex, e.RowIndex);
+            CellItem item = GetItemAt(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.GetCaption() + "; " + point_item.path : "");
-            grid.Cursor =  (point_item != null) ? Cursors.Hand : Cursors.Default;
+               (item != null) ? item.GetCaption() + "; " + item.path : "");
+            grid.Cursor =  (item != null) ? Cursors.Hand : Cursors.Default;
         }
 
         private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            point_item = GetItemAt(e.ColumnIndex, e.RowIndex);
             AppStatusText(Color.Black, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
-               (point_item != null) ? point_item.GetCaption() + "; " + point_item.path : "");
+               (CurrentItem != null) ? CurrentItem.GetCaption() + "; " + CurrentItem.path : "");
 
-            // update menu activity
-            eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
+            // update menu
             deleteItem.Enabled = (CurrentItem != null);
             openItem.Enabled = (CurrentItem != null);
+            eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
+            if (eject.Enabled) {
+                var drive = CurrentItem.GetDriveInfo();
+                if (drive != null && drive.IsReady)
+                    eject.Text = "e&Ject " + drive.Name + ":" + drive.VolumeLabel;
+                else {
+                    eject.Text = "e&Ject " + drive.Name + ":";
+                    eject.Enabled = false;
+                }
+            }
         }
 
         //bool drag_flag = false;

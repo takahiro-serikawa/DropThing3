@@ -192,7 +192,7 @@
             // 
             // randomButton
             // 
-            this.randomButton.Location = new System.Drawing.Point(181, 36);
+            this.randomButton.Location = new System.Drawing.Point(181, 44);
             this.randomButton.Name = "randomButton";
             this.randomButton.Size = new System.Drawing.Size(75, 23);
             this.randomButton.TabIndex = 27;
