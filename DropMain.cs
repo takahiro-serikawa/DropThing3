@@ -237,11 +237,11 @@ namespace DropThing3
 
         public class CellItem: object
         {
-            public string caption;
+            public string caption = "";
             public string path;
             public string options;
             public string dir;
-            public string attr;
+            public string attr = "";
             public int row, col;
             public uint tab;
 
@@ -250,16 +250,11 @@ namespace DropThing3
 
             public CellItem()
             {
-                icon = null;
-                attr = "";
             }
 
             public CellItem(string path)
             {
                 this.path = path;
-                //this.text = Path.GetFileNameWithoutExtension(path);
-                //this.caption = Path.GetFileName(path);
-
                 //this.UpdateIcon();
             }
 
@@ -1146,7 +1141,7 @@ namespace DropThing3
                 g.DrawString(item.GetCaption(), this.Font, new SolidBrush(color), rect, f);
             }
 
-            e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
+            //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
             e.Handled = true;
         }
 
