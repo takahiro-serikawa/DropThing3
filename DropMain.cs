@@ -160,6 +160,12 @@ namespace DropThing3
         /// <param name="rows"></param>
         void GridSize(int cols, int rows)
         {
+            for (int t = 0; t < tabControl1.TabCount; t++)
+                if ((tabControl1.TabPages[t].Tag as TabLayer).id == sett.current_tab) {
+                    tabControl1.SelectedIndex = t;
+                    break;
+                }
+
             Modified |= (grid.ColumnCount != cols) || (grid.RowCount != rows);
 
             CellWidth = sett.caption_visible ? 80 : M+32+M;
@@ -500,6 +506,8 @@ namespace DropThing3
                 set { TabLayer.serial = value; }
             }
 
+            public uint current_tab;
+
             public FormWindowState win_state;
             public int left, top;
             public int col_count, row_count;
@@ -561,11 +569,12 @@ namespace DropThing3
                 this.StartPosition = FormStartPosition.Manual;
                 this.Left = sett.left;
                 this.Top = sett.top;
+
             } else
                 sett = new DropThingSettings();
 
             if (sett.tab_list.Count > 0)
-                CurrentTab = sett.tab_list[0];
+                ;//CurrentTab = sett.tab_list[sett.current];
             else
                 CurrentTab = AddNewTab(null, null); // at least 1 tab
 
@@ -732,18 +741,15 @@ namespace DropThing3
 
         private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
-            //e.Graphics.Clear(Color.Gray);
-            Console.WriteLine("tabControl1_DrawItem(, {0}, {1}, {2})", e.Bounds, e.BackColor, e.State);
             var tab = sett.tab_list[e.Index];
 
-            e.Graphics.FillRectangle(new SolidBrush(tab.color0), e.Bounds);
-            //e.Graphics.FillRectangle(new SolidBrush(tab.color0), 
-            //    e.Bounds.Left-2, e.Bounds.Top, e.Bounds.Width+4, e.Bounds.Height);
-            e.Graphics.DrawString(tab.title, this.Font, Brushes.Black, e.Bounds.Left+2, e.Bounds.Top+3);
+            using (var br = new SolidBrush(tab.color0))
+                e.Graphics.FillRectangle(br, e.Bounds);
+            using (var br = new SolidBrush(TextColor(tab.color0, 250)))
+                e.Graphics.DrawString(tab.title, this.Font, br, e.Bounds.Left+2, e.Bounds.Top+3);
         }
 
         /// <summary>
-        /// 
         /// 
         /// </summary>
         /// <param name="col"></param>
@@ -839,17 +845,24 @@ namespace DropThing3
             return Color.FromArgb(r, g, b);
         }
 
-        TabLayer curr_tab;
+        //TabLayer curr_tab;
 
         /// <summary>
         /// 
         /// </summary>
         TabLayer CurrentTab
         {
-            get { return curr_tab; }
-            set {
-                curr_tab = value;
-                GridSize(grid.ColumnCount, grid.RowCount);
+            get
+            {
+                return sett.tab_list.First(t => t.id == sett.current_tab);
+            }
+            set
+            {
+                if (sett.current_tab != value.id) {
+                    sett.current_tab = value.id;
+                    GridSize(grid.ColumnCount, grid.RowCount);
+                    Modified = true;
+                }
             }
         }
 
@@ -868,8 +881,6 @@ namespace DropThing3
                 color1 = (CurrentTab.draw_gradation && !sett.transparent)
                     ? CurrentTab.color1 : color0;
             }
-            brush0 = new SolidBrush(trim_color(color0, +20));
-            brush1 = new SolidBrush(trim_color(color1, -20));
 
             resize.BackColor = color0;
 
@@ -1126,8 +1137,10 @@ namespace DropThing3
                     int x = r.X + r.Width/2;
                     int y = r.Y + r.Height/2;
 
-                    g.DrawString(alt, missing.Font, brush0, x, y, f);
-                    g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
+                    using (var brush0 = new SolidBrush(trim_color(color0, +20)))
+                        g.DrawString(alt, missing.Font, brush0, x, y, f);
+                    using (var brush1 = new SolidBrush(trim_color(color1, -20)))
+                        g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
                 }
             }
 
@@ -1138,7 +1151,8 @@ namespace DropThing3
                 var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
-                g.DrawString(item.GetCaption(), this.Font, new SolidBrush(color), rect, f);
+                using (var br = new SolidBrush(color))
+                    g.DrawString(item.GetCaption(), this.Font, br, rect, f);
             }
 
             //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
@@ -1221,7 +1235,7 @@ namespace DropThing3
         //public bool draw_gradation = true;
         //Color color0 = Color.Lime, CurrentTab.color1 = Color.Green;
         Color color0, color1;
-        Brush brush0, brush1;
+        //Brush brush0, brush1;
         Bitmap cell_bitmap;
 
         Color TextColor(Color color, int threshold = 400)
@@ -1260,6 +1274,7 @@ namespace DropThing3
             sett.transparent = dlg.TrasnparentMode;
             Modified = true;
 
+            tabControl1.Invalidate();
             GridSize(grid.ColumnCount, grid.RowCount);
             FitToGrid();
             return true;
