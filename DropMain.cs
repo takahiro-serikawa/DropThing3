@@ -860,7 +860,10 @@ namespace DropThing3
         {
             get
             {
-                return sett.tab_list.First(t => t.id == sett.current_tab);
+                try {
+                    return sett.tab_list.First(t => t.id == sett.current_tab);
+                } catch (Exception) { }
+                return sett.tab_list[0];
             }
             set
             {
