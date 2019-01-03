@@ -778,6 +778,12 @@ namespace DropThing3
         /// <returns></returns>
         CellItem NewCellItem(string path, int col, int row)
         {
+            if (Path.GetExtension(path) == ".lnk") {
+                var shell = new IWshRuntimeLibrary.WshShell();
+                var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
+                path = shortcut.TargetPath.ToString();
+            }
+
             var item = new CellItem(path);
             item.col = col;
             item.row = row;
