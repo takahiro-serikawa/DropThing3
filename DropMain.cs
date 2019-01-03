@@ -1033,7 +1033,7 @@ namespace DropThing3
 
         private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            Console.WriteLine("grid_CellMouseDown({0})", estr(e));
+            //Console.WriteLine("grid_CellMouseDown({0})", estr(e));
 
             // select cell on right click too
             if (e.Button == MouseButtons.Right)
@@ -1072,10 +1072,7 @@ namespace DropThing3
 
         private void grid_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
-            Console.WriteLine("grid_CellMouseUp({0})", estr(e));
-            //if (!mouse_down_flag) {
-
-            //} else 
+            //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
             if (e.Button == MouseButtons.Left) {
                 if (e.Clicks == 1) {
                     // cell click
@@ -1109,13 +1106,8 @@ namespace DropThing3
 
             // draw focus rectangle
             if (e.State.HasFlag(DataGridViewElementStates.Selected)) {
-                using (var pen = new Pen(TextColor(CurrentTab.color0, 255))) {
-                    pen.DashStyle = DashStyle.Dot;
-                    var r = e.CellBounds;
-                    r.Inflate(-2, -2);
-                    r.Offset(-1, -1);
-                    g.DrawRectangle(pen, r);
-                }
+                //DrawDotRect(e.CellBounds);
+                FillFocusRect(g, e.CellBounds);
             }
 
             // draw item icon
@@ -1157,6 +1149,28 @@ namespace DropThing3
 
             //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
             e.Handled = true;
+        }
+
+        void DrawDotRect(Graphics g, Rectangle r)
+        {
+            using (var pen = new Pen(TextColor(CurrentTab.color0, 255))) {
+                pen.DashStyle = DashStyle.Dot;
+                r.Inflate(-2, -2);
+                r.Offset(-1, -1);
+                g.DrawRectangle(pen, r);
+            }
+        }
+
+        void FillFocusRect(Graphics g, Rectangle r)
+        {
+            using (var br = new SolidBrush(Color.FromArgb(24, Color.Black))) 
+                using (var pen = new Pen(Color.FromArgb(128, Color.White), 1)) {
+                    g.FillRectangle(br, r.X+2, r.Y+2, r.Width-4, r.Height-4);
+                g.DrawLine(pen, r.Left+2, r.Top+1, r.Right-3, r.Top+1);
+                g.DrawLine(pen, r.Left+2, r.Bottom-2, r.Right-3, r.Bottom-2);
+                g.DrawLine(pen, r.Left+1, r.Top+2, r.Left+1, r.Bottom-3);
+                g.DrawLine(pen, r.Right-2, r.Top+2, r.Right-2, r.Bottom-3);
+            }
         }
 
         // menu handlers
