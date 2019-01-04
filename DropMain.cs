@@ -576,7 +576,7 @@ namespace DropThing3
             if (sett.tab_list.Count > 0)
                 ;//CurrentTab = sett.tab_list[sett.current];
             else
-                CurrentTab = AddNewTab(null, null); // at least 1 tab
+                CurrentTab = AddNewTab(); // at least 1 tab
 
             // tabControl1.TabCount = sett.tab_list;
             RestoreTabs();
@@ -673,7 +673,7 @@ namespace DropThing3
         /// 
         /// </summary>
         /// <returns></returns>
-        TabLayer AddNewTab(object sender, EventArgs args)
+        TabLayer AddNewTab()
         {
             TabLayer tab = new TabLayer();
 
@@ -1280,11 +1280,16 @@ namespace DropThing3
             dlg.TrasnparentMode = sett.transparent;
 
             dlg.OnDelete += DeleteCurrentTab;
-            //dlg.OnAddNew += AddNewTab;
+            dlg.OnAddNew += AddNewTab;
 
             if (dlg.Popup(TabAcceptCallback)) {
                 // ..
             }
+        }
+
+        void AddNewTab(object sender, EventArgs args)
+        {
+            AddNewTab();
         }
 
         bool TabAcceptCallback(TabDialog dlg)
@@ -1327,7 +1332,7 @@ namespace DropThing3
 
         private void addTab_Click(object sender, EventArgs e)
         {
-            CurrentTab = AddNewTab(null, null);
+            CurrentTab = AddNewTab();
             GridSize(sett.col_count, sett.row_count);
         }
 
