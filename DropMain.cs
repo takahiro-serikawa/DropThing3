@@ -1172,9 +1172,10 @@ namespace DropThing3
 
         void FillFocusRect(Graphics g, Rectangle r)
         {
-            using (var br = new SolidBrush(Color.FromArgb(24, Color.Black))) 
-                using (var pen = new Pen(Color.FromArgb(128, Color.White), 1)) {
-                    g.FillRectangle(br, r.X+2, r.Y+2, r.Width-4, r.Height-4);
+            using (var br = new SolidBrush(Color.FromArgb(60, Color.White))) 
+                using (var pen = new Pen(Color.FromArgb(90, Color.Black), 1)) {
+                g.FillRectangle(br, r.X+2, r.Y+2, r.Width-4, r.Height-4);
+                pen.DashStyle = DashStyle.Dot;
                 g.DrawLine(pen, r.Left+2, r.Top+1, r.Right-3, r.Top+1);
                 g.DrawLine(pen, r.Left+2, r.Bottom-2, r.Right-3, r.Bottom-2);
                 g.DrawLine(pen, r.Left+1, r.Top+2, r.Left+1, r.Bottom-3);
