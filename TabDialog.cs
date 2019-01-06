@@ -136,6 +136,9 @@ namespace DropThing3
         {
             if (OnDelete != null)
                 OnDelete(this, null);
+
+            // prevent changing different tab; 暫定
+            ok.Enabled = false;
         }
 
         private void random_Click(object sender, EventArgs e)
