@@ -45,6 +45,7 @@
             this.addButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
             this.randomButton = new System.Windows.Forms.Button();
+            this.titlebar = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cancel
@@ -200,12 +201,26 @@
             this.randomButton.UseVisualStyleBackColor = true;
             this.randomButton.Click += new System.EventHandler(this.random_Click);
             // 
+            // titlebar
+            // 
+            this.titlebar.AutoSize = true;
+            this.titlebar.Checked = true;
+            this.titlebar.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.titlebar.Location = new System.Drawing.Point(272, 108);
+            this.titlebar.Name = "titlebar";
+            this.titlebar.Size = new System.Drawing.Size(66, 19);
+            this.titlebar.TabIndex = 28;
+            this.titlebar.Text = "title bar";
+            this.titlebar.UseVisualStyleBackColor = true;
+            this.titlebar.Visible = false;
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 161);
+            this.Controls.Add(this.titlebar);
             this.Controls.Add(this.randomButton);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.addButton);
@@ -253,5 +268,6 @@
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button randomButton;
+        private System.Windows.Forms.CheckBox titlebar;
     }
 }

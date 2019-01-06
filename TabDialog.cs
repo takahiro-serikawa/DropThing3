@@ -83,6 +83,15 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public bool TitleBar
+        {
+            get { return titlebar.Checked; }
+            set { titlebar.Checked = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
         public delegate bool DialogCallback(TabDialog dlg);

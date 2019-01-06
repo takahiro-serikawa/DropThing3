@@ -136,6 +136,7 @@ namespace DropThing3
                 // resizing now
                 this.Width += e.Location.X - mouse_down_x;
                 this.Height += e.Location.Y - mouse_down_y;
+                //GridSize(grid.Width / CellWidth, grid.Height / CellHeight);
             }
         }
 
@@ -152,6 +153,18 @@ namespace DropThing3
         {
             GridSize(grid.Width / CellWidth, grid.Height / CellHeight);
         }
+
+        private void DropMain_ResizeBegin(object sender, EventArgs e)
+        {
+            Console.WriteLine("DropMain_ResizeBegin()");
+        }
+
+        private void DropMain_ResizeEnd(object sender, EventArgs e)
+        {
+            Console.WriteLine("DropMain_ResizeEnd()");
+            //GridSize(grid.Width / CellWidth, grid.Height / CellHeight);
+        }
+
 
         /// <summary>
         /// 
@@ -192,6 +205,11 @@ namespace DropThing3
         /// </summary>
         void FitToGrid()
         {
+            if (sett.titlebar) {
+                this.FormBorderStyle = FormBorderStyle.Sizable;
+            } else {
+                this.FormBorderStyle = FormBorderStyle.None;
+            }
             int mx = this.Width - this.ClientSize.Width;
             int my = this.Height - this.ClientSize.Height;
             this.Size = new Size(
@@ -527,6 +545,7 @@ namespace DropThing3
             public bool caption_visible;
             public bool cell_border;
             public bool transparent;
+            public bool titlebar;
 
             /// <summary>
             /// 
@@ -1294,10 +1313,7 @@ namespace DropThing3
         }
 
         // tab settings
-        //public bool draw_gradation = true;
-        //Color color0 = Color.Lime, CurrentTab.color1 = Color.Green;
         Color color0, color1;
-        //Brush brush0, brush1;
         Bitmap cell_bitmap;
 
         Color TextColor(Color color, int threshold = 400)
@@ -1318,15 +1334,11 @@ namespace DropThing3
                 d.ShowItemCaption = sett.caption_visible;
                 d.CellBorder = sett.cell_border;
                 d.TrasnparentMode = sett.transparent;
+                d.TitleBar = sett.titlebar;
                 return true;
             };
-            dlg.OnDelete += DeleteCurrentTab;
-            //dlg.OnAddNew += AddNewTab;
-            dlg.OnAddNew += (_sender, _e) => {
-                AddNewTab();
-            };
-            dlg.OnAccept += (d) =>
-            {
+
+            dlg.OnAccept += (d) => {
                 CurrentTab.title = d.TabTitle;
                 CurrentTab.color0 = d.Color0;
                 CurrentTab.color1 = d.Color1;
@@ -1334,6 +1346,7 @@ namespace DropThing3
                 sett.caption_visible = d.ShowItemCaption;
                 sett.cell_border = d.CellBorder;
                 sett.transparent = d.TrasnparentMode;
+                sett.titlebar = d.TitleBar;
                 Modified = true;
 
                 tabControl1.Invalidate();
@@ -1342,8 +1355,13 @@ namespace DropThing3
                 return true;
             };
 
-            if (dlg.Popup()) {
-            }
+            dlg.OnDelete += DeleteCurrentTab;
+
+            dlg.OnAddNew += (_sender, _e) => {
+                AddNewTab();
+            };
+
+            dlg.Popup();
         }
 
         private void quit_Click(object sender, EventArgs e)
@@ -1379,10 +1397,10 @@ namespace DropThing3
 
         static string MakeHash(string path)
         {
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(path);
+            byte[] data = Encoding.UTF8.GetBytes(path);
             byte[] bs = md5.ComputeHash(data);
-            string s = BitConverter.ToString(bs).Replace("-", "");
-            return s;
+            string s = BitConverter.ToString(bs);
+            return s.Replace("-", "");
         }
 
         static string MakeCacheName(string path)
