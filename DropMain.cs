@@ -1309,42 +1309,41 @@ namespace DropThing3
         private void tabItem_Click(object sender, EventArgs e)
         {
             var dlg = new TabDialog();
-            dlg.TabTitle = CurrentTab.title;
-            dlg.Color0 = CurrentTab.color0;
-            dlg.Color1 = CurrentTab.color1;
-            dlg.DrawGradation = CurrentTab.draw_gradation;
-            dlg.ShowItemCaption = sett.caption_visible;
-            dlg.CellBorder = sett.cell_border;
-            dlg.TrasnparentMode = sett.transparent;
 
+            dlg.OnOpen += (d) => {
+                d.TabTitle = CurrentTab.title;
+                d.Color0 = CurrentTab.color0;
+                d.Color1 = CurrentTab.color1;
+                d.DrawGradation = CurrentTab.draw_gradation;
+                d.ShowItemCaption = sett.caption_visible;
+                d.CellBorder = sett.cell_border;
+                d.TrasnparentMode = sett.transparent;
+                return true;
+            };
             dlg.OnDelete += DeleteCurrentTab;
-            dlg.OnAddNew += AddNewTab;
+            //dlg.OnAddNew += AddNewTab;
+            dlg.OnAddNew += (_sender, _e) => {
+                AddNewTab();
+            };
+            dlg.OnAccept += (d) =>
+            {
+                CurrentTab.title = d.TabTitle;
+                CurrentTab.color0 = d.Color0;
+                CurrentTab.color1 = d.Color1;
+                CurrentTab.draw_gradation = d.DrawGradation;
+                sett.caption_visible = d.ShowItemCaption;
+                sett.cell_border = d.CellBorder;
+                sett.transparent = d.TrasnparentMode;
+                Modified = true;
 
-            if (dlg.Popup(TabAcceptCallback)) {
-                // ..
+                tabControl1.Invalidate();
+                GridSize(grid.ColumnCount, grid.RowCount);
+                FitToGrid();
+                return true;
+            };
+
+            if (dlg.Popup()) {
             }
-        }
-
-        void AddNewTab(object sender, EventArgs args)
-        {
-            AddNewTab();
-        }
-
-        bool TabAcceptCallback(TabDialog dlg)
-        {
-            CurrentTab.title = dlg.TabTitle;
-            CurrentTab.color0 = dlg.Color0;
-            CurrentTab.color1 = dlg.Color1;
-            CurrentTab.draw_gradation = dlg.DrawGradation;
-            sett.caption_visible = dlg.ShowItemCaption;
-            sett.cell_border = dlg.CellBorder;
-            sett.transparent = dlg.TrasnparentMode;
-            Modified = true;
-
-            tabControl1.Invalidate();
-            GridSize(grid.ColumnCount, grid.RowCount);
-            FitToGrid();
-            return true;
         }
 
         private void quit_Click(object sender, EventArgs e)

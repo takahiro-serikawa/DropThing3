@@ -85,25 +85,35 @@ namespace DropThing3
         /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
-        public delegate bool AcceptCallback(TabDialog dlg);
+        public delegate bool DialogCallback(TabDialog dlg);
 
-        AcceptCallback callback = null;
+        /// <summary>
+        /// 
+        /// </summary>
+        public event DialogCallback OnOpen;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event DialogCallback OnAccept;
 
         private void apply_Click(object sender, EventArgs e)
         {
-            this.callback(this);
+            if (OnAccept != null)
+                OnAccept(this);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool Popup(AcceptCallback callback)
+        public bool Popup()
         {
-            this.callback = callback;
+            if (OnOpen != null)
+                OnOpen(this);
 
-            bool ret = (this.ShowDialog() == DialogResult.OK);
-            return ret && this.callback(this);
+            return this.ShowDialog() == DialogResult.OK
+               && (OnAccept == null || OnAccept(this));
         }
 
         private void color0_Click(object sender, EventArgs e)
