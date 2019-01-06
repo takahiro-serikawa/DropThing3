@@ -245,6 +245,7 @@ namespace DropThing3
         {
             public string caption = "";
             public string path;
+            public string icon_file;
             public string options;
             public string dir;
             public string attr = "";
@@ -298,7 +299,7 @@ namespace DropThing3
                 //this.attr = "";
                 if (path.StartsWith("http://") || path.StartsWith("https://")) {
                     this.AddAttr('U');
-                    if (this.icon == null)
+                    if (this.icon == null && this.icon_file == null)
                         fetch_req.Enqueue(path);
                 } else {
                     if (Directory.Exists(path))
@@ -320,23 +321,28 @@ namespace DropThing3
                             this.AddAttr('J');
                             break;
                         }
+                }
 
+                string icon_file = (this.icon_file == null && !this.HasAttr('U'))
+                   ? this.path : this.icon_file;
+                if (icon_file != null) {
                     if (this.icon == null)
                         try {
-                            this.icon = Icon.ExtractAssociatedIcon(this.path);
+                            this.icon = Icon.ExtractAssociatedIcon(icon_file);
                         } catch (Exception ex) {
                             this.icon = null;
                             Console.WriteLine("UpdateIcon(); "+ex.Message);
                         }
 
                     if (this.icon == null) {
-                        this.icon = GetIconAPI.Get(this.path);
+                        this.icon = GetIconAPI.Get(icon_file);
                     }
 
-                    if (this.icon != null && HasAttr('J') && !File.Exists(cachename)) {
-                        using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
-                            this.icon.Save(stream);
-                    }
+                }
+
+                if (this.icon != null && HasAttr('J') && !File.Exists(cachename)) {
+                    using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
+                        this.icon.Save(stream);
                 }
             }
 
@@ -417,6 +423,12 @@ namespace DropThing3
                 return this.path;
             }
 
+            string GetIconFile()
+            {
+                if (icon_file == null && !HasAttr('U'))
+                    return path;
+                return icon_file;
+            }
         }
 
         public class TabLayer: object
@@ -610,7 +622,7 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        const int AUTO_SAVE_DELAY = 60;
+        const int AUTO_SAVE_DELAY = 30;
 
         /// <summary>
         /// 
@@ -700,7 +712,8 @@ namespace DropThing3
 
                 tabControl1.TabPages.RemoveAt(index);
 
-                if (index >= sett.tab_list.Count) index--;
+                if (index >= sett.tab_list.Count)
+                    index--;
                 CurrentTab = sett.tab_list[index];
 
                 grid.Invalidate();
@@ -757,7 +770,7 @@ namespace DropThing3
         /// <returns></returns>
         CellItem GetItemAt(int col, int row)
         {
-            var found = sett.cell_list.Where(c => 
+            var found = sett.cell_list.Where(c =>
                c.tab == CurrentTab.id && c.col == col && c.row == row);
             if (found.Count() > 0)
                 return found.First();
@@ -778,7 +791,8 @@ namespace DropThing3
         /// <returns></returns>
         CellItem NewCellItem(string path, int col, int row)
         {
-            if (Path.GetExtension(path) == ".lnk") {
+            string ext = Path.GetExtension(path);
+            if (ext == ".lnk") {
                 var shell = new IWshRuntimeLibrary.WshShell();
                 var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
                 path = shortcut.TargetPath.ToString();
@@ -787,11 +801,33 @@ namespace DropThing3
             var item = new CellItem(path);
             item.col = col;
             item.row = row;
+
+            if (ext == ".url") {
+                // supports InternetShortcut
+                string url, icon_file;
+                ReadInternetShortCut(path, out url, out icon_file);
+                item.caption = Path.GetFileNameWithoutExtension(path);
+                item.path = url;
+                item.icon_file = icon_file;
+            }
+
             item.tab = CurrentTab.id;
             sett.cell_list.Add(item);
             grid.InvalidateCell(col, row);
             Modified = true;
             return item;
+        }
+
+        void ReadInternetShortCut(string path, out string url, out string icon_file)
+        {
+            string[] lines = File.ReadAllLines(path);
+            url = icon_file = null;
+            foreach (string line in lines) {
+                if (line.StartsWith("URL="))
+                    url = line.Substring(4);
+                if (line.StartsWith("IconFile="))
+                    icon_file = line.Substring(9);
+            }
         }
 
         /// <summary>
@@ -1172,8 +1208,8 @@ namespace DropThing3
 
         void FillFocusRect(Graphics g, Rectangle r)
         {
-            using (var br = new SolidBrush(Color.FromArgb(60, Color.White))) 
-                using (var pen = new Pen(Color.FromArgb(90, Color.Black), 1)) {
+            using (var br = new SolidBrush(Color.FromArgb(60, Color.White)))
+            using (var pen = new Pen(Color.FromArgb(90, Color.Black), 1)) {
                 g.FillRectangle(br, r.X+2, r.Y+2, r.Width-4, r.Height-4);
                 pen.DashStyle = DashStyle.Dot;
                 g.DrawLine(pen, r.Left+2, r.Top+1, r.Right-3, r.Top+1);
@@ -1207,12 +1243,14 @@ namespace DropThing3
         private void explorerItem_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            if (CurrentItem != null) {
+            if (CurrentItem == null) {
+                Process.Start("EXPLORER.EXE");
+                AppStatusText(Color.Black, "explorer");
+            } else if (!CurrentItem.HasAttr('U')) {
                 Process.Start("EXPLORER.EXE", @"/select,""" + CurrentItem.path + @"""");
                 AppStatusText(Color.Black, "explorer {0}", CurrentItem.path);
             } else {
-                Process.Start("EXPLORER.EXE");
-                AppStatusText(Color.Black, "explorer");
+                //
             }
         }
 
