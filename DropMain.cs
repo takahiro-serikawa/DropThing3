@@ -266,10 +266,54 @@ namespace DropThing3
         public class CellItem: object
         {
             public string caption = "";
-            public string path;
+            //public string path;
+
+            string _path;
+
+            [XmlElement("path")]
+            public string path
+            {
+                get { return _path; }
+                set
+                {
+                    string ext = Path.GetExtension(value);
+                    if (ext == ".lnk") {    // Windows shortcut
+                        var shell = new IWshRuntimeLibrary.WshShell();
+                        var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(value);
+                        Console.WriteLine("{0}, {1}", shortcut.FullName, shortcut.Description);
+                        _path = shortcut.TargetPath.ToString();
+                        this.caption = Path.GetFileNameWithoutExtension(value);
+                        this.options = shortcut.Arguments;
+                        this.dir = shortcut.WorkingDirectory; // TODO: expand environments
+                        this.hotkey = shortcut.Hotkey;
+
+                        // remove icon index? "YYY\XXX.ico?0"
+                        this.icon_file = shortcut.IconLocation;
+                        int k = this.icon_file.IndexOf(',');
+                        if (k >= 0)
+                            this.icon_file = this.icon_file.Substring(0, k);
+                        if (this.icon_file.Length == 0)
+                            this.icon_file = null;
+                    } else if (ext == ".url") { // InternetShortcut
+                        //string url, icon_file;
+                        //ReadInternetShortCut(value, out url, out icon_file);
+                        string[] lines = File.ReadAllLines(value);
+                        foreach (string line in lines) {
+                            if (line.StartsWith("URL="))
+                                _path = line.Substring(4);
+                            if (line.StartsWith("IconFile="))
+                                this.icon_file = line.Substring(9);
+                        }
+                        this.caption = Path.GetFileNameWithoutExtension(value);
+                    } else
+                        _path = value;
+                }
+            }
+
             public string icon_file;
             public string options;
             public string dir;
+            public string hotkey;
             public string attr = "";
             public int row, col;
             public uint tab;
@@ -284,10 +328,10 @@ namespace DropThing3
             /// <summary>
             /// 
             /// </summary>
-            /// <param name="path"></param>
-            public CellItem(string path)
+            /// <param name="source"></param>
+            public CellItem(string source)
             {
-                this.path = path;
+                this.path = source;
                 //this.UpdateIcon();
             }
 
@@ -827,43 +871,14 @@ namespace DropThing3
         /// <returns></returns>
         CellItem NewCellItem(string path, int col, int row)
         {
-            string ext = Path.GetExtension(path);
-            if (ext == ".lnk") {
-                var shell = new IWshRuntimeLibrary.WshShell();
-                var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(path);
-                path = shortcut.TargetPath.ToString();
-            }
-
             var item = new CellItem(path);
             item.col = col;
             item.row = row;
-
-            if (ext == ".url") {
-                // supports InternetShortcut
-                string url, icon_file;
-                ReadInternetShortCut(path, out url, out icon_file);
-                item.caption = Path.GetFileNameWithoutExtension(path);
-                item.path = url;
-                item.icon_file = icon_file;
-            }
-
             item.tab = CurrentTab.id;
             sett.cell_list.Add(item);
             grid.InvalidateCell(col, row);
             Modified = true;
             return item;
-        }
-
-        void ReadInternetShortCut(string path, out string url, out string icon_file)
-        {
-            string[] lines = File.ReadAllLines(path);
-            url = icon_file = null;
-            foreach (string line in lines) {
-                if (line.StartsWith("URL="))
-                    url = line.Substring(4);
-                if (line.StartsWith("IconFile="))
-                    icon_file = line.Substring(9);
-            }
         }
 
         /// <summary>
