@@ -133,6 +133,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="images\eject_dis.ico" />
+    <None Include="images\eject.ico" />
     <None Include="images\burger.ico" />
     <None Include="images\resize.ico" />
     <None Include="images\app16.png" />

@@ -15,6 +15,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
+using System.Runtime.InteropServices;
+
 // TODO
 // change tab order
 // item move to other tab
@@ -99,6 +101,7 @@ namespace DropThing3
             cache_path = Path.Combine(appdata, "icon_cache");
             faviconFetch.RunWorkerAsync();
 
+            WatchRemoval();
 #if DEBUG
             dbgSave.Visible = true;
 #endif
@@ -1276,6 +1279,11 @@ namespace DropThing3
                 }
             }
 
+            if (false) {
+                var eject_icon = Properties.Resources.eject;
+                g.DrawImage(eject_icon, e.CellBounds.Left+16+2, e.CellBounds.Top+16+2);
+            }
+
             //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
             e.Handled = true;
         }
@@ -1529,6 +1537,99 @@ namespace DropThing3
             Console.WriteLine("fetch {0} {1}", e.ProgressPercentage, e.UserState);
             if (e.ProgressPercentage == 0)
                 grid.Invalidate();
+        }
+
+        // watch removal
+        // cf. http://d.hatena.ne.jp/ohyajapan/20081123/p2
+
+        [DllImport("shell32.dll", SetLastError = true, EntryPoint = "#2", CharSet = CharSet.Auto)]
+        static extern IntPtr SHChangeNotifyRegister(IntPtr hWnd, SHCNF fSources, SHCNE fEvents, uint wMsg, int cEntries, ref SHChangeNotifyEntry pFsne);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        struct SHChangeNotifyEntry
+        {
+            public IntPtr pIdl;
+            [MarshalAs(UnmanagedType.Bool)]
+            public Boolean Recursively;
+        }
+
+        void WatchRemoval()
+        {
+            var notifyEntry = new SHChangeNotifyEntry() { pIdl = IntPtr.Zero, Recursively = true };
+            var notifyId = SHChangeNotifyRegister(Handle,
+                                                  SHCNF.TYPE | SHCNF.IDLIST,
+                                                  SHCNE.MEDIAINSERTED | SHCNE.MEDIAREMOVED,
+                                                  (uint)WM.SHNOTIFY,
+                                                  1,
+                                                  ref notifyEntry);
+        }
+
+        void _disable()
+        {
+            //SHChangeNotifyUnregister(notifyId);
+        }
+
+        enum WM
+        {
+            DEVICECHANGE = 0x0219,
+            SHNOTIFY = 0x0401,
+        }
+
+        enum SHCNF
+        {
+            IDLIST = 0x0000,
+            PATHA = 0x0001,
+            PRINTERA = 0x0002,
+            DWORD = 0x0003,
+            PATHW = 0x0005,
+            PRINTERW = 0x0006,
+            TYPE = 0x00FF,
+            FLUSH = 0x1000,
+            FLUSHNOWAIT = 0x2000
+        }
+
+        enum SHCNE: uint
+        {
+            MEDIAINSERTED = 0x00000020,
+            MEDIAREMOVED = 0x00000040,
+            //...
+        }
+
+        enum DBT
+        {
+            DEVICEARRIVAL = 0x8000,
+            DEVICEQUERYREMOVE = 0x8001,
+            DEVICEQUERYREMOVEFAILED = 0x8002,
+            DEVICEREMOVEPENDING = 0x8003,
+            DEVICEREMOVECOMPLETE = 0x8004
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            switch ((WM)m.Msg) {
+            case WM.SHNOTIFY:
+                switch ((SHCNE)m.LParam) {
+                case SHCNE.MEDIAINSERTED:
+                    Console.WriteLine("メディアがセットされた");
+                    break;
+                case SHCNE.MEDIAREMOVED:
+                    Console.WriteLine("メディアが取り外された");
+                    break;
+                }
+                break;
+            case WM.DEVICECHANGE:
+                switch ((DBT)m.WParam) {
+                case DBT.DEVICEARRIVAL:
+                    Console.WriteLine("DEVICEARRIVAL");
+                    break;
+                case DBT.DEVICEREMOVECOMPLETE:
+                    Console.WriteLine("DEVICEREMOVECOMPLETE");
+                    break;
+                }
+                break;
+            }
+
+            base.WndProc(ref m);
         }
 
     }

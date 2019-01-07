@@ -138,18 +138,18 @@
   <metadata name="faviconFetch.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>259, 17</value>
   </metadata>
-  <data name="resize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wwAADsMBx2+oZAAAAEZJREFUOE9jGIGgoaHhPwhDuaQDkGYQgHLpBJCdTZYXkJ2NzKYtQHYqLjZeAFIE
-        cyouNvUBsvOIYWMAkATMecSwBwNgYAAAJ7tyu6z+qvEAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="hamburger.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wwAADsMBx2+oZAAAAEZJREFUOE/N0DEKADAIA0Cfmv9/okUIxNHUwR5kEZLB+AeA44Q1yaODNRkP7KsP
         6oQ1yaODNRkP7KsP6oQ1yaODNRkPvIm42ypgHht9YYgAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="resize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        wwAADsMBx2+oZAAAAEZJREFUOE9jGIGgoaHhPwhDuaQDkGYQgHLpBJCdTZYXkJ2NzKYtQHYqLjZeAFIE
+        cyouNvUBsvOIYWMAkATMecSwBwNgYAAAJ7tyu6z+qvEAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

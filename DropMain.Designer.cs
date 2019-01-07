@@ -28,10 +28,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,14 +48,15 @@
             this.missing = new System.Windows.Forms.Label();
             this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.resize = new System.Windows.Forms.PictureBox();
-            this.hamburger = new System.Windows.Forms.PictureBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.dbgSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.title = new System.Windows.Forms.ToolStripMenuItem();
+            this.hamburger = new System.Windows.Forms.PictureBox();
+            this.resize = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.resize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resize)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -75,18 +75,7 @@
             this.dbgSave,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 258);
-            // 
-            // title
-            // 
-            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.title.ForeColor = System.Drawing.Color.White;
-            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
-            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(204, 22);
-            this.title.Text = "DropThing";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 236);
             // 
             // openItem
             // 
@@ -269,37 +258,6 @@
             this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
             this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
-            // resize
-            // 
-            this.resize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.resize.BackColor = System.Drawing.Color.Lime;
-            this.resize.Cursor = System.Windows.Forms.Cursors.SizeNWSE;
-            this.resize.Image = ((System.Drawing.Image)(resources.GetObject("resize.Image")));
-            this.resize.InitialImage = null;
-            this.resize.Location = new System.Drawing.Point(363, 95);
-            this.resize.Name = "resize";
-            this.resize.Size = new System.Drawing.Size(16, 16);
-            this.resize.TabIndex = 6;
-            this.resize.TabStop = false;
-            this.toolTip1.SetToolTip(this.resize, "resize window");
-            this.resize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
-            this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
-            this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);
-            // 
-            // hamburger
-            // 
-            this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.hamburger.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.hamburger.ErrorImage = null;
-            this.hamburger.Image = ((System.Drawing.Image)(resources.GetObject("hamburger.Image")));
-            this.hamburger.Location = new System.Drawing.Point(362, 0);
-            this.hamburger.Name = "hamburger";
-            this.hamburger.Size = new System.Drawing.Size(16, 16);
-            this.hamburger.TabIndex = 7;
-            this.hamburger.TabStop = false;
-            this.toolTip1.SetToolTip(this.hamburger, "popup menu");
-            this.hamburger.Click += new System.EventHandler(this.hamburger_Click);
-            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -321,6 +279,48 @@
             this.dbgSave.ToolTipText = "save settings now.";
             this.dbgSave.Visible = false;
             this.dbgSave.Click += new System.EventHandler(this.dbgSave_Click);
+            // 
+            // title
+            // 
+            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.title.ForeColor = System.Drawing.Color.White;
+            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
+            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(204, 22);
+            this.title.Text = "DropThing";
+            // 
+            // hamburger
+            // 
+            this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.hamburger.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.hamburger.ErrorImage = null;
+            this.hamburger.Image = ((System.Drawing.Image)(resources.GetObject("hamburger.Image")));
+            this.hamburger.Location = new System.Drawing.Point(362, 0);
+            this.hamburger.Name = "hamburger";
+            this.hamburger.Size = new System.Drawing.Size(16, 16);
+            this.hamburger.TabIndex = 7;
+            this.hamburger.TabStop = false;
+            this.toolTip1.SetToolTip(this.hamburger, "popup menu");
+            this.hamburger.Click += new System.EventHandler(this.hamburger_Click);
+            // 
+            // resize
+            // 
+            this.resize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.resize.BackColor = System.Drawing.Color.Lime;
+            this.resize.Cursor = System.Windows.Forms.Cursors.SizeNWSE;
+            this.resize.Image = ((System.Drawing.Image)(resources.GetObject("resize.Image")));
+            this.resize.InitialImage = null;
+            this.resize.Location = new System.Drawing.Point(363, 95);
+            this.resize.Name = "resize";
+            this.resize.Size = new System.Drawing.Size(16, 16);
+            this.resize.TabIndex = 6;
+            this.resize.TabStop = false;
+            this.toolTip1.SetToolTip(this.resize, "resize window");
+            this.resize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
+            this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
+            this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);
             // 
             // DropMain
             // 
@@ -356,8 +356,8 @@
             this.Resize += new System.EventHandler(this.DropForm_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.resize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
