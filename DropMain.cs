@@ -1255,8 +1255,25 @@ namespace DropThing3
                 var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
-                using (var br = new SolidBrush(color))
-                    g.DrawString(item.GetCaption(), this.Font, br, rect, f);
+                if (m.Width <= rect.Width) {
+                    using (var br = new SolidBrush(color))
+                        g.DrawString(item.GetCaption(), this.Font, br, rect, f);
+                } else {
+                    RectangleF rect0 = rect;
+                    rect0.Width -= 20;
+
+                    RectangleF rect1 = rect;
+                    rect1.X = rect0.Right;
+                    rect1.Width = 20;
+
+                    g.SetClip(rect0);
+                    using (var br0 = new SolidBrush(color))
+                        g.DrawString(item.GetCaption(), this.Font, br0, rect, f);
+                    g.SetClip(rect1);
+                    using (var br1 = new LinearGradientBrush(rect1, color, color1, 30f))
+                        g.DrawString(item.GetCaption(), this.Font, br1, rect, f);
+                    g.ResetClip();
+                }
             }
 
             //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
