@@ -281,17 +281,30 @@ namespace DropThing3
             {
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="path"></param>
             public CellItem(string path)
             {
                 this.path = path;
                 //this.UpdateIcon();
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="c"></param>
+            /// <returns></returns>
             public bool HasAttr(char c)
             {
                 return attr != null && attr.IndexOf(c) >= 0;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="c"></param>
             public void AddAttr(char c)
             {
                 if (!HasAttr(c))
@@ -1310,6 +1323,7 @@ namespace DropThing3
                 item = NewCellItem(dlg.FilePath,
                     grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
             item.caption = dlg.ItemCaption;
+            item.path = dlg.FilePath;
             item.options = dlg.CommandOptions;
             item.dir = dlg.WorkingDirectory;
             Modified = true;
