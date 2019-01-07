@@ -485,10 +485,26 @@ namespace DropThing3
                     try {
                         // www.AAAA. ...co.jp
                         var u = new Uri(this.path);
-                        string[] hh = u.Host.Split('.');
-                        if (hh.Length > 1 && hh[0] == "www")
-                            return hh[1];
-                        return hh[0];
+                        string[] ll = u.LocalPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                        int l = ll.Length-1;
+                        if (l >= 0)
+                            return ll[l];
+                        
+                        //if (u.LocalPath != "/" && u.LocalPath != "/index.html") {
+                        //    string s = Path.GetFileNameWithoutExtension(u.LocalPath);
+                        //    return s;
+                        //}
+
+                        IPAddress addr = IPAddress.Any;
+                        if (IPAddress.TryParse(u.Host, out addr)) {
+                            return u.Host;  // 192.168.yyy.xxx
+                        } else {
+                            string[] hh = u.Host.Split('.');
+                            if (hh.Length > 1 && hh[0] == "www")
+                                return hh[1];
+                            return hh[0];
+                        }
+
                     } catch (Exception ex) {
                         Console.WriteLine(ex.Message);
                     }
