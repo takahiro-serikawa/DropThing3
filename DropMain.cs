@@ -98,6 +98,10 @@ namespace DropThing3
 
             cache_path = Path.Combine(appdata, "icon_cache");
             faviconFetch.RunWorkerAsync();
+
+#if DEBUG
+            dbgSave.Visible = true;
+#endif
         }
 
         private void DropForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -1362,6 +1366,13 @@ namespace DropThing3
             };
 
             dlg.Popup();
+        }
+
+        private void dbgSave_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+            Modified = false;
+            AppStatusText(Color.Black, "debug: save done.");
         }
 
         private void quit_Click(object sender, EventArgs e)
