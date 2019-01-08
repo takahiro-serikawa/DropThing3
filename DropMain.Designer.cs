@@ -28,9 +28,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DropMain));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.about = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,6 +41,7 @@
             this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settings = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.dbgSave = new System.Windows.Forms.ToolStripMenuItem();
             this.quit = new System.Windows.Forms.ToolStripMenuItem();
             this.status = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -48,11 +50,9 @@
             this.missing = new System.Windows.Forms.Label();
             this.faviconFetch = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.dbgSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.title = new System.Windows.Forms.ToolStripMenuItem();
             this.hamburger = new System.Windows.Forms.PictureBox();
             this.resize = new System.Windows.Forms.PictureBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
@@ -62,7 +62,7 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.title,
+            this.about,
             this.openItem,
             this.explorerItem,
             this.propertyItem,
@@ -75,7 +75,18 @@
             this.dbgSave,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 236);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 258);
+            // 
+            // about
+            // 
+            this.about.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.about.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.about.ForeColor = System.Drawing.Color.White;
+            this.about.Image = ((System.Drawing.Image)(resources.GetObject("about.Image")));
+            this.about.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.about.Name = "about";
+            this.about.Size = new System.Drawing.Size(204, 22);
+            this.about.Text = "DropThing";
             // 
             // openItem
             // 
@@ -108,6 +119,7 @@
             // 
             // eject
             // 
+            this.eject.Image = global::DropThing3.Properties.Resources.eject;
             this.eject.Name = "eject";
             this.eject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.J)));
             this.eject.Size = new System.Drawing.Size(204, 22);
@@ -133,7 +145,7 @@
             // 
             this.tabItem.Name = "tabItem";
             this.tabItem.Size = new System.Drawing.Size(204, 22);
-            this.tabItem.Text = "&Tab ...";
+            this.tabItem.Text = "&Tab options ...";
             this.tabItem.ToolTipText = "Open form of TAB settings.";
             this.tabItem.Click += new System.EventHandler(this.tabItem_Click);
             // 
@@ -149,6 +161,15 @@
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(201, 6);
+            // 
+            // dbgSave
+            // 
+            this.dbgSave.Name = "dbgSave";
+            this.dbgSave.Size = new System.Drawing.Size(204, 22);
+            this.dbgSave.Text = "dbg: save now";
+            this.dbgSave.ToolTipText = "save settings now.";
+            this.dbgSave.Visible = false;
+            this.dbgSave.Click += new System.EventHandler(this.dbgSave_Click);
             // 
             // quit
             // 
@@ -258,39 +279,6 @@
             this.faviconFetch.DoWork += new System.ComponentModel.DoWorkEventHandler(this.faviconFetch_DoWork);
             this.faviconFetch.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.faviconFetch_ProgressChanged);
             // 
-            // tabControl1
-            // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.tabControl1.Location = new System.Drawing.Point(2, -3);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(340, 25);
-            this.tabControl1.TabIndex = 0;
-            this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
-            this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
-            // 
-            // dbgSave
-            // 
-            this.dbgSave.Name = "dbgSave";
-            this.dbgSave.Size = new System.Drawing.Size(204, 22);
-            this.dbgSave.Text = "dbg: save now";
-            this.dbgSave.ToolTipText = "save settings now.";
-            this.dbgSave.Visible = false;
-            this.dbgSave.Click += new System.EventHandler(this.dbgSave_Click);
-            // 
-            // title
-            // 
-            this.title.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.title.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.title.ForeColor = System.Drawing.Color.White;
-            this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
-            this.title.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(204, 22);
-            this.title.Text = "DropThing";
-            // 
             // hamburger
             // 
             this.hamburger.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -321,6 +309,19 @@
             this.resize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);
             this.resize.MouseMove += new System.Windows.Forms.MouseEventHandler(this.resize_MouseMove);
             this.resize.MouseUp += new System.Windows.Forms.MouseEventHandler(this.resize_MouseUp);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.tabControl1.Location = new System.Drawing.Point(2, -3);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(340, 25);
+            this.tabControl1.TabIndex = 0;
+            this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
+            this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
             // 
             // DropMain
             // 
@@ -381,7 +382,7 @@
         private System.Windows.Forms.PictureBox resize;
         private System.Windows.Forms.ToolStripMenuItem tabItem;
         private System.Windows.Forms.Label missing;
-        private System.Windows.Forms.ToolStripMenuItem title;
+        private System.Windows.Forms.ToolStripMenuItem about;
         private System.ComponentModel.BackgroundWorker faviconFetch;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem eject;

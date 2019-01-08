@@ -73,16 +73,6 @@ namespace DropThing3.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap burger {
-            get {
-                object obj = ResourceManager.GetObject("burger", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
-        /// </summary>
         internal static System.Drawing.Bitmap eject {
             get {
                 object obj = ResourceManager.GetObject("eject", resourceCulture);
@@ -96,16 +86,6 @@ namespace DropThing3.Properties {
         internal static System.Drawing.Bitmap eject_dis {
             get {
                 object obj = ResourceManager.GetObject("eject_dis", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
-        /// </summary>
-        internal static System.Drawing.Bitmap resize {
-            get {
-                object obj = ResourceManager.GetObject("resize", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

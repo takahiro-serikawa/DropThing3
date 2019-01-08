@@ -56,12 +56,11 @@ namespace DropThing3
             var ver = asm.GetName().Version;
             AppStatusText(STM.NORMAL, "{0} version {1}.{2:D2}; {3}",
                app, ver.Major, ver.Minor, "application launcher");
-            title.Text = string.Format("{0} version {1}.{2:D2}", app, ver.Major, ver.Minor);
+            about.Text = string.Format("{0} ver{1}.{2:D2} (b{3})", app, ver.Major, ver.Minor, ver.Build);
 
             Directory.SetCurrentDirectory(@"C:\");
 
-            appdata = Environment.GetFolderPath(Environment.SpecialFolder
-               .LocalApplicationData) + "\\" + app;
+            appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + app;
             Directory.CreateDirectory(appdata);
             filename = Path.Combine(appdata, app+"."+DROPTHING_EXT);
 
@@ -106,6 +105,7 @@ namespace DropThing3
 
             WatchRemoval();
 #if DEBUG
+            makbak = true;
             dbgSave.Visible = true;
 #endif
         }
@@ -238,7 +238,7 @@ namespace DropThing3
         /// 
         /// </summary>
         public enum STM {
-            // basic color
+            // basic color code
             NORMAL = 0x000000,  // black
             ERROR = 0xFF0000,   // fuchsia
             DEBUG = 0x808080,   // gray
@@ -256,17 +256,15 @@ namespace DropThing3
         /// <param name="color"></param>
         /// <param name="message"></param>
         /// <param name="args"></param>
-        //public static void AppStatusText(Color color, string message, params object[] args)
         public static void AppStatusText(STM mode, string message, params object[] args)
         {
             if (main_form != null) {
                 //Color color = Color.FromArgb(mode & 0xFFFFFF);
-                if (mode.HasFlag(STM.RIGHT))
+                                if (mode.HasFlag(STM.RIGHT))
                     main_form.status.TextAlign = ContentAlignment.TopRight;
                 else
                     main_form.status.TextAlign = ContentAlignment.TopLeft;
 
-                //main_form.status.ForeColor = color;
                 main_form.status.Text = string.Format(message, args);
             }
         }
@@ -298,7 +296,6 @@ namespace DropThing3
         public class CellItem: object
         {
             public string caption = "";
-            //public string path;
 
             string _path;
 
@@ -328,7 +325,6 @@ namespace DropThing3
                             this.icon_file = null;
                     } else if (ext == ".url") { // InternetShortcut
                         //string url, icon_file;
-                        //ReadInternetShortCut(value, out url, out icon_file);
                         string[] lines = File.ReadAllLines(value);
                         foreach (string line in lines) {
                             if (line.StartsWith("URL="))
@@ -450,9 +446,9 @@ namespace DropThing3
                     if (this.icon == null) {
                         this.icon = GetIconAPI.Get(icon_file);
                     }
-
                 }
 
+                // save icon cache
                 if (this.icon != null && HasAttr('J') && !File.Exists(cachename)) {
                     using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
                         this.icon.Save(stream);
@@ -705,6 +701,8 @@ namespace DropThing3
                     }
                 } catch (Exception ex) {
                     Console.WriteLine(ex.Message);
+                    sett = new DropThingSettings();
+                    makbak = true;
                 }
 
                 //this.WindowState = dock.win_state;
@@ -737,6 +735,16 @@ namespace DropThing3
             //if (sett == null)
             //    sett = new DropThingSettings();
 
+            if (makbak)
+                try {
+                    string bak = Path.ChangeExtension(filename, DateTime.Now.ToString("yyyyMMdd-HHmmss"))
+                       + Path.GetExtension(filename);
+                    File.Delete(bak);
+                    File.Move(filename, bak);
+                } catch (Exception ex) {
+                    Console.WriteLine("make .bak: " + ex.Message);
+                }
+
             sett.win_state = this.WindowState;
             sett.left = this.Left;
             sett.top = this.Top;
@@ -748,6 +756,8 @@ namespace DropThing3
                 serializer.Serialize(sw, sett);
             }
         }
+
+        bool makbak = false;
 
         /// <summary>
         /// 
