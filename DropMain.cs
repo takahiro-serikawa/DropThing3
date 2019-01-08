@@ -30,14 +30,9 @@ using System.Text.RegularExpressions;
 // drop to folder cell
 // multi drop files
 // multiple dock
-
-// TODO: 拡張子登録
-// scan favicon in html
 // double click item
 
 // file://
-// drive info (removal)
-// resize info
 
 namespace DropThing3
 {
@@ -1181,7 +1176,7 @@ namespace DropThing3
                         t /= 1024;
                         u++;
                     }
-                    item.alt_info = string.Format(" \"{0}\" free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
+                    item.alt_info = string.Format(" \"{0}\", free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
                 }
                 s += item.alt_info;
             }
@@ -1214,11 +1209,12 @@ namespace DropThing3
                 if (eject.Enabled) {
                     var drive = CurrentItem.GetDriveInfo();
                     if (drive != null && drive.IsReady)
-                        eject.Text = "e&Ject " + drive.Name + ":" + drive.VolumeLabel;
+                        ;// eject.Text = "e&Ject " + drive.Name + ":" + drive.VolumeLabel;
                     else {
-                        eject.Text = "e&Ject " + drive.Name + ":";
+                    //    eject.Text = "e&Ject " + drive.Name + ":";
                         eject.Enabled = false;
                     }
+                    eject.Text = "e&Ject " + drive.Name + " " + CurrentItem.alt_info.Split(',')[0];
                 }
             }
         }
