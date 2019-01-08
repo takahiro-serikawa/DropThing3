@@ -189,7 +189,10 @@ namespace DropThing3
                     break;
                 }
 
-            Modified |= (grid.ColumnCount != cols) || (grid.RowCount != rows);
+            if (grid.ColumnCount != cols || grid.RowCount != rows) {
+                AppStatusText(STM.RESIZE, "{0} x {1}", cols, rows);
+                Modified |= true;
+            }
 
             CellWidth = sett.caption_visible ? 80 : M+32+M;
             CellHeight = sett.caption_visible ? M+32+17+M : M+32+M;
@@ -244,7 +247,7 @@ namespace DropThing3
             RIGHT = 0x01000000, //
 
             // complex
-            RESISE = NORMAL | RIGHT
+            RESIZE = NORMAL | RIGHT
         }
 
         /// <summary>
@@ -1149,23 +1152,30 @@ namespace DropThing3
             grid.Cursor =  (item != null) ? Cursors.Hand : Cursors.Default;
         }
 
+        int last_col = -1, last_row = -1;
+
         private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
-               e.ColumnIndex, e.RowIndex,
-               (CurrentItem != null) ? CurrentItem.GetCaption() + "; " + CurrentItem.path : "");
+            if (last_col != e.ColumnIndex || last_row != e.RowIndex) {
+                last_col = e.ColumnIndex;
+                last_row = e.RowIndex;
 
-            // update menu
-            deleteItem.Enabled = (CurrentItem != null);
-            openItem.Enabled = (CurrentItem != null);
-            eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
-            if (eject.Enabled) {
-                var drive = CurrentItem.GetDriveInfo();
-                if (drive != null && drive.IsReady)
-                    eject.Text = "e&Ject " + drive.Name + ":" + drive.VolumeLabel;
-                else {
-                    eject.Text = "e&Ject " + drive.Name + ":";
-                    eject.Enabled = false;
+                AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
+                   e.ColumnIndex, e.RowIndex,
+                   (CurrentItem != null) ? CurrentItem.GetCaption() + "; " + CurrentItem.path : "");
+
+                // update menu
+                deleteItem.Enabled = (CurrentItem != null);
+                openItem.Enabled = (CurrentItem != null);
+                eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
+                if (eject.Enabled) {
+                    var drive = CurrentItem.GetDriveInfo();
+                    if (drive != null && drive.IsReady)
+                        eject.Text = "e&Ject " + drive.Name + ":" + drive.VolumeLabel;
+                    else {
+                        eject.Text = "e&Ject " + drive.Name + ":";
+                        eject.Enabled = false;
+                    }
                 }
             }
         }
