@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 // TODO
 // change tab order
@@ -1578,21 +1579,28 @@ namespace DropThing3
                 Directory.CreateDirectory(cache_path);
                 string tempname = Path.Combine(cache_path, "downloading.ico");
 
-                for (; ; ) {
-                    if (faviconFetch.CancellationPending) {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    string path;
-                    if (fetch_req.TryDequeue(out path)) {
+                for (; !faviconFetch.CancellationPending; ) {
+                    //string path;
+                    if (fetch_req.TryDequeue(out string path)) {
                         try {
-                            //if (path.StartsWith("http://") || path.StartsWith("https://"))
-
                             string cachename = MakeCacheName(path);
                             if (!File.Exists(cachename)) {
+                                string favicon = "/favicon.ico";
+                                try {
+                                    string html = wc.DownloadString(path);
+                                    string regex = @"<link\srel=""shortcut icon""\shref=""(.*?)"">";
+                                    var m = Regex.Match(html, regex);
+                                    if (m != null && m.Groups.Count > 1) {
+                                        Console.WriteLine("{0}", m.Groups[1]);
+                                        favicon = m.Groups[1].ToString();
+                                    }
+                                } catch (Exception ex) {
+                                    Console.WriteLine("" + ex.Message);
+                                }
+
                                 var u = new Uri(path);
-                                string favicon = u.GetLeftPart(UriPartial.Authority) + "/favicon.ico";
+                                if (!favicon.StartsWith("http"))
+                                    favicon = u.GetLeftPart(UriPartial.Authority) + favicon;
                                 wc.DownloadFile(favicon, tempname);
 
                                 File.Move(tempname, cachename);
@@ -1605,6 +1613,7 @@ namespace DropThing3
                     } else
                         System.Threading.Thread.Sleep(100);
                 }
+                e.Cancel = true;
             } catch (Exception ex) {
                 Console.WriteLine("faviconFetch give up; "+ex.Message);
             }
