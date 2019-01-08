@@ -347,6 +347,8 @@ namespace DropThing3
             public string dir;
             public string hotkey;
             public string attr = "";
+            public string alt_info;
+
             public int row, col;
             public uint tab;
 
@@ -1140,15 +1142,47 @@ namespace DropThing3
             drag_item = null;
         }
 
-        //CellItem point_item = null;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        string info(CellItem item)
+        {
+            if (item == null)
+                return "none";
+
+            // append original path
+            string s = item.GetCaption();
+            if (s != item.path)
+                s += "; " + item.path;
+
+            // append removal media info
+            if (item.HasAttr('J')) {
+                var d = item.GetDriveInfo();
+                if (d != null && d.IsReady) {
+                    float f = d.TotalFreeSpace;
+                    float t = d.TotalSize;
+                    string[] units = { "B", "KB", "MB", "GB", "TB" };
+                    int u = 0;
+                    for (; f >= 1024 && u+1 < units.Length;) {
+                        f /= 1024f;
+                        t /= 1024;
+                        u++;
+                    }
+                    item.alt_info = string.Format(" \"{0}\" free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
+                }
+                s += item.alt_info;
+            }
+
+            return s;
+        }
 
         private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             // show mouse over cell information
             CellItem item = GetItemAt(e.ColumnIndex, e.RowIndex);
-            AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
-               e.ColumnIndex, e.RowIndex,
-               (item != null) ? item.GetCaption() + "; " + item.path : "");
+            AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info(item));
             grid.Cursor =  (item != null) ? Cursors.Hand : Cursors.Default;
         }
 
@@ -1160,9 +1194,7 @@ namespace DropThing3
                 last_col = e.ColumnIndex;
                 last_row = e.RowIndex;
 
-                AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
-                   e.ColumnIndex, e.RowIndex,
-                   (CurrentItem != null) ? CurrentItem.GetCaption() + "; " + CurrentItem.path : "");
+                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info(CurrentItem));
 
                 // update menu
                 deleteItem.Enabled = (CurrentItem != null);
