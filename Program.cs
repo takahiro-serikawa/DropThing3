@@ -25,7 +25,7 @@ namespace DropThing3
         private static void Application_ThreadException(object sender,
            System.Threading.ThreadExceptionEventArgs e)
         {
-            DropMain.AppStatusText(System.Drawing.Color.Fuchsia, e.Exception.Message);
+            DropMain.AppStatusText(DropMain.STM.ERROR, e.Exception.Message);
         }
     }
 }

@@ -29,11 +29,14 @@ using System.Runtime.InteropServices;
 // drop to folder cell
 // multi drop files
 // multiple dock
+
 // TODO: 拡張子登録
 // scan favicon in html
 // double click item
 
-// WM_DEVICECHANGE
+// file://
+// drive info (removal)
+// resize info
 
 namespace DropThing3
 {
@@ -51,7 +54,7 @@ namespace DropThing3
             string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
             var asm = System.Reflection.Assembly.GetExecutingAssembly();
             var ver = asm.GetName().Version;
-            AppStatusText(Color.Black, "{0} version {1}.{2:D2}; {3}",
+            AppStatusText(STM.NORMAL, "{0} version {1}.{2:D2}; {3}",
                app, ver.Major, ver.Minor, "application launcher");
             title.Text = string.Format("{0} version {1}.{2:D2}", app, ver.Major, ver.Minor);
 
@@ -231,12 +234,35 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public enum STM {
+            // basic color
+            NORMAL = 0x000000,  // black
+            ERROR = 0xFF0000,   // fuchsia
+            DEBUG = 0x808080,   // gray
+
+            // others, text align ...
+            RIGHT = 0x01000000, //
+
+            // complex
+            RESISE = NORMAL | RIGHT
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="color"></param>
         /// <param name="message"></param>
         /// <param name="args"></param>
-        public static void AppStatusText(Color color, string message, params object[] args)
+        //public static void AppStatusText(Color color, string message, params object[] args)
+        public static void AppStatusText(STM mode, string message, params object[] args)
         {
             if (main_form != null) {
+                //Color color = Color.FromArgb(mode & 0xFFFFFF);
+                if (mode.HasFlag(STM.RIGHT))
+                    main_form.status.TextAlign = ContentAlignment.TopRight;
+                else
+                    main_form.status.TextAlign = ContentAlignment.TopLeft;
+
                 //main_form.status.ForeColor = color;
                 main_form.status.Text = string.Format(message, args);
             }
@@ -763,7 +789,7 @@ namespace DropThing3
                 if (Modified && DateTime.Now > modified_time.AddSeconds(AUTO_SAVE_DELAY)) {
                     SaveSettings();
                     Modified = false;
-                    AppStatusText(Color.Black, "auto save done.");
+                    AppStatusText(STM.NORMAL, "auto save done.");
                 }
 
                 // hot corner
@@ -1087,7 +1113,7 @@ namespace DropThing3
                 var item = GetItemAt(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
                     if (item == drag_item)
-                        AppStatusText(Color.Gray, "cancel self drop");
+                        AppStatusText(STM.DEBUG, "cancel self drop");
                     else if (item.HasAttr('d')) {
                         // drop files to directory
                         // copy ...? not yet
@@ -1105,7 +1131,7 @@ namespace DropThing3
                         // TODO accept multiple files
                     }
                 }
-                AppStatusText(Color.Black, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
+                AppStatusText(STM.NORMAL, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
             }
 
             drag_item = null;
@@ -1117,7 +1143,7 @@ namespace DropThing3
         {
             // show mouse over cell information
             CellItem item = GetItemAt(e.ColumnIndex, e.RowIndex);
-            AppStatusText(Color.Black, "[{0},{1}] {2}",
+            AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
                (item != null) ? item.GetCaption() + "; " + item.path : "");
             grid.Cursor =  (item != null) ? Cursors.Hand : Cursors.Default;
@@ -1125,7 +1151,7 @@ namespace DropThing3
 
         private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            AppStatusText(Color.Black, "[{0},{1}] {2}",
+            AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
                e.ColumnIndex, e.RowIndex,
                (CurrentItem != null) ? CurrentItem.GetCaption() + "; " + CurrentItem.path : "");
 
@@ -1337,10 +1363,10 @@ namespace DropThing3
             Cursor.Current = Cursors.WaitCursor;
             if (CurrentItem == null) {
                 Process.Start("EXPLORER.EXE");
-                AppStatusText(Color.Black, "explorer");
+                AppStatusText(STM.NORMAL, "explorer");
             } else if (!CurrentItem.HasAttr('U')) {
                 Process.Start("EXPLORER.EXE", @"/select,""" + CurrentItem.path + @"""");
-                AppStatusText(Color.Black, "explorer {0}", CurrentItem.path);
+                AppStatusText(STM.NORMAL, "explorer {0}", CurrentItem.path);
             } else {
                 //
             }
@@ -1442,7 +1468,7 @@ namespace DropThing3
         {
             SaveSettings();
             Modified = false;
-            AppStatusText(Color.Black, "debug: save done.");
+            AppStatusText(STM.NORMAL, "debug: save done.");
         }
 
         private void quit_Click(object sender, EventArgs e)
