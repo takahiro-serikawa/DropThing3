@@ -1273,9 +1273,9 @@ namespace DropThing3
             if (e.Button == MouseButtons.Left) {
                 if (e.Clicks == 1) {
                     // cell click
-                    if (ModifierKeys.HasFlag(Keys.Control))
+                    if (ModifierKeys.HasFlag(Keys.Shift))
                         explorerItem_Click(null, null);
-                    else if (ModifierKeys.HasFlag(Keys.Shift))
+                    else if (ModifierKeys.HasFlag(Keys.Control))
                         propertyItem_Click(null, null);
                     else
                         openItem_Click(null, null);
@@ -1404,9 +1404,9 @@ namespace DropThing3
         private void grid_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) {
-                if (e.Control)
+                if (e.Shift)
                     explorerItem_Click(null, null);
-                else if (e.Shift)
+                else if (e.Control)
                     propertyItem_Click(null, null);
                 else
                     openItem_Click(null, null);
@@ -1530,6 +1530,11 @@ namespace DropThing3
         private void quit_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void about_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("YET");
         }
 
         private void eject_Click(object sender, EventArgs e)
