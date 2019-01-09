@@ -32,8 +32,6 @@ using System.Text.RegularExpressions;
 // multiple dock
 // double click item
 
-// file://
-
 namespace DropThing3
 {
     public partial class DropMain: Form
@@ -99,7 +97,8 @@ namespace DropThing3
             cache_path = Path.Combine(appdata, "icon_cache");
             faviconFetch.RunWorkerAsync();
 
-            WatchRemoval();
+            //atchRemoval();
+            ParaParaView.Ejector.StartWatch(RevalNotify);
 #if DEBUG
             makbak = true;
             dbgSave.Visible = true;
@@ -1180,7 +1179,7 @@ namespace DropThing3
                     int u = 0;
                     for (; f >= 1024 && u+1 < units.Length;) {
                         f /= 1024f;
-                        t /= 1024;
+                        t /= 1024f;
                         u++;
                     }
                     item.alt_info = string.Format(" \"{0}\", free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
@@ -1560,6 +1559,15 @@ namespace DropThing3
             GridSize(sett.col_count, sett.row_count);
         }
 
+        void RevalNotify(object sender, ParaParaView.Ejector.RemovalEventArgs e)
+        {
+            if (e.Status == ParaParaView.Ejector.RemovalStatus.INSERTED) {
+                AppStatusText(STM.DEBUG, "inserted {0}:", e.DriveLetter);
+            } else if (e.Status == ParaParaView.Ejector.RemovalStatus.EJECTED) {
+                AppStatusText(STM.DEBUG, "ejected {0}:", e.DriveLetter);
+            }
+        }
+
         // faviocn fetch in background
 
         static System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
@@ -1633,99 +1641,6 @@ namespace DropThing3
             Console.WriteLine("fetch {0} {1}", e.ProgressPercentage, e.UserState);
             if (e.ProgressPercentage == 0)
                 grid.Invalidate();
-        }
-
-        // watch removal
-        // cf. http://d.hatena.ne.jp/ohyajapan/20081123/p2
-
-        [DllImport("shell32.dll", SetLastError = true, EntryPoint = "#2", CharSet = CharSet.Auto)]
-        static extern IntPtr SHChangeNotifyRegister(IntPtr hWnd, SHCNF fSources, SHCNE fEvents, uint wMsg, int cEntries, ref SHChangeNotifyEntry pFsne);
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        struct SHChangeNotifyEntry
-        {
-            public IntPtr pIdl;
-            [MarshalAs(UnmanagedType.Bool)]
-            public Boolean Recursively;
-        }
-
-        void WatchRemoval()
-        {
-            var notifyEntry = new SHChangeNotifyEntry() { pIdl = IntPtr.Zero, Recursively = true };
-            var notifyId = SHChangeNotifyRegister(Handle,
-                                                  SHCNF.TYPE | SHCNF.IDLIST,
-                                                  SHCNE.MEDIAINSERTED | SHCNE.MEDIAREMOVED,
-                                                  (uint)WM.SHNOTIFY,
-                                                  1,
-                                                  ref notifyEntry);
-        }
-
-        void _disable()
-        {
-            //SHChangeNotifyUnregister(notifyId);
-        }
-
-        enum WM
-        {
-            DEVICECHANGE = 0x0219,
-            SHNOTIFY = 0x0401,
-        }
-
-        enum SHCNF
-        {
-            IDLIST = 0x0000,
-            PATHA = 0x0001,
-            PRINTERA = 0x0002,
-            DWORD = 0x0003,
-            PATHW = 0x0005,
-            PRINTERW = 0x0006,
-            TYPE = 0x00FF,
-            FLUSH = 0x1000,
-            FLUSHNOWAIT = 0x2000
-        }
-
-        enum SHCNE: uint
-        {
-            MEDIAINSERTED = 0x00000020,
-            MEDIAREMOVED = 0x00000040,
-            //...
-        }
-
-        enum DBT
-        {
-            DEVICEARRIVAL = 0x8000,
-            DEVICEQUERYREMOVE = 0x8001,
-            DEVICEQUERYREMOVEFAILED = 0x8002,
-            DEVICEREMOVEPENDING = 0x8003,
-            DEVICEREMOVECOMPLETE = 0x8004
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            switch ((WM)m.Msg) {
-            case WM.SHNOTIFY:
-                switch ((SHCNE)m.LParam) {
-                case SHCNE.MEDIAINSERTED:
-                    Console.WriteLine("メディアがセットされた");
-                    break;
-                case SHCNE.MEDIAREMOVED:
-                    Console.WriteLine("メディアが取り外された");
-                    break;
-                }
-                break;
-            case WM.DEVICECHANGE:
-                switch ((DBT)m.WParam) {
-                case DBT.DEVICEARRIVAL:
-                    Console.WriteLine("DEVICEARRIVAL");
-                    break;
-                case DBT.DEVICEREMOVECOMPLETE:
-                    Console.WriteLine("DEVICEREMOVECOMPLETE");
-                    break;
-                }
-                break;
-            }
-
-            base.WndProc(ref m);
         }
 
     }
