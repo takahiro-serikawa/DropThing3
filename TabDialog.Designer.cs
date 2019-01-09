@@ -46,6 +46,7 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.randomButton = new System.Windows.Forms.Button();
             this.titlebar = new System.Windows.Forms.CheckBox();
+            this.swap = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cancel
@@ -214,12 +215,23 @@
             this.titlebar.UseVisualStyleBackColor = true;
             this.titlebar.Visible = false;
             // 
+            // swap
+            // 
+            this.swap.Location = new System.Drawing.Point(181, 73);
+            this.swap.Name = "swap";
+            this.swap.Size = new System.Drawing.Size(75, 23);
+            this.swap.TabIndex = 29;
+            this.swap.Text = "swap";
+            this.swap.UseVisualStyleBackColor = true;
+            this.swap.Click += new System.EventHandler(this.swap_Click);
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 161);
+            this.Controls.Add(this.swap);
             this.Controls.Add(this.titlebar);
             this.Controls.Add(this.randomButton);
             this.Controls.Add(this.deleteButton);
@@ -269,5 +281,6 @@
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button randomButton;
         private System.Windows.Forms.CheckBox titlebar;
+        private System.Windows.Forms.Button swap;
     }
 }

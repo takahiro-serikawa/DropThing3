@@ -32,7 +32,11 @@ namespace DropThing3
         public Color Color0
         {
             get { return color0.BackColor; }
-            set { color0.BackColor = value; }
+            set {
+                color0.BackColor = value;
+                color0.Text = value.Name;
+                color0.ForeColor = DropMain.TextColor(value, 300);
+            }
         }
 
         /// <summary>
@@ -41,7 +45,11 @@ namespace DropThing3
         public Color Color1
         {
             get { return color1.BackColor; }
-            set { color1.BackColor = value; }
+            set {
+                color1.BackColor = value;
+                color1.Text = value.Name;
+                color1.ForeColor = DropMain.TextColor(value, 300);
+            }
         }
 
         /// <summary>
@@ -180,6 +188,12 @@ namespace DropThing3
             }
         }
 
+        private void swap_Click(object sender, EventArgs e)
+        {
+            Color temp = Color0;
+            Color0 = Color1;
+            Color1 = temp;
+        }
 
     }
 }

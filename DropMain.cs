@@ -1472,7 +1472,7 @@ namespace DropThing3
         Color color0, color1;
         Bitmap cell_bitmap;
 
-        Color TextColor(Color color, int threshold = 400)
+        public static Color TextColor(Color color, int threshold = 400)
         {
             var v = Math.Sqrt(color.R * color.R + color.G * color.G + color.B * color.B);
             return (v >= threshold) ? Color.Black : Color.White;
