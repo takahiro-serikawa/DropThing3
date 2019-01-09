@@ -1440,32 +1440,41 @@ namespace DropThing3
         private void propertyItem_Click(object sender, EventArgs e)
         {
             var dlg = new ItemDialog();
-            if (CurrentItem != null) {
-                dlg.ItemCaption = CurrentItem.caption;
-                dlg.FilePath = CurrentItem.path;
-                dlg.CommandOptions = CurrentItem.options;
-                dlg.WorkingDirectory = CurrentItem.dir;
-            }
 
-            if (dlg.Popup(ItemAcceptCallback)) {
+            dlg.OnOpen += (d) => {
+                if (CurrentItem != null) {
+                    dlg.ItemCaption = CurrentItem.caption;
+                    dlg.FilePath = CurrentItem.path;
+                    dlg.CommandOptions = CurrentItem.options;
+                    dlg.WorkingDirectory = CurrentItem.dir;
+                } else {
+                    dlg.ItemCaption = "";
+                    dlg.FilePath = "";
+                    dlg.CommandOptions = "";
+                    dlg.WorkingDirectory = "";
+                }
+                return true;
+            };
+
+            dlg.OnAccept += (d) => {
+                CellItem item;
+                if (CurrentItem != null)
+                    item = CurrentItem;
+                else
+                    item = NewCellItem(dlg.FilePath, grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
+                item.caption = dlg.ItemCaption;
+                item.path = dlg.FilePath;
+                item.options = dlg.CommandOptions;
+                item.dir = dlg.WorkingDirectory;
+                Modified = true;
+                grid.InvalidateCell(grid.CurrentCell);
+                return true;
+            };
+
+            dlg.Popup();
+            //ItemAcceptCallback)) {
                 // ...
-            }
-        }
-
-        bool ItemAcceptCallback(ItemDialog dlg)
-        {
-            CellItem item;
-            if (CurrentItem != null)
-                item = CurrentItem;
-            else
-                item = NewCellItem(dlg.FilePath,
-                    grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
-            item.caption = dlg.ItemCaption;
-            item.path = dlg.FilePath;
-            item.options = dlg.CommandOptions;
-            item.dir = dlg.WorkingDirectory;
-            Modified = true;
-            return true;
+            //}
         }
 
         // tab settings

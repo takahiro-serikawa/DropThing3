@@ -102,17 +102,17 @@ namespace DropThing3
         /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
-        public delegate bool DialogCallback(TabDialog dlg);
+        public delegate bool DialogEvent(TabDialog dlg);
 
         /// <summary>
         /// 
         /// </summary>
-        public event DialogCallback OnOpen;
+        public event DialogEvent OnOpen;
 
         /// <summary>
         /// 
         /// </summary>
-        public event DialogCallback OnAccept;
+        public event DialogEvent OnAccept;
 
         private void apply_Click(object sender, EventArgs e)
         {

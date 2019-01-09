@@ -60,13 +60,22 @@ namespace DropThing3
         /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
-        public delegate bool AcceptCallback(ItemDialog dlg);
+        public delegate bool DialogEvent(ItemDialog dlg);
 
-        AcceptCallback callback;
+        /// <summary>
+        /// 
+        /// </summary>
+        public event DialogEvent OnOpen;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event DialogEvent OnAccept;
 
         private void apply_Click(object sender, EventArgs e)
         {
-            this.callback(this);
+            if (OnAccept != null)
+                OnAccept(this);
         }
 
         /// <summary>
@@ -74,12 +83,17 @@ namespace DropThing3
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>
-        public bool Popup(AcceptCallback callback)
+        public bool Popup(DialogEvent callback = null)
         {
-            this.callback = callback;
+            if (callback != null)
+                this.OnAccept = callback;
 
-            bool ret = (this.ShowDialog() == DialogResult.OK) && (this.FilePath != "");
-            return ret && this.callback(this);
+            if (OnOpen != null)
+                OnOpen(this);
+
+            return this.ShowDialog() == DialogResult.OK
+                && this.FilePath != ""
+                && (OnAccept == null || OnAccept(this));
         }
 
         private void select_Click(object sender, EventArgs e)
