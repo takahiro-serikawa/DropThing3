@@ -1111,6 +1111,27 @@ namespace DropThing3
                 e.Effect = DragDropEffects.None;
         }
 
+        int hover_col, hover_row;
+
+        private void grid_DragOver(object sender, DragEventArgs e)
+        {
+            var p = grid.PointToClient(new Point(e.X, e.Y));
+            var h = grid.HitTest(p.X, p.Y);
+            if (e.Effect != DragDropEffects.None
+             && h.Type == DataGridViewHitTestType.Cell
+             && (hover_col != h.ColumnIndex || hover_row != h.RowIndex)) {
+                grid.InvalidateCell(hover_col, hover_row);
+                hover_col = h.ColumnIndex;
+                hover_row = h.RowIndex;
+                grid.InvalidateCell(hover_col, hover_row);
+            }
+        }
+
+        private void grid_DragLeave(object sender, EventArgs e)
+        {
+
+        }
+
         private void grid_DragDrop(object sender, DragEventArgs e)
         {
             string[] names;
@@ -1192,6 +1213,11 @@ namespace DropThing3
 
         private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
+            grid.InvalidateCell(hover_col, hover_row);
+            hover_col = e.ColumnIndex;
+            hover_row = e.RowIndex;
+            grid.InvalidateCell(hover_col, hover_row);
+
             // show mouse over cell information
             CellItem item = GetItemAt(e.ColumnIndex, e.RowIndex);
             AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info(item));
@@ -1307,6 +1333,10 @@ namespace DropThing3
                 FillFocusRect(g, e.CellBounds);
             }
 
+            if (hover_col == e.ColumnIndex && hover_row == e.RowIndex) {
+                FillFocusRect0(g, e.CellBounds);
+            }
+
             // draw item icon
             var item = GetItemAt(e.ColumnIndex, e.RowIndex);
             if (item != null) {
@@ -1382,7 +1412,7 @@ namespace DropThing3
 
         void FillFocusRect(Graphics g, Rectangle r)
         {
-            using (var br = new SolidBrush(Color.FromArgb(60, Color.White)))
+            using (var br = new SolidBrush(Color.FromArgb(30, Color.White)))
             using (var pen = new Pen(Color.FromArgb(90, Color.Black), 1)) {
                 g.FillRectangle(br, r.X+2, r.Y+2, r.Width-4, r.Height-4);
                 pen.DashStyle = DashStyle.Dot;
@@ -1390,6 +1420,13 @@ namespace DropThing3
                 g.DrawLine(pen, r.Left+2, r.Bottom-2, r.Right-3, r.Bottom-2);
                 g.DrawLine(pen, r.Left+1, r.Top+2, r.Left+1, r.Bottom-3);
                 g.DrawLine(pen, r.Right-2, r.Top+2, r.Right-2, r.Bottom-3);
+            }
+        }
+
+        void FillFocusRect0(Graphics g, Rectangle r)
+        {
+            using (var br = new SolidBrush(Color.FromArgb(30, Color.White))) { 
+                g.FillRectangle(br, r.X+3, r.Y+3, r.Width-6, r.Height-6);
             }
         }
 
@@ -1597,6 +1634,7 @@ namespace DropThing3
         static string cache_path;
         static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
 
+        
         static WebClient wc = new WebClient();
 
         private void faviconFetch_DoWork(object sender, DoWorkEventArgs e)
