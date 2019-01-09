@@ -391,6 +391,8 @@ namespace DropThing3
                 if (attr == null)
                     attr = "";
 
+                string path = this.path;
+
                 // get cache if exists
                 string cachename = MakeCacheName(path);
                 if (this.icon == null && File.Exists(cachename))
@@ -402,11 +404,16 @@ namespace DropThing3
                     }
 
                 //this.attr = "";
-                if (path.StartsWith("http://") || path.StartsWith("https://")) {
+                if (path.StartsWith(@"http://") || path.StartsWith(@"https://")) {
                     this.AddAttr('U');
                     if (this.icon == null && this.icon_file == null)
                         fetch_req.Enqueue(path);
                 } else {
+                    if (path.StartsWith(@"file:///"))
+                        path = path.Substring(8);
+                    if (path[0] != '\\')
+                        path = Path.GetFullPath(path);
+
                     if (Directory.Exists(path))
                         this.AddAttr('d');
                     else if (File.Exists(path)) {
@@ -429,7 +436,7 @@ namespace DropThing3
                 }
 
                 string icon_file = (this.icon_file == null && !this.HasAttr('U'))
-                   ? this.path : this.icon_file;
+                   ? path : this.icon_file;
                 if (icon_file != null) {
                     if (this.icon == null)
                         try {
@@ -1112,7 +1119,7 @@ namespace DropThing3
                 names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             else if (e.Data.GetDataPresent("UniformResourceLocator")) {
                 string url = e.Data.GetData(DataFormats.Text).ToString();
-                if (!url.StartsWith("http"))    // http or https
+                if (url.IndexOf(@"://") < 0)
                     url = "http://" + url;
                 names = new string[] { url };
             } else
