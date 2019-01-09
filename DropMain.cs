@@ -1163,7 +1163,7 @@ namespace DropThing3
         string info(CellItem item)
         {
             if (item == null)
-                return "none";
+                return ""; // "none"; or emepty
 
             // append original path
             string s = item.GetCaption();
@@ -1221,7 +1221,8 @@ namespace DropThing3
                     //    eject.Text = "e&Ject " + drive.Name + ":";
                         eject.Enabled = false;
                     }
-                    eject.Text = "e&Ject " + drive.Name + " " + CurrentItem.alt_info.Split(',')[0];
+                    eject.Text = "e&Ject " + drive.Name + " "
+                        + (CurrentItem.alt_info != null ? CurrentItem.alt_info.Split(',')[0] : "?") ;
                 }
             }
         }
