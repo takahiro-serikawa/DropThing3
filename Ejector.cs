@@ -13,6 +13,20 @@ namespace ParaParaView
     /// <summary>
     /// 
     /// </summary>
+    public enum RemovalStatus { NONE, EJECTED, INSERTED };
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RemovalEventArgs: EventArgs
+    {
+        public RemovalStatus Status;
+        public char DriveLetter;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     static class Ejector
     {
         [DllImport("kernel32", SetLastError = true)]
@@ -94,19 +108,7 @@ namespace ParaParaView
 
         // watch removal
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public enum RemovalStatus { NONE, EJECTED, INSERTED };
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public class RemovalEventArgs: EventArgs
-        {
-            public RemovalStatus Status;
-            public char DriveLetter;
-        }
+       
 
         /// <summary>
         /// 

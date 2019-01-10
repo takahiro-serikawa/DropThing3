@@ -18,8 +18,11 @@ using System.Xml.Serialization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO; // FileSystem.
+using ParaParaView;
 
 // 2019.1.10 ver 0.13 ref MicroSoft.VisualBasic.dll
+// drag over guide
+// texture
 
 // TODO
 // change tab order
@@ -32,6 +35,8 @@ using Microsoft.VisualBasic.FileIO; // FileSystem.
 // other icon size
 // multiple dock
 // double click item
+
+// quit menu ignored. tooltiphint
 
 namespace DropThing3
 {
@@ -55,7 +60,7 @@ namespace DropThing3
 
             Directory.SetCurrentDirectory(@"C:\");
 
-            appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + app;
+            appdata = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), app);
             Directory.CreateDirectory(appdata);
             filename = Path.Combine(appdata, app+"."+DROPTHING_EXT);
 
@@ -420,7 +425,10 @@ namespace DropThing3
                 } else {
                     if (path.StartsWith(@"file:///"))
                         path = path.Substring(8);
-                    if (path[0] != '\\')
+                    //if (path[0] != '\\')
+                    if (path.StartsWith(@"\\"))
+                        AddAttr('V');
+                    else
                         path = Path.GetFullPath(path);
 
                     if (Directory.Exists(path))
@@ -461,7 +469,8 @@ namespace DropThing3
                 }
 
                 // save icon cache
-                if (this.icon != null && HasAttr('J') && !File.Exists(cachename)) {
+                if ((HasAttr('J') || HasAttr('V'))
+                 && this.icon != null && !File.Exists(cachename)) {
                     using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
                         this.icon.Save(stream);
                 }
@@ -1610,16 +1619,16 @@ namespace DropThing3
             GridSize(sett.col_count, sett.row_count);
         }
 
-        void RemovalNotify(object sender, ParaParaView.Ejector.RemovalEventArgs e)
+        void RemovalNotify(object sender, RemovalEventArgs e)
         {
-            if (e.Status == ParaParaView.Ejector.RemovalStatus.INSERTED) {
+            if (e.Status == RemovalStatus.INSERTED) {
                 AppStatusText(STM.DEBUG, "inserted {0}:", e.DriveLetter);
                 sett.cell_list.ForEach((x) => {
                     if (x.HasAttr('J')
                      && x.path.StartsWith(e.DriveLetter+":"))
                         x.AddAttr('m');
                 });
-            } else if (e.Status == ParaParaView.Ejector.RemovalStatus.EJECTED) {
+            } else if (e.Status == RemovalStatus.EJECTED) {
                 AppStatusText(STM.DEBUG, "ejected {0}:", e.DriveLetter);
                 sett.cell_list.ForEach((x) => {
                     if (x.HasAttr('J')
