@@ -1303,14 +1303,10 @@ namespace DropThing3
             g.DrawImage(cell_bitmap, e.CellBounds.X, e.CellBounds.Y);
 
             // draw focus rectangle
-            if (e.State.HasFlag(DataGridViewElementStates.Selected)) {
-                //DrawDotRect(e.CellBounds);
+            if (e.State.HasFlag(DataGridViewElementStates.Selected))
                 DrawFocusCell(g, e.CellBounds);
-            }
-
-            if (hover_col == e.ColumnIndex && hover_row == e.RowIndex) {
+            if (hover_col == e.ColumnIndex && hover_row == e.RowIndex)
                 DrawHoverCell(g, e.CellBounds);
-            }
 
             // draw item icon
             var item = GetItemAt(e.ColumnIndex, e.RowIndex);
@@ -1320,7 +1316,7 @@ namespace DropThing3
 
                 if (item.icon != null) {
                     int ix = e.CellBounds.X + (e.CellBounds.Width - item.icon.Width)/2;
-                    g.DrawIcon(item.icon, ix/*e.CellBounds.X+2*/, e.CellBounds.Y+2);
+                    g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
@@ -1331,10 +1327,11 @@ namespace DropThing3
                     int x = r.X + r.Width/2;
                     int y = r.Y + r.Height/2;
 
-                    using (var brush0 = new SolidBrush(ColorUtl.TrimColor(color0, +20)))
-                        g.DrawString(alt, missing.Font, brush0, x, y, f);
-                    using (var brush1 = new SolidBrush(ColorUtl.TrimColor(color1, -20)))
-                        g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
+                    //using (var brush0 = new SolidBrush(ColorUtl.TrimColor(color0, +20)))
+                    //    g.DrawString(alt, missing.Font, brush0, x, y, f);
+                    //using (var brush1 = new SolidBrush(ColorUtl.TrimColor(color1, -20)))
+                    //    g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
+                    ControlPaint.DrawStringDisabled(g, alt, missing.Font, color0, e.CellBounds, f);
                 }
             }
 
