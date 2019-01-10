@@ -17,6 +17,9 @@ using System.Xml.Serialization;
 
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.FileIO; // FileSystem.
+
+// 2019.1.10 ver 0.13 ref MicroSoft.VisualBasic.dll
 
 // TODO
 // change tab order
@@ -96,7 +99,7 @@ namespace DropThing3
             faviconFetch.RunWorkerAsync();
 
             //atchRemoval();
-            ParaParaView.Ejector.StartWatch(RevalNotify);
+            ParaParaView.Ejector.StartWatch(RemovalNotify);
 #if DEBUG
             makbak = true;
             dbgSave.Visible = true;
@@ -369,13 +372,22 @@ namespace DropThing3
             }
 
             /// <summary>
-            /// 
+            ///  
             /// </summary>
             /// <param name="c"></param>
             public void AddAttr(char c)
             {
                 if (!HasAttr(c))
                     attr += c;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="c"></param>
+            public void RemoveAttr(char c)
+            {
+                this.attr = this.attr.Replace(c.ToString(), "");
             }
 
             List<string> executables = new List<string>() { ".exe", ".com" };
@@ -1136,7 +1148,15 @@ namespace DropThing3
                         ;// AppStatusText(STM.DEBUG, "cancel self drop");
                     else if (item.HasAttr('d')) {
                         // drop files to directory
-                        // copy ...? not yet
+                        foreach (string name in names)
+                            try {
+                                string dest = Path.Combine(item.path, Path.GetFileName(name));
+                                FileSystem.CopyFile(name, dest, UIOption.AllDialogs/*, UICancelOption.DoNothing*/);
+                            } catch (Exception ex) {
+                                AppStatusText(STM.ERROR, "" + ex.Message);
+                                break;
+                            }
+
                     } else {
                         // drop files to app icon; execute application
                         item.ProcessStart(names);
@@ -1147,14 +1167,33 @@ namespace DropThing3
                         MoveCell(drag_item, hit.ColumnIndex, hit.RowIndex);
                     } else {
                         // drop file to empty cell; register file to cell
-                        item = NewCellItem(names[0], hit.ColumnIndex, hit.RowIndex);
-                        // TODO accept multiple files
+                        int col = hit.ColumnIndex, row = hit.RowIndex;
+                        foreach (var name in names)
+                            if (FindEmptyCell(ref col, ref row))
+                                NewCellItem(name, col, row);
+                            else {
+                                AppStatusText(STM.ERROR, "give up too many files");
+                                break;
+                            }
                     }
                 }
                 AppStatusText(STM.NORMAL, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
             }
 
             drag_item = null;
+        }
+
+        bool FindEmptyCell(ref int col, ref int row)
+        {
+            for (; ; ) {
+                if (GetItemAt(col, row) == null)
+                    return true;
+                if (++col >= grid.ColumnCount) {
+                    if (++row >= grid.RowCount)
+                        return false;
+                    col = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -1328,7 +1367,10 @@ namespace DropThing3
 
                 if (item.icon != null) {
                     int ix = e.CellBounds.X + (e.CellBounds.Width - item.icon.Width)/2;
-                    g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
+                    if (!item.HasAttr('J') || item.HasAttr('m'))
+                        g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
+                    else
+                        ControlPaint.DrawImageDisabled(g, item.icon.ToBitmap(), ix, e.CellBounds.Y+2, color1);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
@@ -1568,13 +1610,25 @@ namespace DropThing3
             GridSize(sett.col_count, sett.row_count);
         }
 
-        void RevalNotify(object sender, ParaParaView.Ejector.RemovalEventArgs e)
+        void RemovalNotify(object sender, ParaParaView.Ejector.RemovalEventArgs e)
         {
             if (e.Status == ParaParaView.Ejector.RemovalStatus.INSERTED) {
                 AppStatusText(STM.DEBUG, "inserted {0}:", e.DriveLetter);
+                sett.cell_list.ForEach((x) => {
+                    if (x.HasAttr('J')
+                     && x.path.StartsWith(e.DriveLetter+":"))
+                        x.AddAttr('m');
+                });
             } else if (e.Status == ParaParaView.Ejector.RemovalStatus.EJECTED) {
                 AppStatusText(STM.DEBUG, "ejected {0}:", e.DriveLetter);
+                sett.cell_list.ForEach((x) => {
+                    if (x.HasAttr('J')
+                     && x.path.StartsWith(e.DriveLetter+":"))
+                        x.RemoveAttr('m');
+                });
             }
+
+            grid.Invalidate();
         }
 
         // faviocn fetch in background
@@ -1615,7 +1669,7 @@ namespace DropThing3
                                 string favicon = "/favicon.ico";
                                 try {
                                     string html = wc.DownloadString(path);
-                                    string regex = @"<link\srel=""shortcut icon""\shref=""(.*?)"">";
+                                    string regex = @"<link\srel=""shortcut icon""\shref=""(.*?)""";
                                     var m = Regex.Match(html, regex);
                                     if (m != null && m.Groups.Count > 1) {
                                         Console.WriteLine("{0}", m.Groups[1]);
