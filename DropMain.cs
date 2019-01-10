@@ -17,6 +17,7 @@ using System.Xml.Serialization;
 
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.FileIO; // VisualBasic.dll
 
 // TODO
 // change tab order
