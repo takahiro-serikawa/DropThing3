@@ -27,8 +27,6 @@ using System.Text.RegularExpressions;
 // cell drawing too slow
 // undo (delete item, ...)
 // other icon size
-// drop to folder cell
-// multi drop files
 // multiple dock
 // double click item
 
@@ -832,8 +830,8 @@ namespace DropThing3
             TabLayer tab = new TabLayer();
 
             // random color
-            tab.color0 = TabDialog.RandomColor();
-            tab.color1 = TabDialog.RandomColor();
+            tab.color0 = ColorUtl.RandomColor();
+            tab.color1 = ColorUtl.RandomColor();
             sett.tab_list.Add(tab);
             var tabpage = new TabPage(tab.title);
             tabpage.Tag = tab;
@@ -1108,8 +1106,12 @@ namespace DropThing3
             var hit = grid.HitTest(point.X, point.Y);
             if (e.Effect != DragDropEffects.None
              && hit.Type == DataGridViewHitTestType.Cell
-             && (hover_col != hit.ColumnIndex || hover_row != hit.RowIndex))
+             && (hover_col != hit.ColumnIndex || hover_row != hit.RowIndex)) {
                 hover_effect(hit.ColumnIndex, hit.RowIndex);
+
+                CellItem item = GetItemAt(hover_col, hover_row);
+                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", hover_col, hover_row, info_text(item));
+            }
         }
 
         private void grid_DragDrop(object sender, DragEventArgs e)
@@ -1167,18 +1169,22 @@ namespace DropThing3
 
             // append original path
             string s = item.GetCaption();
-            if (s != item.path)
+
+            if (item.HasAttr('d')) {
+                if (item.caption == null || item.caption == "")
+                    s = item.path;
+            } else if (s != item.path)
                 s += "; " + item.path;
 
             // append removal media info
-            if (item.HasAttr('J')) {
+            if (item.HasAttr('J') && item.HasAttr('d')) {
                 var d = item.GetDriveInfo();
                 if (d != null && d.IsReady) {
                     float f = d.TotalFreeSpace;
                     float t = d.TotalSize;
                     string[] units = { "B", "KB", "MB", "GB", "TB" };
                     int u = 0;
-                    for (; f >= 1024 && u+1 < units.Length;) {
+                    for (; f >= 1024f && u+1 < units.Length;) {
                         f /= 1024f;
                         t /= 1024f;
                         u++;
@@ -1706,6 +1712,24 @@ namespace DropThing3
                 b = 255;
 
             return Color.FromArgb(r, g, b);
+        }
+
+        static System.Random random = new System.Random();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static Color RandomColor()
+        {
+            var cc = typeof(Color).GetProperties(System.Reflection.BindingFlags.Public
+               | System.Reflection.BindingFlags.Static);
+            for (; ; ) {
+                int i = random.Next(cc.Length);
+                Color color = (Color)cc[i].GetValue(null, null);
+                if (color.Name != "Transparent")
+                    return color;
+            }
         }
 
     }
