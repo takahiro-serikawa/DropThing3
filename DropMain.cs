@@ -1323,9 +1323,9 @@ namespace DropThing3
                     f.Alignment = StringAlignment.Center;
                     f.LineAlignment = StringAlignment.Center;
 
-                    var r = e.CellBounds;
-                    int x = r.X + r.Width/2;
-                    int y = r.Y + r.Height/2;
+                    //var r = e.CellBounds;
+                    //int x = r.X + r.Width/2;
+                    //int y = r.Y + r.Height/2;
 
                     //using (var brush0 = new SolidBrush(ColorUtl.TrimColor(color0, +20)))
                     //    g.DrawString(alt, missing.Font, brush0, x, y, f);
