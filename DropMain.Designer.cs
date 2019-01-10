@@ -37,8 +37,8 @@
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eject = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dbgSave = new System.Windows.Forms.ToolStripMenuItem();
             this.quit = new System.Windows.Forms.ToolStripMenuItem();
             this.status = new System.Windows.Forms.Label();
@@ -71,7 +71,7 @@
             this.dbgSave,
             this.quit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 230);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 208);
             // 
             // about
             // 
@@ -131,14 +131,6 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(199, 6);
             // 
-            // tabItem
-            // 
-            this.tabItem.Name = "tabItem";
-            this.tabItem.Size = new System.Drawing.Size(202, 22);
-            this.tabItem.Text = "&Tab options ...";
-            this.tabItem.ToolTipText = "Open form of TAB settings.";
-            this.tabItem.Click += new System.EventHandler(this.tabItem_Click);
-            // 
             // eject
             // 
             this.eject.Image = global::DropThing3.Properties.Resources.eject;
@@ -148,6 +140,14 @@
             this.eject.Text = "e&Ject";
             this.eject.ToolTipText = "Try to eject removal media.";
             this.eject.Click += new System.EventHandler(this.eject_Click);
+            // 
+            // tabItem
+            // 
+            this.tabItem.Name = "tabItem";
+            this.tabItem.Size = new System.Drawing.Size(202, 22);
+            this.tabItem.Text = "&Tab options ...";
+            this.tabItem.ToolTipText = "Open form of TAB settings.";
+            this.tabItem.Click += new System.EventHandler(this.tabItem_Click);
             // 
             // dbgSave
             // 
@@ -246,9 +246,10 @@
             this.grid.DragDrop += new System.Windows.Forms.DragEventHandler(this.grid_DragDrop);
             this.grid.DragEnter += new System.Windows.Forms.DragEventHandler(this.grid_DragEnter);
             this.grid.DragOver += new System.Windows.Forms.DragEventHandler(this.grid_DragOver);
-            this.grid.DragLeave += new System.EventHandler(this.grid_DragLeave);
+            this.grid.DragLeave += new System.EventHandler(this.grid_MouseLeave);
             this.grid.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.grid_QueryContinueDrag);
             this.grid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.grid_KeyDown);
+            this.grid.MouseLeave += new System.EventHandler(this.grid_MouseLeave);
             // 
             // missing
             // 

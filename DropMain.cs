@@ -1086,25 +1086,30 @@ namespace DropThing3
                 e.Effect = DragDropEffects.None;
         }
 
-        int hover_col, hover_row;
+        int hover_col = -1, hover_row;
+
+        void hover_effect(int col, int row)
+        {
+            // refresh leaved from
+            if (hover_col >= 0)
+                grid.InvalidateCell(hover_col, hover_row);
+
+            hover_col = col;
+            hover_row = row;
+
+            // refresh enter to
+            if (hover_col >= 0)
+                grid.InvalidateCell(hover_col, hover_row);
+        }
 
         private void grid_DragOver(object sender, DragEventArgs e)
         {
-            var p = grid.PointToClient(new Point(e.X, e.Y));
-            var h = grid.HitTest(p.X, p.Y);
+            var point = grid.PointToClient(new Point(e.X, e.Y));
+            var hit = grid.HitTest(point.X, point.Y);
             if (e.Effect != DragDropEffects.None
-             && h.Type == DataGridViewHitTestType.Cell
-             && (hover_col != h.ColumnIndex || hover_row != h.RowIndex)) {
-                grid.InvalidateCell(hover_col, hover_row);
-                hover_col = h.ColumnIndex;
-                hover_row = h.RowIndex;
-                grid.InvalidateCell(hover_col, hover_row);
-            }
-        }
-
-        private void grid_DragLeave(object sender, EventArgs e)
-        {
-
+             && hit.Type == DataGridViewHitTestType.Cell
+             && (hover_col != hit.ColumnIndex || hover_row != hit.RowIndex))
+                hover_effect(hit.ColumnIndex, hit.RowIndex);
         }
 
         private void grid_DragDrop(object sender, DragEventArgs e)
@@ -1126,7 +1131,7 @@ namespace DropThing3
                 var item = GetItemAt(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
                     if (item == drag_item)
-                        AppStatusText(STM.DEBUG, "cancel self drop");
+                        ;// AppStatusText(STM.DEBUG, "cancel self drop");
                     else if (item.HasAttr('d')) {
                         // drop files to directory
                         // copy ...? not yet
@@ -1155,7 +1160,7 @@ namespace DropThing3
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        string info(CellItem item)
+        string info_text(CellItem item)
         {
             if (item == null)
                 return ""; // "none"; or emepty
@@ -1188,15 +1193,16 @@ namespace DropThing3
 
         private void grid_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
-            grid.InvalidateCell(hover_col, hover_row);
-            hover_col = e.ColumnIndex;
-            hover_row = e.RowIndex;
-            grid.InvalidateCell(hover_col, hover_row);
-
             // show mouse over cell information
             CellItem item = GetItemAt(e.ColumnIndex, e.RowIndex);
-            AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info(item));
+            AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info_text(item));
             grid.Cursor =  (item != null) ? Cursors.Hand : Cursors.Default;
+            hover_effect(e.ColumnIndex, e.RowIndex);
+        }
+
+        private void grid_MouseLeave(object sender, EventArgs e)
+        {
+            hover_effect(-1, -1);
         }
 
         int last_col = -1, last_row = -1;
@@ -1207,7 +1213,7 @@ namespace DropThing3
                 last_col = e.ColumnIndex;
                 last_row = e.RowIndex;
 
-                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info(CurrentItem));
+                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info_text(CurrentItem));
 
                 // update menu
                 deleteItem.Enabled = (CurrentItem != null);
