@@ -100,14 +100,14 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dlg"></param>
+        /// <param name="sender"></param>
         /// <returns></returns>
-        public delegate bool DialogEvent(TabDialog dlg);
+        public delegate bool DialogEvent(object sender);
 
         /// <summary>
         /// 
         /// </summary>
-        public event DialogEvent OnOpen;
+        public event EventHandler OnOpen;
 
         /// <summary>
         /// 
@@ -127,7 +127,7 @@ namespace DropThing3
         public bool Popup()
         {
             if (OnOpen != null)
-                OnOpen(this);
+                OnOpen(this, null);
 
             return this.ShowDialog() == DialogResult.OK
                && (OnAccept == null || OnAccept(this));

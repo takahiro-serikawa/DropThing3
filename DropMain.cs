@@ -1443,7 +1443,7 @@ namespace DropThing3
         {
             var dlg = new ItemDialog();
 
-            dlg.OnOpen += (d) => {
+            dlg.OnOpen += (_, __) => {
                 if (CurrentItem != null) {
                     dlg.ItemCaption = CurrentItem.caption;
                     dlg.FilePath = CurrentItem.path;
@@ -1455,10 +1455,9 @@ namespace DropThing3
                     dlg.CommandOptions = "";
                     dlg.WorkingDirectory = "";
                 }
-                return true;
             };
 
-            dlg.OnAccept += (d) => {
+            dlg.OnAccept += (_) => {
                 CellItem item;
                 if (CurrentItem != null)
                     item = CurrentItem;
@@ -1474,9 +1473,6 @@ namespace DropThing3
             };
 
             dlg.Popup();
-            //ItemAcceptCallback)) {
-                // ...
-            //}
         }
 
         // tab settings
@@ -1487,27 +1483,26 @@ namespace DropThing3
         {
             var dlg = new TabDialog();
 
-            dlg.OnOpen += (d) => {
-                d.TabTitle = CurrentTab.title;
-                d.Color0 = CurrentTab.color0;
-                d.Color1 = CurrentTab.color1;
-                d.DrawGradation = CurrentTab.draw_gradation;
-                d.ShowItemCaption = sett.caption_visible;
-                d.CellBorder = sett.cell_border;
-                d.TrasnparentMode = sett.transparent;
-                d.TitleBar = sett.titlebar;
-                return true;
+            dlg.OnOpen += (_, __) => {
+                dlg.TabTitle = CurrentTab.title;
+                dlg.Color0 = CurrentTab.color0;
+                dlg.Color1 = CurrentTab.color1;
+                dlg.DrawGradation = CurrentTab.draw_gradation;
+                dlg.ShowItemCaption = sett.caption_visible;
+                dlg.CellBorder = sett.cell_border;
+                dlg.TrasnparentMode = sett.transparent;
+                dlg.TitleBar = sett.titlebar;
             };
 
-            dlg.OnAccept += (d) => {
-                CurrentTab.title = d.TabTitle;
-                CurrentTab.color0 = d.Color0;
-                CurrentTab.color1 = d.Color1;
-                CurrentTab.draw_gradation = d.DrawGradation;
-                sett.caption_visible = d.ShowItemCaption;
-                sett.cell_border = d.CellBorder;
-                sett.transparent = d.TrasnparentMode;
-                sett.titlebar = d.TitleBar;
+            dlg.OnAccept += (_) => {
+                CurrentTab.title = dlg.TabTitle;
+                CurrentTab.color0 = dlg.Color0;
+                CurrentTab.color1 = dlg.Color1;
+                CurrentTab.draw_gradation = dlg.DrawGradation;
+                sett.caption_visible = dlg.ShowItemCaption;
+                sett.cell_border = dlg.CellBorder;
+                sett.transparent = dlg.TrasnparentMode;
+                sett.titlebar = dlg.TitleBar;
                 Modified = true;
 
                 tabControl1.Invalidate();
@@ -1518,7 +1513,7 @@ namespace DropThing3
 
             dlg.OnDelete += DeleteCurrentTab;
 
-            dlg.OnAddNew += (_sender, _e) => {
+            dlg.OnAddNew += (_, __) => {
                 AddNewTab();
             };
 

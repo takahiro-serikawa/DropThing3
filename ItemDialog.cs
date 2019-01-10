@@ -60,12 +60,12 @@ namespace DropThing3
         /// </summary>
         /// <param name="dlg"></param>
         /// <returns></returns>
-        public delegate bool DialogEvent(ItemDialog dlg);
+        public delegate bool DialogEvent(object sender);
 
         /// <summary>
         /// 
         /// </summary>
-        public event DialogEvent OnOpen;
+        public event EventHandler OnOpen;
 
         /// <summary>
         /// 
@@ -89,7 +89,7 @@ namespace DropThing3
                 this.OnAccept = callback;
 
             if (OnOpen != null)
-                OnOpen(this);
+                OnOpen(this, null);
 
             return this.ShowDialog() == DialogResult.OK
                 && this.FilePath != ""
