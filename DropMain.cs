@@ -196,7 +196,7 @@ namespace DropThing3
 
             cell_bitmap = CellBitmap();
             status.BackColor = color0;
-            status.ForeColor = TextColor(color0, 250);
+            status.ForeColor = ColorUtl.TextColor(color0);
 
             grid.BackgroundColor = CurrentTab.color1;
             grid.ColumnCount = Math.Max(cols, 1);
@@ -255,7 +255,7 @@ namespace DropThing3
         {
             if (main_form != null) {
                 //Color color = Color.FromArgb(mode & 0xFFFFFF);
-                                if (mode.HasFlag(STM.RIGHT))
+                if (mode.HasFlag(STM.RIGHT))
                     main_form.status.TextAlign = ContentAlignment.TopRight;
                 else
                     main_form.status.TextAlign = ContentAlignment.TopLeft;
@@ -900,7 +900,7 @@ namespace DropThing3
 
             using (var br = new SolidBrush(tab.color0))
                 e.Graphics.FillRectangle(br, e.Bounds);
-            using (var br = new SolidBrush(TextColor(tab.color0, 250)))
+            using (var br = new SolidBrush(ColorUtl.TextColor(tab.color0)))
                 e.Graphics.DrawString(tab.title, this.Font, br, e.Bounds.Left+2, e.Bounds.Top+3);
         }
 
@@ -971,37 +971,6 @@ namespace DropThing3
             //set { }
         }
 
-        // drawing
-        const int M = 3;
-        int Y0 { get { return grid.Top; } }
-        int CellWidth = M+32+M;
-        int CellHeight = M+32+M;
-
-        Color trim_color(Color color, int d)
-        {
-            int r = (int)color.R + d;
-            if (r < 0)
-                r = 0;
-            else if (r > 255)
-                r = 255;
-
-            int g = (int)color.G + d;
-            if (g < 0)
-                g = 0;
-            else if (g > 255)
-                g = 255;
-
-            int b = (int)color.B + d;
-            if (b < 0)
-                b = 0;
-            else if (b > 255)
-                b = 255;
-
-            return Color.FromArgb(r, g, b);
-        }
-
-        //TabLayer curr_tab;
-
         /// <summary>
         /// 
         /// </summary>
@@ -1024,6 +993,12 @@ namespace DropThing3
             }
         }
 
+        // drawing
+        const int M = 3;
+        int Y0 { get { return grid.Top; } }
+        int CellWidth = M+32+M;
+        int CellHeight = M+32+M;
+
         /// <summary>
         /// 
         /// </summary>
@@ -1044,8 +1019,8 @@ namespace DropThing3
 
             var bmp = new Bitmap(CellWidth, CellHeight);
             using (var g = Graphics.FromImage(bmp))
-            using (var light = new Pen(trim_color(color0, +20)))
-            using (var dark = new Pen(trim_color(color1, -20)))
+            using (var light = new Pen(ColorUtl.TrimColor(color0, +20)))
+            using (var dark = new Pen(ColorUtl.TrimColor(color1, -20)))
             using (Brush brush = new LinearGradientBrush(g.VisibleClipBounds,
                 color0, color1, LinearGradientMode.Vertical)) {
                 g.FillRectangle(brush, g.VisibleClipBounds);
@@ -1330,11 +1305,11 @@ namespace DropThing3
             // draw focus rectangle
             if (e.State.HasFlag(DataGridViewElementStates.Selected)) {
                 //DrawDotRect(e.CellBounds);
-                FillFocusRect(g, e.CellBounds);
+                DrawFocusCell(g, e.CellBounds);
             }
 
             if (hover_col == e.ColumnIndex && hover_row == e.RowIndex) {
-                FillFocusRect0(g, e.CellBounds);
+                DrawHoverCell(g, e.CellBounds);
             }
 
             // draw item icon
@@ -1356,9 +1331,9 @@ namespace DropThing3
                     int x = r.X + r.Width/2;
                     int y = r.Y + r.Height/2;
 
-                    using (var brush0 = new SolidBrush(trim_color(color0, +20)))
+                    using (var brush0 = new SolidBrush(ColorUtl.TrimColor(color0, +20)))
                         g.DrawString(alt, missing.Font, brush0, x, y, f);
-                    using (var brush1 = new SolidBrush(trim_color(color1, -20)))
+                    using (var brush1 = new SolidBrush(ColorUtl.TrimColor(color1, -20)))
                         g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
                 }
             }
@@ -1366,7 +1341,7 @@ namespace DropThing3
             // draw item caption
             if (item != null && sett.caption_visible) {
                 var m = g.MeasureString(item.GetCaption(), this.Font);
-                Color color = TextColor(color1, 250);
+                Color color = ColorUtl.TextColor(color1);
                 var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
                 var f = new StringFormat();
                 f.Alignment = StringAlignment.Center;
@@ -1400,19 +1375,9 @@ namespace DropThing3
             e.Handled = true;
         }
 
-        void DrawDotRect(Graphics g, Rectangle r)
+        void DrawFocusCell(Graphics g, Rectangle r)
         {
-            using (var pen = new Pen(TextColor(CurrentTab.color0, 255))) {
-                pen.DashStyle = DashStyle.Dot;
-                r.Inflate(-2, -2);
-                r.Offset(-1, -1);
-                g.DrawRectangle(pen, r);
-            }
-        }
-
-        void FillFocusRect(Graphics g, Rectangle r)
-        {
-            using (var br = new SolidBrush(Color.FromArgb(30, Color.White)))
+            using (var br = new SolidBrush(Color.FromArgb(15, ColorUtl.TextColor(color0))))
             using (var pen = new Pen(Color.FromArgb(90, Color.Black), 1)) {
                 g.FillRectangle(br, r.X+2, r.Y+2, r.Width-4, r.Height-4);
                 pen.DashStyle = DashStyle.Dot;
@@ -1423,9 +1388,9 @@ namespace DropThing3
             }
         }
 
-        void FillFocusRect0(Graphics g, Rectangle r)
+        void DrawHoverCell(Graphics g, Rectangle r)
         {
-            using (var br = new SolidBrush(Color.FromArgb(30, Color.White))) { 
+            using (var br = new SolidBrush(Color.FromArgb(25, ColorUtl.TextColor(color0)))) { 
                 g.FillRectangle(br, r.X+3, r.Y+3, r.Width-6, r.Height-6);
             }
         }
@@ -1517,12 +1482,6 @@ namespace DropThing3
         // tab settings
         Color color0, color1;
         Bitmap cell_bitmap;
-
-        public static Color TextColor(Color color, int threshold = 400)
-        {
-            var v = Math.Sqrt(color.R * color.R + color.G * color.G + color.B * color.B);
-            return (v >= threshold) ? Color.Black : Color.White;
-        }
 
         private void tabItem_Click(object sender, EventArgs e)
         {
@@ -1688,6 +1647,67 @@ namespace DropThing3
             Console.WriteLine("fetch {0} {1}", e.ProgressPercentage, e.UserState);
             if (e.ProgressPercentage == 0)
                 grid.Invalidate();
+        }
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static class ColorUtl
+    {
+        const int DEF_THRESHOLD = 150;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="back_color"></param>
+        /// <param name="threshold"></param>
+        /// <returns></returns>
+        public static Color TextColor(Color back_color, int threshold = DEF_THRESHOLD)
+        {
+            return IsDark(back_color, threshold) ? Color.White : Color.Black;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="threshold"></param>
+        /// <returns></returns>
+        public static bool IsDark(Color color, int threshold = DEF_THRESHOLD)
+        {
+            //return Math.Sqrt(color.R*color.R + color.G*color.G + color.B*color.B) < threshold;
+            return (int)(0.2126*color.R + 0.7152*color.G + 0.0722*color.B) < threshold;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static Color TrimColor(Color color, int d)
+        {
+            int r = (int)color.R + d;
+            if (r < 0)
+                r = 0;
+            else if (r > 255)
+                r = 255;
+
+            int g = (int)color.G + d;
+            if (g < 0)
+                g = 0;
+            else if (g > 255)
+                g = 255;
+
+            int b = (int)color.B + d;
+            if (b < 0)
+                b = 0;
+            else if (b > 255)
+                b = 255;
+
+            return Color.FromArgb(r, g, b);
         }
 
     }

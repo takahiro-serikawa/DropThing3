@@ -35,7 +35,7 @@ namespace DropThing3
             set {
                 color0.BackColor = value;
                 color0.Text = value.Name;
-                color0.ForeColor = DropMain.TextColor(value, 300);
+                color0.ForeColor = ColorUtl.TextColor(value);
             }
         }
 
@@ -48,7 +48,7 @@ namespace DropThing3
             set {
                 color1.BackColor = value;
                 color1.Text = value.Name;
-                color1.ForeColor = DropMain.TextColor(value, 300);
+                color1.ForeColor = ColorUtl.TextColor(value);
             }
         }
 
