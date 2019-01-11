@@ -1133,7 +1133,20 @@ namespace DropThing3
                 hover_effect(hit.ColumnIndex, hit.RowIndex);
 
                 CellItem item = GetItemAt(hover_col, hover_row);
-                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", hover_col, hover_row, info_text(item));
+                string s = "";
+                //s = info_text(item);
+                if (item == null)
+                    s = " will be placed here";
+                else if (item.HasAttr('x'))
+                    s = string.Format("open by {0}", item.GetCaption());
+                else if (item.HasAttr('J') && !item.HasAttr('m'))
+                    s = string.Format("{0} is NOT ready", item.GetCaption());
+                else if (item.HasAttr('d'))
+                    s = string.Format("copy to {0}", item.GetCaption());
+                else
+                    s = info_text(item);
+
+                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", hover_col, hover_row, s);
             }
         }
 
@@ -1167,7 +1180,7 @@ namespace DropThing3
                                 else
                                     FileSystem.CopyFile(name, dest, UIOption.AllDialogs);
                             } catch (Exception ex) {
-                                AppStatusText(STM.ERROR, "" + ex.Message);
+                                AppStatusText(STM.ERROR, "ERROR: " + ex.Message);
                                 break;
                             }
 
@@ -1186,12 +1199,12 @@ namespace DropThing3
                             if (FindEmptyCell(ref col, ref row))
                                 NewCellItem(name, col, row);
                             else {
-                                AppStatusText(STM.ERROR, "give up too many files");
+                                AppStatusText(STM.ERROR, "ERROR: give up too many files");
                                 break;
                             }
                     }
                 }
-                AppStatusText(STM.NORMAL, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
+                //AppStatusText(STM.NORMAL, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
             }
 
             drag_item = null;
@@ -1675,8 +1688,8 @@ namespace DropThing3
                 string tempname = Path.Combine(cache_path, "downloading.ico");
 
                 for (; !faviconFetch.CancellationPending; ) {
-                    //string path;
-                    if (fetch_req.TryDequeue(out string path)) {
+                    string path;
+                    if (fetch_req.TryDequeue(out path)) {
                         try {
                             string cachename = MakeCacheName(path);
                             if (!File.Exists(cachename)) {
