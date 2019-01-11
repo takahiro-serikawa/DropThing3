@@ -1162,7 +1162,10 @@ namespace DropThing3
                         foreach (string name in names)
                             try {
                                 string dest = Path.Combine(item.path, Path.GetFileName(name));
-                                FileSystem.CopyFile(name, dest, UIOption.AllDialogs/*, UICancelOption.DoNothing*/);
+                                if (Directory.Exists(name))
+                                    FileSystem.CopyDirectory(name, dest, UIOption.AllDialogs);
+                                else
+                                    FileSystem.CopyFile(name, dest, UIOption.AllDialogs);
                             } catch (Exception ex) {
                                 AppStatusText(STM.ERROR, "" + ex.Message);
                                 break;
