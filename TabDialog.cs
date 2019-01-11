@@ -170,23 +170,9 @@ namespace DropThing3
 
         private void random_Click(object sender, EventArgs e)
         {
-            Color0 = RandomColor();
-            Color1 = RandomColor();
-        }
-
-        static System.Random random = new System.Random();
-
-        public static Color RandomColor()
-        {
-            var cc = typeof(Color).GetProperties(System.Reflection.BindingFlags.Public
-               | System.Reflection.BindingFlags.Static);
-            for (; ; ) {
-                int i = random.Next(cc.Length);
-                Color color = (Color)cc[i].GetValue(null, null);
-                if (color.Name != "Transparent")
-                    return color;
-            }
-        }
+            Color0 = ColorUtl.RandomColor();
+            Color1 = ColorUtl.RandomColor();
+        } 
 
         private void swap_Click(object sender, EventArgs e)
         {
