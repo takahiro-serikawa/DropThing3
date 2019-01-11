@@ -448,6 +448,8 @@ namespace DropThing3
                         case DriveType.CDRom:
                         case DriveType.Network:
                             this.AddAttr('J');
+                            if (drive.IsReady)
+                                this.AddAttr('m');
                             break;
                         }
                 }
