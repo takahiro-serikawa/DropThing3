@@ -1180,7 +1180,6 @@ namespace DropThing3
 
                 CellItem item = GetItemAt(hover_col, hover_row);
                 string s = "";
-                //s = info_text(item);
                 if (item == null)
                     s = " will be placed here";
                 else if (item.HasAttr('x'))
@@ -1476,39 +1475,48 @@ namespace DropThing3
                     //    g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
                     ControlPaint.DrawStringDisabled(g, alt, missing.Font, color0, e.CellBounds, f);
                 }
-            }
 
-            // draw item caption
-            if (item != null && sett.caption_visible) {
-                var m = g.MeasureString(item.GetCaption(), this.Font);
-                Color color = ColorUtl.TextColor(color1);
-                var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
-                var f = new StringFormat();
-                f.Alignment = StringAlignment.Center;
-                if (m.Width <= rect.Width) {
-                    using (var br = new SolidBrush(color))
-                        g.DrawString(item.GetCaption(), this.Font, br, rect, f);
-                } else {
-                    RectangleF rect0 = rect;
-                    rect0.Width -= 20;
+                // draw item caption
+                if (sett.caption_visible) {
+                    var m = g.MeasureString(item.GetCaption(), this.Font);
+                    Color color = ColorUtl.TextColor(color1);
+                    var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
+                    var f = new StringFormat();
+                    f.Alignment = StringAlignment.Center;
+                    if (m.Width <= rect.Width) {
+                        using (var br = new SolidBrush(color))
+                            g.DrawString(item.GetCaption(), this.Font, br, rect, f);
+                    } else {
+                        RectangleF rect0 = rect;
+                        rect0.Width -= 20;
 
-                    RectangleF rect1 = rect;
-                    rect1.X = rect0.Right;
-                    rect1.Width = 20;
+                        RectangleF rect1 = rect;
+                        rect1.X = rect0.Right;
+                        rect1.Width = 20;
 
-                    g.SetClip(rect0);
-                    using (var br0 = new SolidBrush(color))
-                        g.DrawString(item.GetCaption(), this.Font, br0, rect, f);
-                    g.SetClip(rect1);
-                    using (var br1 = new LinearGradientBrush(rect1, color, color1, 30f))
-                        g.DrawString(item.GetCaption(), this.Font, br1, rect, f);
-                    g.ResetClip();
+                        g.SetClip(rect0);
+                        using (var br0 = new SolidBrush(color))
+                            g.DrawString(item.GetCaption(), this.Font, br0, rect, f);
+                        g.SetClip(rect1);
+                        using (var br1 = new LinearGradientBrush(rect1, color, color1, 30f))
+                            g.DrawString(item.GetCaption(), this.Font, br1, rect, f);
+                        g.ResetClip();
+                    }
                 }
-            }
 
-            if (false) {
-                var eject_icon = Properties.Resources.eject;
-                g.DrawImage(eject_icon, e.CellBounds.Left+16+2, e.CellBounds.Top+16+2);
+                if (item.HasAttr('m')) {
+                    int x, y;
+                    if (sett.caption_visible) {
+                        x = e.CellBounds.Right-16-2;
+                        y = e.CellBounds.Bottom-16-2;
+                    } else {
+                        x = e.CellBounds.Right-16;
+                        y = e.CellBounds.Bottom-16;
+                    }
+
+                    var eject_icon = Properties.Resources.eject;
+                    g.DrawImage(eject_icon, x, y);
+                }
             }
 
             //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
