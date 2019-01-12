@@ -801,26 +801,29 @@ namespace DropThing3
             //if (sett == null)
             //    sett = new DropThingSettings();
 
-            if (makbak)
-                try {
-                    string bak = Path.ChangeExtension(filename, DateTime.Now.ToString("yyyyMMdd-HHmmss"))
-                       + Path.GetExtension(filename);
-                    File.Delete(bak);
-                    File.Move(filename, bak);
-                } catch (Exception ex) {
-                    Console.WriteLine("make .bak: " + ex.Message);
-                }
-
             sett.win_state = this.WindowState;
             sett.left = this.Left;
             sett.top = this.Top;
             sett.col_count = grid.ColumnCount;
             sett.row_count = grid.RowCount;
 
-            var serializer = new XmlSerializer(typeof(DropThingSettings));
-            using (var sw = new StreamWriter(filename, false, Encoding.UTF8)) {
+            string tmpname = Path.ChangeExtension(filename, ".$$$");
+            using (var sw = new StreamWriter(tmpname, false, Encoding.UTF8)) {
+                var serializer = new XmlSerializer(typeof(DropThingSettings));
                 serializer.Serialize(sw, sett);
             }
+
+            if (makbak)
+                try {
+                    string bak = Path.ChangeExtension(filename, 
+                       DateTime.Now.ToString("yyyyMMdd-HHmmss"))
+                      + Path.GetExtension(filename);
+                    FileSystem.MoveFile(filename, bak, true);
+                } catch (Exception ex) {
+                    Console.WriteLine("make .bak: " + ex.Message);
+                }
+
+            FileSystem.MoveFile(tmpname, filename, true);
         }
 
         bool makbak = false;
@@ -868,8 +871,8 @@ namespace DropThing3
             try {
                 // auto save
                 if (Modified && DateTime.Now > modified_time.AddSeconds(AUTO_SAVE_DELAY)) {
+                    Modified = false;   // 
                     SaveSettings();
-                    Modified = false;
                     AppStatusText(STM.NORMAL, "auto save done.");
                 }
 
