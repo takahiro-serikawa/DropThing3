@@ -104,7 +104,7 @@ namespace DropThing3
             faviconFetch.RunWorkerAsync();
 
             //atchRemoval();
-            ParaParaView.Ejector.StartWatch(RemovalNotify);
+            Ejector.StartWatch(RemovalNotify);
 #if DEBUG
             makbak = true;
             dbgSave.Visible = true;
@@ -353,7 +353,8 @@ namespace DropThing3
             public uint tab;
 
             [XmlIgnore]
-            public Icon icon;
+            //public Icon icon;
+            public Bitmap icon;
 
             public CellItem()
             {
@@ -414,7 +415,8 @@ namespace DropThing3
                 string cachename = MakeCacheName(path);
                 if (this.icon == null && File.Exists(cachename))
                     try {
-                        this.icon = new Icon(cachename);
+                        //this.icon = new Icon(cachename, 32, 32);
+                        this.icon = (Bitmap)Image.FromFile(cachename);
                     } catch (Exception ex) {
                         this.icon = null;
                         Console.WriteLine("UpdateIcon(); "+ex.Message);
@@ -462,22 +464,27 @@ namespace DropThing3
                 if (icon_file != null) {
                     if (this.icon == null)
                         try {
-                            this.icon = Icon.ExtractAssociatedIcon(icon_file);
+                            //this.icon = Icon.ExtractAssociatedIcon(icon_file);
+                            this.icon = Icon.ExtractAssociatedIcon(icon_file).ToBitmap();
                         } catch (Exception ex) {
                             this.icon = null;
                             Console.WriteLine("UpdateIcon(); "+ex.Message);
                         }
 
                     if (this.icon == null) {
-                        this.icon = GetIconAPI.Get(icon_file);
+                        //this.icon = GetIconAPI.Get(icon_file);
+                        var icon = GetIconAPI.Get(icon_file);
+                        if (icon != null)
+                            this.icon = icon.ToBitmap();
                     }
                 }
 
                 // save icon cache
                 if ((HasAttr('J') || HasAttr('V'))
                  && this.icon != null && !File.Exists(cachename)) {
-                    using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
-                        this.icon.Save(stream);
+                    //using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
+                    //    this.icon.Save(stream);
+                    this.icon.Save(cachename);
                 }
             }
 
@@ -1354,8 +1361,6 @@ namespace DropThing3
 
         private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            //Console.WriteLine("grid_CellMouseDown({0})", estr(e));
-
             // select cell on right click too
             if (e.Button == MouseButtons.Right)
                 grid.CurrentCell = grid[e.ColumnIndex, e.RowIndex];
@@ -1393,7 +1398,6 @@ namespace DropThing3
 
         private void grid_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
-            //Console.WriteLine("grid_CellMouseUp({0})", estr(e));
             if (e.Button == MouseButtons.Left) {
                 if (e.Clicks == 1) {
                     // cell click
@@ -1416,17 +1420,6 @@ namespace DropThing3
         {
             if (e.Action == DragAction.Cancel)
                 drag_item = null;
-        }
-
-        void DrawTile(Graphics g, Image image, Rectangle bounds, TabLayer.ORIGIN origin)
-        {
-            Point o = (origin == TabLayer.ORIGIN.CELL) ? bounds.Location : new Point(0, 0);
-            if (origin == TabLayer.ORIGIN.SCREEN)
-                o = grid.PointToClient(o);
-
-            for (int y = o.Y; y < bounds.Bottom; y += image.Height)
-                for (int x = o.X; x < bounds.Right; x += image.Width)
-                    g.DrawImage(CurrentTab.image, x, y);
         }
 
         private void grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -1454,55 +1447,27 @@ namespace DropThing3
                     item.UpdateIcon();
 
                 if (item.icon != null) {
-                    int ix = e.CellBounds.X + (e.CellBounds.Width - item.icon.Width)/2;
+                    int w = item.icon.Width;
+                    if (w > 32)
+                        w = 32;
+                    int ix = e.CellBounds.X + (e.CellBounds.Width - w)/2;
                     if (!item.HasAttr('J') || item.HasAttr('m'))
-                        g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
+                        //g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
+                        g.DrawImage(item.icon, ix, e.CellBounds.Y+2, w, w);
                     else
-                        ControlPaint.DrawImageDisabled(g, item.icon.ToBitmap(), ix, e.CellBounds.Y+2, color1);
+                        //ControlPaint.DrawImageDisabled(g, item.icon.ToBitmap(), ix, e.CellBounds.Y+2, color1);
+                        ControlPaint.DrawImageDisabled(g, item.icon, ix, e.CellBounds.Y+2, color1);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
                     f.Alignment = StringAlignment.Center;
                     f.LineAlignment = StringAlignment.Center;
-
-                    //var r = e.CellBounds;
-                    //int x = r.X + r.Width/2;
-                    //int y = r.Y + r.Height/2;
-
-                    //using (var brush0 = new SolidBrush(ColorUtl.TrimColor(color0, +20)))
-                    //    g.DrawString(alt, missing.Font, brush0, x, y, f);
-                    //using (var brush1 = new SolidBrush(ColorUtl.TrimColor(color1, -20)))
-                    //    g.DrawString(alt, missing.Font, brush1, x-1, y-1, f);
                     ControlPaint.DrawStringDisabled(g, alt, missing.Font, color0, e.CellBounds, f);
                 }
 
                 // draw item caption
-                if (sett.caption_visible) {
-                    var m = g.MeasureString(item.GetCaption(), this.Font);
-                    Color color = ColorUtl.TextColor(color1);
-                    var rect = new RectangleF(e.CellBounds.Left, e.CellBounds.Top + M+32, e.CellBounds.Width, m.Height);
-                    var f = new StringFormat();
-                    f.Alignment = StringAlignment.Center;
-                    if (m.Width <= rect.Width) {
-                        using (var br = new SolidBrush(color))
-                            g.DrawString(item.GetCaption(), this.Font, br, rect, f);
-                    } else {
-                        RectangleF rect0 = rect;
-                        rect0.Width -= 20;
-
-                        RectangleF rect1 = rect;
-                        rect1.X = rect0.Right;
-                        rect1.Width = 20;
-
-                        g.SetClip(rect0);
-                        using (var br0 = new SolidBrush(color))
-                            g.DrawString(item.GetCaption(), this.Font, br0, rect, f);
-                        g.SetClip(rect1);
-                        using (var br1 = new LinearGradientBrush(rect1, color, color1, 30f))
-                            g.DrawString(item.GetCaption(), this.Font, br1, rect, f);
-                        g.ResetClip();
-                    }
-                }
+                if (sett.caption_visible) 
+                    DrawCaption(g, item.GetCaption(), e.CellBounds);
 
                 if (item.HasAttr('m')) {
                     int x, y;
@@ -1540,6 +1505,45 @@ namespace DropThing3
         {
             using (var br = new SolidBrush(Color.FromArgb(25, ColorUtl.TextColor(color0)))) { 
                 g.FillRectangle(br, r.X+3, r.Y+3, r.Width-6, r.Height-6);
+            }
+        }
+
+        void DrawTile(Graphics g, Image image, Rectangle bounds, TabLayer.ORIGIN origin)
+        {
+            Point o = (origin == TabLayer.ORIGIN.CELL) ? bounds.Location : new Point(0, 0);
+            if (origin == TabLayer.ORIGIN.SCREEN)
+                o = grid.PointToClient(o);
+
+            for (int y = o.Y; y < bounds.Bottom; y += image.Height)
+                for (int x = o.X; x < bounds.Right; x += image.Width)
+                    g.DrawImage(CurrentTab.image, x, y);
+        }
+
+        void DrawCaption(Graphics g, string caption, Rectangle bounds)
+        {
+            var m = g.MeasureString(caption, this.Font);
+            Color color = ColorUtl.TextColor(color1);
+            var rect = new RectangleF(bounds.Left, bounds.Top + M+32, bounds.Width, m.Height);
+            var f = new StringFormat();
+            f.Alignment = StringAlignment.Center;
+            if (m.Width <= rect.Width) {
+                using (var br = new SolidBrush(color))
+                    g.DrawString(caption, this.Font, br, rect, f);
+            } else {
+                RectangleF rect0 = rect;
+                rect0.Width -= 20;
+
+                RectangleF rect1 = rect;
+                rect1.X = rect0.Right;
+                rect1.Width = 20;
+
+                g.SetClip(rect0);
+                using (var br0 = new SolidBrush(color))
+                    g.DrawString(caption, this.Font, br0, rect, f);
+                g.SetClip(rect1);
+                using (var br1 = new LinearGradientBrush(rect1, color, color1, 30f))
+                    g.DrawString(caption, this.Font, br1, rect, f);
+                g.ResetClip();
             }
         }
 
@@ -1745,47 +1749,48 @@ namespace DropThing3
 
         static string MakeCacheName(string path)
         {
-            return Path.Combine(cache_path, MakeHash(path)+".ico");
+            //return Path.Combine(cache_path, MakeHash(path)+".ico");
+            return Path.Combine(cache_path, MakeHash(path)+".png");
         }
 
         static string cache_path;
-        static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
-
-        
+        static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();        
         static WebClient wc = new WebClient();
 
         private void faviconFetch_DoWork(object sender, DoWorkEventArgs e)
         {
             try {
                 Directory.CreateDirectory(cache_path);
-                string tempname = Path.Combine(cache_path, "downloading.ico");
+                //string tempname = Path.Combine(cache_path, "downloading.ico");
+                string tempname = Path.Combine(cache_path, "downloading.png");
 
-                for (; !faviconFetch.CancellationPending; ) {
+                for (; !faviconFetch.CancellationPending;) {
                     string path;
                     if (fetch_req.TryDequeue(out path)) {
+                        string cachename = MakeCacheName(path);
+                        if (File.Exists(cachename))
+                            continue;
+
                         try {
-                            string cachename = MakeCacheName(path);
-                            if (!File.Exists(cachename)) {
-                                string favicon = "/favicon.ico";
-                                try {
-                                    string html = wc.DownloadString(path);
-                                    string regex = @"<link\srel=""shortcut icon""\shref=""(.*?)""";
-                                    var m = Regex.Match(html, regex);
-                                    if (m != null && m.Groups.Count > 1) {
-                                        Console.WriteLine("{0}", m.Groups[1]);
-                                        favicon = m.Groups[1].ToString();
-                                    }
-                                } catch (Exception ex) {
-                                    Console.WriteLine("" + ex.Message);
+                            string favicon = "/favicon.ico";
+                            try {
+                                string html = wc.DownloadString(path);
+                                string regex = @"<link\srel=""shortcut icon""\shref=""(.*?)""";
+                                var m = Regex.Match(html, regex);
+                                if (m != null && m.Groups.Count > 1) {
+                                    Console.WriteLine("{0}", m.Groups[1]);
+                                    favicon = m.Groups[1].ToString();
                                 }
-
-                                var u = new Uri(path);
-                                if (!favicon.StartsWith("http"))
-                                    favicon = u.GetLeftPart(UriPartial.Authority) + favicon;
-                                wc.DownloadFile(favicon, tempname);
-
-                                File.Move(tempname, cachename);
+                            } catch (Exception ex) {
+                                Console.WriteLine("" + ex.Message);
                             }
+
+                            var u = new Uri(path);
+                            if (!favicon.StartsWith("http"))
+                                favicon = u.GetLeftPart(UriPartial.Authority) + favicon;
+                            wc.DownloadFile(favicon, tempname);
+
+                            File.Move(tempname, cachename);
 
                             faviconFetch.ReportProgress(fetch_req.Count);
                         } catch (Exception ex) {
