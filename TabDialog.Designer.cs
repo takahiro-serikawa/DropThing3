@@ -47,12 +47,16 @@
             this.randomButton = new System.Windows.Forms.Button();
             this.titlebar = new System.Windows.Forms.CheckBox();
             this.swap = new System.Windows.Forms.Button();
+            this.texture = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // cancel
             // 
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(281, 126);
+            this.cancel.Location = new System.Drawing.Point(281, 246);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 17;
@@ -62,7 +66,7 @@
             // ok
             // 
             this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(200, 126);
+            this.ok.Location = new System.Drawing.Point(200, 246);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(75, 23);
             this.ok.TabIndex = 16;
@@ -128,7 +132,7 @@
             // 
             // apply
             // 
-            this.apply.Location = new System.Drawing.Point(100, 126);
+            this.apply.Location = new System.Drawing.Point(100, 246);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 21;
@@ -225,12 +229,47 @@
             this.swap.UseVisualStyleBackColor = true;
             this.swap.Click += new System.EventHandler(this.swap_Click);
             // 
+            // texture
+            // 
+            this.texture.AllowDrop = true;
+            this.texture.Location = new System.Drawing.Point(100, 131);
+            this.texture.Name = "texture";
+            this.texture.Size = new System.Drawing.Size(326, 23);
+            this.texture.TabIndex = 30;
+            this.texture.DragDrop += new System.Windows.Forms.DragEventHandler(this.texture_DragDrop);
+            this.texture.DragEnter += new System.Windows.Forms.DragEventHandler(this.texture_DragEnter);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(53, 134);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 15);
+            this.label3.TabIndex = 31;
+            this.label3.Text = "texture";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(428, 130);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(24, 23);
+            this.button1.TabIndex = 32;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
-            this.ClientSize = new System.Drawing.Size(464, 161);
+            this.ClientSize = new System.Drawing.Size(464, 281);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.texture);
             this.Controls.Add(this.swap);
             this.Controls.Add(this.titlebar);
             this.Controls.Add(this.randomButton);
@@ -282,5 +321,9 @@
         private System.Windows.Forms.Button randomButton;
         private System.Windows.Forms.CheckBox titlebar;
         private System.Windows.Forms.Button swap;
+        private System.Windows.Forms.TextBox texture;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

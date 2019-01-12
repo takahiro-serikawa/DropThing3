@@ -21,7 +21,7 @@ using Microsoft.VisualBasic.FileIO; // FileSystem.
 using ParaParaView;
 
 // 2019.1.10 ver 0.13 ref MicroSoft.VisualBasic.dll
-// drag over guide
+
 // texture
 
 // TODO
@@ -200,7 +200,10 @@ namespace DropThing3
 
             MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
 
-            cell_bitmap = CellBitmap();
+            if (CurrentTab.image != null)
+                cell_bitmap = CurrentTab.image;
+            else
+                cell_bitmap = CellBitmap();
             status.BackColor = color0;
             status.ForeColor = ColorUtl.TextColor(color0);
 
@@ -645,7 +648,47 @@ namespace DropThing3
             {
                 return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(value);
             }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string texture
+            {
+                get { return _texture; }
+                set
+                {
+                    _texture = value;
+                    image = null;
+                    if (File.Exists(_texture)) {
+                        image = Image.FromFile(_texture);
+                    }
+                }
+            }
+
+            string _texture;
+            [XmlIgnore]
+            public Image image { get; private set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public STYLE style = STYLE.NORMAL;
+            public ORIGIN origin;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public enum STYLE
+            {
+                NORMAL = 0,
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public enum ORIGIN { UNKNOWN, SCREEN, TAB, CELL }
         }
+
 
         // app settings class (for serialization)
 
@@ -1373,12 +1416,28 @@ namespace DropThing3
                 drag_item = null;
         }
 
+        void DrawTile(Graphics g, Image image, Rectangle bounds, TabLayer.ORIGIN origin)
+        {
+            Point o = (origin == TabLayer.ORIGIN.CELL) ? bounds.Location : new Point(0, 0);
+            if (origin == TabLayer.ORIGIN.SCREEN)
+                o = grid.PointToClient(o);
+
+            for (int y = o.Y; y < bounds.Bottom; y += image.Height)
+                for (int x = o.X; x < bounds.Right; x += image.Width)
+                    g.DrawImage(CurrentTab.image, x, y);
+        }
+
         private void grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             var g = e.Graphics;
 
             // draw cell background
-            g.DrawImage(cell_bitmap, e.CellBounds.X, e.CellBounds.Y);
+            g.SetClip(e.CellBounds);
+            if (CurrentTab.image != null)
+                //DrawTile(g, CurrentTab.image, e.CellBounds, CurrentTab.origin);
+                DrawTile(g, CurrentTab.image, e.CellBounds, TabLayer.ORIGIN.SCREEN);
+            else
+                g.DrawImage(cell_bitmap, e.CellBounds.X, e.CellBounds.Y);
 
             // draw focus rectangle
             if (e.State.HasFlag(DataGridViewElementStates.Selected))
@@ -1555,7 +1614,8 @@ namespace DropThing3
 
         // tab settings
         Color color0, color1;
-        Bitmap cell_bitmap;
+        //Bitmap cell_bitmap;
+        Image cell_bitmap;
 
         private void tabItem_Click(object sender, EventArgs e)
         {
@@ -1566,6 +1626,7 @@ namespace DropThing3
                 dlg.Color0 = CurrentTab.color0;
                 dlg.Color1 = CurrentTab.color1;
                 dlg.DrawGradation = CurrentTab.draw_gradation;
+                dlg.TexturePath = CurrentTab.texture;
                 dlg.ShowItemCaption = sett.caption_visible;
                 dlg.CellBorder = sett.cell_border;
                 dlg.TrasnparentMode = sett.transparent;
@@ -1577,6 +1638,7 @@ namespace DropThing3
                 CurrentTab.color0 = dlg.Color0;
                 CurrentTab.color1 = dlg.Color1;
                 CurrentTab.draw_gradation = dlg.DrawGradation;
+                CurrentTab.texture = dlg.TexturePath;
                 sett.caption_visible = dlg.ShowItemCaption;
                 sett.cell_border = dlg.CellBorder;
                 sett.transparent = dlg.TrasnparentMode;

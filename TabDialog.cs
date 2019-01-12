@@ -100,6 +100,15 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
+        public string TexturePath
+        {
+            get { return texture.Text; }
+            set { texture.Text = value; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
         public delegate bool DialogEvent(object sender);
@@ -181,5 +190,18 @@ namespace DropThing3
             Color1 = temp;
         }
 
+        private void texture_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void texture_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            texture.Text = names[0];
+        }
     }
 }
