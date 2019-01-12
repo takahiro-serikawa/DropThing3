@@ -1451,12 +1451,15 @@ namespace DropThing3
                     if (w > 32)
                         w = 32;
                     int ix = e.CellBounds.X + (e.CellBounds.Width - w)/2;
+                    int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
+                    if (sett.caption_visible)
+                        iy -= 8;
                     if (!item.HasAttr('J') || item.HasAttr('m'))
                         //g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
-                        g.DrawImage(item.icon, ix, e.CellBounds.Y+2, w, w);
+                        g.DrawImage(item.icon, ix, iy, w, w);
                     else
                         //ControlPaint.DrawImageDisabled(g, item.icon.ToBitmap(), ix, e.CellBounds.Y+2, color1);
-                        ControlPaint.DrawImageDisabled(g, item.icon, ix, e.CellBounds.Y+2, color1);
+                        ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
