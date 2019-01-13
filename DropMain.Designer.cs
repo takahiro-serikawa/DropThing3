@@ -41,6 +41,7 @@
             this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dbgSave = new System.Windows.Forms.ToolStripMenuItem();
             this.quit = new System.Windows.Forms.ToolStripMenuItem();
+            this.dummy = new System.Windows.Forms.ToolStripMenuItem();
             this.status = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.addTab = new System.Windows.Forms.Button();
@@ -69,13 +70,14 @@
             this.eject,
             this.tabItem,
             this.dbgSave,
-            this.quit});
+            this.quit,
+            this.dummy});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 208);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 230);
             // 
             // about
             // 
-            this.about.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
+            this.about.BackColor = System.Drawing.Color.MediumBlue;
             this.about.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.about.ForeColor = System.Drawing.Color.White;
             this.about.Image = ((System.Drawing.Image)(resources.GetObject("about.Image")));
@@ -167,6 +169,13 @@
             this.quit.ToolTipText = "Quit DropThing3.";
             this.quit.Click += new System.EventHandler(this.quit_Click);
             // 
+            // dummy
+            // 
+            this.dummy.BackColor = System.Drawing.Color.MediumBlue;
+            this.dummy.Enabled = false;
+            this.dummy.Name = "dummy";
+            this.dummy.Size = new System.Drawing.Size(202, 22);
+            // 
             // status
             // 
             this.status.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -203,7 +212,7 @@
             this.addTab.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.toolTip1.SetToolTip(this.addTab, "Add new tab.");
             this.addTab.UseVisualStyleBackColor = false;
-            this.addTab.Click += new System.EventHandler(this.addTab_Click);
+            this.addTab.Click += new System.EventHandler(this.AddNewTab);
             // 
             // grid
             // 
@@ -217,7 +226,6 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grid.BackgroundColor = System.Drawing.Color.Green;
             this.grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.ColumnHeadersVisible = false;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
@@ -377,6 +385,7 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.PictureBox hamburger;
         private System.Windows.Forms.ToolStripMenuItem dbgSave;
+        private System.Windows.Forms.ToolStripMenuItem dummy;
     }
 }
 

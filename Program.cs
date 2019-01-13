@@ -17,15 +17,8 @@ namespace DropThing3
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.ThreadException += Application_ThreadException;
-
             Application.Run(new DropMain());
         }
 
-        private static void Application_ThreadException(object sender,
-           System.Threading.ThreadExceptionEventArgs e)
-        {
-            DropMain.AppStatusText(DropMain.STM.ERROR, e.Exception.Message);
-        }
     }
 }

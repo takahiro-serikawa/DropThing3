@@ -50,6 +50,7 @@ namespace DropThing3
         {
             InitializeComponent();
             main_form = this;
+            Application.ThreadException += Application_ThreadException;
 
             string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
             var asm = System.Reflection.Assembly.GetExecutingAssembly();
@@ -131,8 +132,9 @@ namespace DropThing3
             try {
                 faviconFetch.CancelAsync();
 
-                if (Modified)
-                    SaveSettings();
+
+                //if (Modified) // alt_infoを保尊するため常に　
+                SaveSettings();
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "FATAL",
                    MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -241,7 +243,8 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        public enum STM {
+        public enum STM
+        {
             // basic color code
             NORMAL = 0x000000,  // black
             ERROR = 0xFF0000,   // fuchsia
@@ -271,6 +274,12 @@ namespace DropThing3
 
                 main_form.status.Text = string.Format(message, args);
             }
+        }
+
+        static void Application_ThreadException(object sender,
+           System.Threading.ThreadExceptionEventArgs e)
+        {
+            DropMain.AppStatusText(STM.ERROR, e.Exception.Message);
         }
 
 
@@ -399,6 +408,22 @@ namespace DropThing3
                 this.attr = this.attr.Replace(c.ToString(), "");
             }
 
+            public void ToggleAttr(char c, bool value)
+            {
+                if (value)
+                    AddAttr(c);
+                else
+                    RemoveAttr(c);
+            }
+
+            public void ToggleAttr(char c)
+            {
+                if (HasAttr(c))
+                    RemoveAttr(c);
+                else
+                    AddAttr(c);
+            }
+
             List<string> executables = new List<string>() { ".exe", ".com" };
 
             /// <summary>
@@ -436,6 +461,8 @@ namespace DropThing3
                     else
                         path = Path.GetFullPath(path);
 
+                    GetDriveInfo();
+
                     if (Directory.Exists(path))
                         this.AddAttr('d');
                     else if (File.Exists(path)) {
@@ -444,19 +471,6 @@ namespace DropThing3
                         if (executables.IndexOf(ext) >= 0)
                             this.AddAttr('x');
                     }
-
-                    // removal?
-                    var drive = GetDriveInfo();
-                    if (drive != null)
-                        switch (drive.DriveType) {
-                        case DriveType.Removable:
-                        case DriveType.CDRom:
-                        case DriveType.Network:
-                            this.AddAttr('J');
-                            if (drive.IsReady)
-                                this.AddAttr('m');
-                            break;
-                        }
                 }
 
                 string icon_file = (this.icon_file == null && !this.HasAttr('U'))
@@ -492,8 +506,41 @@ namespace DropThing3
             {
                 try {
                     string fullpath = Path.GetFullPath(this.path);
-                    if (fullpath[1] == ':')
-                        return new DriveInfo(fullpath.Substring(0, 1));
+                    if (fullpath[1] == ':') {
+                        var d = new DriveInfo(fullpath.Substring(0, 1));
+
+                        switch (d.DriveType) {
+                        case DriveType.CDRom:
+                        case DriveType.Network:
+                        case DriveType.Removable:
+                            AddAttr('J');
+                            break;
+                        case DriveType.Fixed:
+                            RemoveAttr('J');
+                            break;
+                        }
+
+                        if (HasAttr('J'))
+                            if (d.IsReady) {
+                                this.AddAttr('m');
+                                this.RemoveAttr('M');
+
+                                float f = d.TotalFreeSpace;
+                                float t = d.TotalSize;
+                                string[] units = { "B", "KB", "MB", "GB", "TB" };
+                                int u = 0;
+                                for (; f >= 1024f && u+1 < units.Length;) {
+                                    f /= 1024f;
+                                    t /= 1024f;
+                                    u++;
+                                }
+                                this.alt_info = string.Format(" \"{0}\", free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
+                            } else {
+                                this.RemoveAttr('m');
+                                this.AddAttr('M');
+                            }
+                        return d;
+                    }
                 } catch (Exception ex) {
                     Console.WriteLine(ex.Message);
                 }
@@ -552,7 +599,7 @@ namespace DropThing3
                         int l = ll.Length-1;
                         if (l >= 0)
                             return ll[l];
-                        
+
                         //if (u.LocalPath != "/" && u.LocalPath != "/index.html") {
                         //    string s = Path.GetFileNameWithoutExtension(u.LocalPath);
                         //    return s;
@@ -737,6 +784,8 @@ namespace DropThing3
                 col_count = 10;
                 row_count = 2;
             }
+
+            //Dictionary<string, string> alt_strings = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -786,12 +835,9 @@ namespace DropThing3
             } else
                 sett = new DropThingSettings();
 
-            if (sett.tab_list.Count > 0)
-                ;//CurrentTab = sett.tab_list[sett.current];
-            else
-                CurrentTab = AddNewTab(); // at least 1 tab
+            if (sett.tab_list.Count < 1)
+                AddNewTab(null, null); // at least 1 tab
 
-            // tabControl1.TabCount = sett.tab_list;
             RestoreTabs();
 
             GridSize(sett.col_count, sett.row_count);
@@ -822,7 +868,7 @@ namespace DropThing3
 
             if (makbak)
                 try {
-                    string bak = Path.ChangeExtension(filename, 
+                    string bak = Path.ChangeExtension(filename,
                        DateTime.Now.ToString("yyyyMMdd-HHmmss"))
                       + Path.GetExtension(filename);
                     FileSystem.MoveFile(filename, bak, true);
@@ -901,7 +947,7 @@ namespace DropThing3
         /// 
         /// </summary>
         /// <returns></returns>
-        TabLayer AddNewTab()
+        void AddNewTab(object sender, EventArgs args)
         {
             TabLayer tab = new TabLayer();
 
@@ -913,8 +959,8 @@ namespace DropThing3
             tabpage.Tag = tab;
             tabControl1.TabPages.Add(tabpage);
             //tabControl1.
-            Modified = true;
-            return tab;
+
+            CurrentTab = tab;
         }
 
         void DeleteCurrentTab(object sender, EventArgs args)
@@ -924,7 +970,6 @@ namespace DropThing3
 
                 sett.cell_list.RemoveAll(cell => cell.tab == CurrentTab.id);
                 sett.tab_list.Remove(CurrentTab);
-                Modified = true;
 
                 tabControl1.TabPages.RemoveAt(index);
 
@@ -932,16 +977,7 @@ namespace DropThing3
                     index--;
                 CurrentTab = sett.tab_list[index];
 
-                grid.Invalidate();
-            }
-        }
-
-        private void tabDoubleTitle_Click(object sender, EventArgs e)
-        {
-            var tag = (sender as Button).Tag;
-            if (tag != null) {
-                //CurrentTab = tag as TabLayer;
-                tabItem_Click(null, null);
+                //grid.Invalidate();
             }
         }
 
@@ -993,11 +1029,6 @@ namespace DropThing3
             return null;
         }
 
-        CellItem GetItemAt(DataGridViewCell cell)
-        {
-            return GetItemAt(cell.ColumnIndex, cell.RowIndex);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -1039,8 +1070,9 @@ namespace DropThing3
         {
             get
             {
-                //return curr_item; 
-                return GetItemAt(grid.CurrentCell);
+                int col = grid.CurrentCell.ColumnIndex,
+                    row = grid.CurrentCell.RowIndex;
+                return GetItemAt(col, row);
             }
             //set { }
         }
@@ -1191,7 +1223,7 @@ namespace DropThing3
                     s = " will be placed here";
                 else if (item.HasAttr('x'))
                     s = string.Format("open by {0}", item.GetCaption());
-                else if (item.HasAttr('J') && !item.HasAttr('m'))
+                else if (/*item.HasAttr('J') && */item.HasAttr('M'))
                     s = string.Format("{0} is NOT ready", item.GetCaption());
                 else if (item.HasAttr('d'))
                     s = string.Format("copy to {0}", item.GetCaption());
@@ -1296,19 +1328,7 @@ namespace DropThing3
 
             // append removal media info
             if (item.HasAttr('J') && item.HasAttr('d')) {
-                var d = item.GetDriveInfo();
-                if (d != null && d.IsReady) {
-                    float f = d.TotalFreeSpace;
-                    float t = d.TotalSize;
-                    string[] units = { "B", "KB", "MB", "GB", "TB" };
-                    int u = 0;
-                    for (; f >= 1024f && u+1 < units.Length;) {
-                        f /= 1024f;
-                        t /= 1024f;
-                        u++;
-                    }
-                    item.alt_info = string.Format(" \"{0}\", free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
-                }
+                item.GetDriveInfo();
                 s += item.alt_info;
             }
 
@@ -1345,19 +1365,13 @@ namespace DropThing3
                 eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
                 if (eject.Enabled) {
                     var drive = CurrentItem.GetDriveInfo();
-                    if (drive != null && drive.IsReady)
-                        ;// eject.Text = "e&Ject " + drive.Name + ":" + drive.VolumeLabel;
-                    else {
-                    //    eject.Text = "e&Ject " + drive.Name + ":";
+                    if (drive.IsReady)
+                        eject.Text = "e&Ject " + drive.Name + " " + drive.VolumeLabel;
+                    else
                         eject.Enabled = false;
-                    }
-                    eject.Text = "e&Ject " + drive.Name + " "
-                        + (CurrentItem.alt_info != null ? CurrentItem.alt_info.Split(',')[0] : "?") ;
                 }
             }
         }
-
-        //bool drag_flag = false;
 
         private void grid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -1453,12 +1467,10 @@ namespace DropThing3
                     int ix = e.CellBounds.X + (e.CellBounds.Width - w)/2;
                     int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
                     if (sett.caption_visible)
-                        iy -= 8;
-                    if (!item.HasAttr('J') || item.HasAttr('m'))
-                        //g.DrawIcon(item.icon, ix, e.CellBounds.Y+2);
+                        iy -= 6;
+                    if (/*!item.HasAttr('J') || */!item.HasAttr('M'))
                         g.DrawImage(item.icon, ix, iy, w, w);
                     else
-                        //ControlPaint.DrawImageDisabled(g, item.icon.ToBitmap(), ix, e.CellBounds.Y+2, color1);
                         ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
@@ -1469,10 +1481,10 @@ namespace DropThing3
                 }
 
                 // draw item caption
-                if (sett.caption_visible) 
+                if (sett.caption_visible)
                     DrawCaption(g, item.GetCaption(), e.CellBounds);
 
-                if (item.HasAttr('m')) {
+                if (item.HasAttr('J')) {
                     int x, y;
                     if (sett.caption_visible) {
                         x = e.CellBounds.Right-16-2;
@@ -1482,12 +1494,12 @@ namespace DropThing3
                         y = e.CellBounds.Bottom-16;
                     }
 
-                    var eject_icon = Properties.Resources.eject;
+                    var eject_icon = item.HasAttr('M') ? Properties.Resources.eject_dis : Properties.Resources.eject;
                     g.DrawImage(eject_icon, x, y);
                 }
             }
 
-            //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
+            e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
             e.Handled = true;
         }
 
@@ -1506,7 +1518,7 @@ namespace DropThing3
 
         void DrawHoverCell(Graphics g, Rectangle r)
         {
-            using (var br = new SolidBrush(Color.FromArgb(25, ColorUtl.TextColor(color0)))) { 
+            using (var br = new SolidBrush(Color.FromArgb(25, ColorUtl.TextColor(color0)))) {
                 g.FillRectangle(br, r.X+3, r.Y+3, r.Width-6, r.Height-6);
             }
         }
@@ -1526,7 +1538,7 @@ namespace DropThing3
         {
             var m = g.MeasureString(caption, this.Font);
             Color color = ColorUtl.TextColor(color1);
-            var rect = new RectangleF(bounds.Left, bounds.Top + M+32, bounds.Width, m.Height);
+            var rect = new RectangleF(bounds.Left, bounds.Top + 32 +6, bounds.Width, m.Height);
             var f = new StringFormat();
             f.Alignment = StringAlignment.Center;
             if (m.Width <= rect.Width) {
@@ -1598,7 +1610,8 @@ namespace DropThing3
         {
             var dlg = new ItemDialog();
 
-            dlg.OnOpen += (_, __) => {
+            dlg.OnOpen += (_, __) =>
+            {
                 if (CurrentItem != null) {
                     dlg.ItemCaption = CurrentItem.caption;
                     dlg.FilePath = CurrentItem.path;
@@ -1612,7 +1625,8 @@ namespace DropThing3
                 }
             };
 
-            dlg.OnAccept += (_) => {
+            dlg.OnAccept += (_) =>
+            {
                 CellItem item;
                 if (CurrentItem != null)
                     item = CurrentItem;
@@ -1639,7 +1653,8 @@ namespace DropThing3
         {
             var dlg = new TabDialog();
 
-            dlg.OnOpen += (_, __) => {
+            dlg.OnOpen += (_, __) =>
+            {
                 dlg.TabTitle = CurrentTab.title;
                 dlg.Color0 = CurrentTab.color0;
                 dlg.Color1 = CurrentTab.color1;
@@ -1651,7 +1666,8 @@ namespace DropThing3
                 dlg.TitleBar = sett.titlebar;
             };
 
-            dlg.OnAccept += (_) => {
+            dlg.OnAccept += (_) =>
+            {
                 CurrentTab.title = dlg.TabTitle;
                 CurrentTab.color0 = dlg.Color0;
                 CurrentTab.color1 = dlg.Color1;
@@ -1671,9 +1687,7 @@ namespace DropThing3
 
             dlg.OnDelete += DeleteCurrentTab;
 
-            dlg.OnAddNew += (_, __) => {
-                AddNewTab();
-            };
+            dlg.OnAddNew += AddNewTab;
 
             dlg.Popup();
         }
@@ -1711,27 +1725,27 @@ namespace DropThing3
             contextMenuStrip1.Show(grid, r.Left+10, r.Top+10);
         }
 
-        private void addTab_Click(object sender, EventArgs e)
-        {
-            CurrentTab = AddNewTab();
-            GridSize(sett.col_count, sett.row_count);
-        }
-
         void RemovalNotify(object sender, RemovalEventArgs e)
         {
             if (e.Status == RemovalStatus.INSERTED) {
                 AppStatusText(STM.DEBUG, "inserted {0}:", e.DriveLetter);
-                sett.cell_list.ForEach((x) => {
+                sett.cell_list.ForEach((x) =>
+                {
                     if (x.HasAttr('J')
-                     && x.path.StartsWith(e.DriveLetter+":"))
+                     && x.path.StartsWith(e.DriveLetter+":")) {
                         x.AddAttr('m');
+                        x.RemoveAttr('M');
+                    }
                 });
             } else if (e.Status == RemovalStatus.EJECTED) {
                 AppStatusText(STM.DEBUG, "ejected {0}:", e.DriveLetter);
-                sett.cell_list.ForEach((x) => {
+                sett.cell_list.ForEach((x) =>
+                {
                     if (x.HasAttr('J')
-                     && x.path.StartsWith(e.DriveLetter+":"))
+                     && x.path.StartsWith(e.DriveLetter+":")) {
                         x.RemoveAttr('m');
+                        x.AddAttr('M');
+                    }
                 });
             }
 
@@ -1757,7 +1771,7 @@ namespace DropThing3
         }
 
         static string cache_path;
-        static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();        
+        static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
         static WebClient wc = new WebClient();
 
         private void faviconFetch_DoWork(object sender, DoWorkEventArgs e)
