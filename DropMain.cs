@@ -28,6 +28,8 @@ using ParaParaView;
 // change tab order
 // item move to other tab
 // custom tab display
+// too small icon (youtube ...)
+// modless settings dialog
 
 // hot key
 // cell drawing too slow

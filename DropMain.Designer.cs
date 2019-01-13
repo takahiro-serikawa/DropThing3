@@ -171,7 +171,7 @@
             // 
             // dummy
             // 
-            this.dummy.BackColor = System.Drawing.Color.MediumBlue;
+            this.dummy.BackColor = System.Drawing.SystemColors.Control;
             this.dummy.Enabled = false;
             this.dummy.Name = "dummy";
             this.dummy.Size = new System.Drawing.Size(202, 22);
@@ -226,6 +226,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grid.BackgroundColor = System.Drawing.Color.Green;
             this.grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.grid.ColumnHeadersVisible = false;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomCenter;
