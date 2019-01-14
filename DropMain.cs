@@ -1389,6 +1389,7 @@ namespace DropThing3
                     else
                         eject.Enabled = false;
                 }
+                undo.Enabled = undo_buf != null;
             }
         }
 
@@ -1433,7 +1434,7 @@ namespace DropThing3
         {
             if (e.Button == MouseButtons.Left) {
                 if (e.Clicks == 1) {
-                    // ejject mini button
+                    // eject mini button
                     if (CurrentItem != null && CurrentItem.HasAttr('J')) {
                         var b = grid.CurrentCell.ContentBounds;
                         int x, y;
@@ -1446,7 +1447,7 @@ namespace DropThing3
                         }
                         if (e.X >= x && e.Y >= y)
                             eject_Click(null, null);
-                    }
+                    } else
 
                     // cell click
                     if (ModifierKeys.HasFlag(Keys.Shift))
