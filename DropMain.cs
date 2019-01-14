@@ -26,7 +26,6 @@ using ParaParaView;
 // custom tab display
 // bug: too small icon (youtube ...)
 // modless settings dialog
-// eject button
 
 // hot key
 // cell drawing too slow
@@ -1434,6 +1433,21 @@ namespace DropThing3
         {
             if (e.Button == MouseButtons.Left) {
                 if (e.Clicks == 1) {
+                    // ejject mini button
+                    if (CurrentItem != null && CurrentItem.HasAttr('J')) {
+                        var b = grid.CurrentCell.ContentBounds;
+                        int x, y;
+                        if (sett.caption_visible) {
+                            x = b.Right-16-8;
+                            y = b.Bottom-32-2;
+                        } else {
+                            x = b.Right-16;
+                            y = b.Bottom-16;
+                        }
+                        if (e.X >= x && e.Y >= y)
+                            eject_Click(null, null);
+                    }
+
                     // cell click
                     if (ModifierKeys.HasFlag(Keys.Shift))
                         explorerItem_Click(null, null);
@@ -1519,7 +1533,7 @@ namespace DropThing3
                 }
             }
 
-            e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
+            //e.Paint(e.CellBounds, e.PaintParts & ~DataGridViewPaintParts.Background);
             e.Handled = true;
         }
 
