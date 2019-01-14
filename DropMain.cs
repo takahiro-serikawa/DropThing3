@@ -15,38 +15,34 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
-using System.Runtime.InteropServices;
+//using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO; // FileSystem.
 using ParaParaView;
-
-// 2019.1.10 ver 0.13 ref MicroSoft.VisualBasic.dll
-
-// texture
 
 // TODO
 // change tab order
 // item move to other tab
 // custom tab display
-// too small icon (youtube ...)
+// bug: too small icon (youtube ...)
 // modless settings dialog
+// eject button
 
 // hot key
 // cell drawing too slow
-// undo (delete item, ...)
 // other icon size
 // multiple dock
 // double click item
-
-// quit menu ignored. tooltiphint
 
 namespace DropThing3
 {
     public partial class DropMain: Form
     {
+        const string APP_NAME = "DropThing3";
+
         // file extension for DropThing settings
         const string DROPTHING_EXT = "dtIII";
-        string appdata; // application datacpath
+        string appdata; // application data path C:\Users\ ..USER.. \AppData\Local\DropThing3
 
         public DropMain()
         {
@@ -54,18 +50,19 @@ namespace DropThing3
             main_form = this;
             Application.ThreadException += Application_ThreadException;
 
-            string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
+            //string app = Path.GetFileNameWithoutExtension(Application.ExecutablePath);
             var asm = System.Reflection.Assembly.GetExecutingAssembly();
             var ver = asm.GetName().Version;
             AppStatusText(STM.NORMAL, "{0} version {1}.{2:D2}; {3}",
-               app, ver.Major, ver.Minor, "application launcher");
-            about.Text = string.Format("{0} ver{1}.{2:D2} (b{3})", app, ver.Major, ver.Minor, ver.Build);
+               APP_NAME, ver.Major, ver.Minor, "application launcher");
+            about.Text = string.Format("{0} ver{1}.{2:D2}", APP_NAME, ver.Major, ver.Minor);
 
             Directory.SetCurrentDirectory(@"C:\");
 
-            appdata = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), app);
+            string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            appdata = Path.Combine(local, APP_NAME);
             Directory.CreateDirectory(appdata);
-            filename = Path.Combine(appdata, app+"."+DROPTHING_EXT);
+            sett_filename = Path.Combine(appdata, APP_NAME+"."+DROPTHING_EXT);
 
             // parse command line
             string[] aa = Environment.GetCommandLineArgs();
@@ -92,8 +89,8 @@ namespace DropThing3
 
             // restore last settings
             if (filenames.Count > 0)
-                filename = filenames[0];
-            LoadSettings(new_settings ? "" : filename);
+                sett_filename = filenames[0];
+            LoadSettings(new_settings ? "" : sett_filename);
             sett.app_version = string.Format("{0}.{1:D2}", ver.Major, ver.Minor);
 
             // open other instances
@@ -109,7 +106,7 @@ namespace DropThing3
             //atchRemoval();
             Ejector.StartWatch(RemovalNotify);
 #if DEBUG
-            makbak = true;
+            dbg_makbak = true;
             dbgSave.Visible = true;
 #endif
         }
@@ -134,12 +131,10 @@ namespace DropThing3
             try {
                 faviconFetch.CancelAsync();
 
-
                 //if (Modified) // alt_infoを保尊するため常に　
                 SaveSettings();
             } catch (Exception ex) {
-                MessageBox.Show(ex.Message, "FATAL",
-                   MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "FATAL", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -171,7 +166,7 @@ namespace DropThing3
 
         private void DropMain_ResizeBegin(object sender, EventArgs e)
         {
-            Console.WriteLine("DropMain_ResizeBegin()");
+            //Console.WriteLine("DropMain_ResizeBegin()");
         }
 
         private void DropMain_ResizeEnd(object sender, EventArgs e)
@@ -324,11 +319,11 @@ namespace DropThing3
                     if (ext == ".lnk") {    // Windows shortcut
                         var shell = new IWshRuntimeLibrary.WshShell();
                         var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(value);
-                        Console.WriteLine("{0}, {1}", shortcut.FullName, shortcut.Description);
+                        //Console.WriteLine("{0}, {1}", shortcut.FullName, shortcut.Description);
                         _path = shortcut.TargetPath.ToString();
                         this.caption = Path.GetFileNameWithoutExtension(value);
                         this.options = shortcut.Arguments;
-                        this.dir = shortcut.WorkingDirectory; // TODO: expand environments
+                        this.dir = shortcut.WorkingDirectory;
                         this.hotkey = shortcut.Hotkey;
 
                         // remove icon index? "YYY\XXX.ico?0"
@@ -339,7 +334,6 @@ namespace DropThing3
                         if (this.icon_file.Length == 0)
                             this.icon_file = null;
                     } else if (ext == ".url") { // InternetShortcut
-                        //string url, icon_file;
                         string[] lines = File.ReadAllLines(value);
                         foreach (string line in lines) {
                             if (line.StartsWith("URL="))
@@ -364,7 +358,6 @@ namespace DropThing3
             public uint tab;
 
             [XmlIgnore]
-            //public Icon icon;
             public Bitmap icon;
 
             public CellItem()
@@ -381,6 +374,26 @@ namespace DropThing3
                 //this.UpdateIcon();
             }
 
+            public CellItem Clone()
+            {
+                var item = new CellItem(this.path);
+                item.CopyFrom(this);
+                return item;
+            }
+
+            public void CopyFrom(CellItem item)
+            {
+                this.path = item.path;
+                this.caption = item.caption;
+                this.tab = item.tab;
+                this.col = item.col;
+                this.row = item.row;
+                this.attr = item.attr;
+                this.icon_file = item.icon_file;
+                this.icon = item.icon;
+                this.dir = item.dir;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -388,7 +401,7 @@ namespace DropThing3
             /// <returns></returns>
             public bool HasAttr(char c)
             {
-                return attr != null && attr.IndexOf(c) >= 0;
+                return /*attr != null && */attr.IndexOf(c) >= 0;
             }
 
             /// <summary>
@@ -433,31 +446,29 @@ namespace DropThing3
             /// </summary>
             public void UpdateIcon()
             {
-                if (attr == null)
-                    attr = "";
+                //if (attr == null)
+                //    attr = "";
 
                 string path = this.path;
-
-                // get cache if exists
                 string cachename = MakeCacheName(path);
+
+                // 1. get from cache if exists
                 if (this.icon == null && File.Exists(cachename))
                     try {
-                        //this.icon = new Icon(cachename, 32, 32);
                         this.icon = (Bitmap)Image.FromFile(cachename);
                     } catch (Exception ex) {
                         this.icon = null;
                         Console.WriteLine("UpdateIcon(); "+ex.Message);
                     }
 
-                //this.attr = "";
                 if (path.StartsWith(@"http://") || path.StartsWith(@"https://")) {
                     this.AddAttr('U');
+                    // 2. from web (URL)
                     if (this.icon == null && this.icon_file == null)
                         fetch_req.Enqueue(path);
                 } else {
                     if (path.StartsWith(@"file:///"))
                         path = path.Substring(8);
-                    //if (path[0] != '\\')
                     if (path.StartsWith(@"\\"))
                         AddAttr('V');
                     else
@@ -475,16 +486,16 @@ namespace DropThing3
                     }
                 }
 
-                string icon_file = (this.icon_file == null && !this.HasAttr('U'))
-                   ? path : this.icon_file;
-                if (icon_file != null) {
+                //string icon_file = (this.icon_file == null && !this.HasAttr('U'))
+                //   ? path : this.icon_file;
+                string icon_file = this.icon_file != null ? this.icon_file : this.path;
+
+                //if (icon_file != null) {
                     if (this.icon == null)
                         try {
-                            //this.icon = Icon.ExtractAssociatedIcon(icon_file);
                             this.icon = Icon.ExtractAssociatedIcon(icon_file).ToBitmap();
                         } catch (Exception ex) {
                             this.icon = null;
-                            Console.WriteLine("UpdateIcon(); "+ex.Message);
                         }
 
                     if (this.icon == null) {
@@ -493,13 +504,11 @@ namespace DropThing3
                         if (icon != null)
                             this.icon = icon.ToBitmap();
                     }
-                }
+                //}
 
                 // save icon cache
                 if ((HasAttr('J') || HasAttr('V'))
                  && this.icon != null && !File.Exists(cachename)) {
-                    //using (var stream = new FileStream(cachename, FileMode.Create, FileAccess.Write))
-                    //    this.icon.Save(stream);
                     this.icon.Save(cachename);
                 }
             }
@@ -522,13 +531,10 @@ namespace DropThing3
                             break;
                         }
 
-                        if (HasAttr('J'))
+                        if (HasAttr('J')) {
                             if (d.IsReady) {
-                                this.AddAttr('m');
-                                this.RemoveAttr('M');
-
-                                float f = d.TotalFreeSpace;
-                                float t = d.TotalSize;
+                                float f = (float)d.TotalFreeSpace;
+                                float t = (float)d.TotalSize;
                                 string[] units = { "B", "KB", "MB", "GB", "TB" };
                                 int u = 0;
                                 for (; f >= 1024f && u+1 < units.Length;) {
@@ -536,11 +542,13 @@ namespace DropThing3
                                     t /= 1024f;
                                     u++;
                                 }
-                                this.alt_info = string.Format(" \"{0}\", free {1:F1}/{2:F1} {3}", d.VolumeLabel, f, t, units[u]);
-                            } else {
-                                this.RemoveAttr('m');
+                                this.alt_info = string.Format(" \"{0}\", free {1:F1}/{2:F1} {3}",
+                                   d.VolumeLabel, f, t, units[u]);
+
+                                this.RemoveAttr('M');
+                            } else
                                 this.AddAttr('M');
-                            }
+                        }
                         return d;
                     }
                 } catch (Exception ex) {
@@ -560,6 +568,8 @@ namespace DropThing3
                     var info = new ProcessStartInfo(this.path);
                     info.Arguments = this.options + escapedJoin(args);
                     info.WorkingDirectory = this.dir;
+                    // TODO: expand environments
+
                     //info.Environment
                     Process.Start(info);
                 } catch (Exception ex) {
@@ -595,7 +605,6 @@ namespace DropThing3
                 // return default caption if not specified
                 if (this.HasAttr('U')) {
                     try {
-                        // www.AAAA. ...co.jp
                         var u = new Uri(this.path);
                         string[] ll = u.LocalPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                         int l = ll.Length-1;
@@ -608,15 +617,14 @@ namespace DropThing3
                         //}
 
                         IPAddress addr = IPAddress.Any;
-                        if (IPAddress.TryParse(u.Host, out addr)) {
+                        if (IPAddress.TryParse(u.Host, out addr))
                             return u.Host;  // 192.168.yyy.xxx
-                        } else {
-                            string[] hh = u.Host.Split('.');
-                            if (hh.Length > 1 && hh[0] == "www")
-                                return hh[1];
-                            return hh[0];
-                        }
 
+                        // www.AAAA. ...co.jp -> AAAA
+                        string[] hh = u.Host.Split('.');
+                        if (hh.Length > 1 && hh[0] == "www")
+                            return hh[1];
+                        return hh[0];
                     } catch (Exception ex) {
                         Console.WriteLine(ex.Message);
                     }
@@ -794,7 +802,7 @@ namespace DropThing3
         /// 
         /// </summary>
         public DropThingSettings sett;
-        string filename;
+        string sett_filename;
         bool modified = false;
         DateTime modified_time;
 
@@ -826,7 +834,7 @@ namespace DropThing3
                 } catch (Exception ex) {
                     Console.WriteLine(ex.Message);
                     sett = new DropThingSettings();
-                    makbak = true;
+                    dbg_makbak = true;
                 }
 
                 //this.WindowState = dock.win_state;
@@ -862,26 +870,26 @@ namespace DropThing3
             sett.col_count = grid.ColumnCount;
             sett.row_count = grid.RowCount;
 
-            string tmpname = Path.ChangeExtension(filename, ".$$$");
+            string tmpname = Path.ChangeExtension(sett_filename, ".$$$");
             using (var sw = new StreamWriter(tmpname, false, Encoding.UTF8)) {
                 var serializer = new XmlSerializer(typeof(DropThingSettings));
                 serializer.Serialize(sw, sett);
             }
 
-            if (makbak)
+            if (dbg_makbak)
                 try {
-                    string bak = Path.ChangeExtension(filename,
+                    string bak = Path.ChangeExtension(sett_filename,
                        DateTime.Now.ToString("yyyyMMdd-HHmmss"))
-                      + Path.GetExtension(filename);
-                    FileSystem.MoveFile(filename, bak, true);
+                      + Path.GetExtension(sett_filename);
+                    FileSystem.MoveFile(sett_filename, bak, true);
                 } catch (Exception ex) {
                     Console.WriteLine("make .bak: " + ex.Message);
                 }
 
-            FileSystem.MoveFile(tmpname, filename, true);
+            FileSystem.MoveFile(tmpname, sett_filename, true);
         }
 
-        bool makbak = false;
+        bool dbg_makbak = false;
 
         /// <summary>
         /// 
@@ -1047,6 +1055,9 @@ namespace DropThing3
             sett.cell_list.Add(item);
             grid.InvalidateCell(col, row);
             Modified = true;
+
+            undo_buf = new NewCellUndo(CurrentItem);
+
             return item;
         }
 
@@ -1058,6 +1069,8 @@ namespace DropThing3
         /// <param name="row"></param>
         void MoveCell(CellItem item, int col, int row)
         {
+            undo_buf = new ChangeCellUndo(item);
+
             grid.InvalidateCell(item.col, item.row);
             item.col = col;
             item.row = row;
@@ -1225,7 +1238,7 @@ namespace DropThing3
                     s = " will be placed here";
                 else if (item.HasAttr('x'))
                     s = string.Format("open by {0}", item.GetCaption());
-                else if (/*item.HasAttr('J') && */item.HasAttr('M'))
+                else if (item.HasAttr('M'))
                     s = string.Format("{0} is NOT ready", item.GetCaption());
                 else if (item.HasAttr('d'))
                     s = string.Format("copy to {0}", item.GetCaption());
@@ -1470,7 +1483,7 @@ namespace DropThing3
                     int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
                     if (sett.caption_visible)
                         iy -= 6;
-                    if (/*!item.HasAttr('J') || */!item.HasAttr('M'))
+                    if (!item.HasAttr('M'))
                         g.DrawImage(item.icon, ix, iy, w, w);
                     else
                         ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
@@ -1489,8 +1502,8 @@ namespace DropThing3
                 if (item.HasAttr('J')) {
                     int x, y;
                     if (sett.caption_visible) {
-                        x = e.CellBounds.Right-16-2;
-                        y = e.CellBounds.Bottom-16-2;
+                        x = e.CellBounds.Right-16-8;
+                        y = e.CellBounds.Bottom-32-2;
                     } else {
                         x = e.CellBounds.Right-16;
                         y = e.CellBounds.Bottom-16;
@@ -1602,10 +1615,78 @@ namespace DropThing3
         private void deleteItem_Click(object sender, EventArgs e)
         {
             if (CurrentItem != null) {
+                undo_buf = new DeleteCellUndo(CurrentItem);
+
                 sett.cell_list.Remove(CurrentItem);
                 grid.InvalidateCell(grid.CurrentCell);
                 Modified = true;
             }
+        }
+
+        //enum UNDO { None, DELETE_ITEM, MOVE_ITEM }
+
+        abstract class UndoRec: Object
+        {
+            //public abstract object Undo();
+        }
+
+        class CellUndo: UndoRec
+        {
+            public CellItem item;
+
+            public CellUndo(CellItem item)
+            {
+                this.item = item;
+            }
+        }
+
+        class NewCellUndo: CellUndo
+        {
+            public NewCellUndo(CellItem item): base(item)
+            {
+            }
+        }
+
+        class DeleteCellUndo: CellUndo
+        {
+            public DeleteCellUndo(CellItem item) : base(item)
+            {
+            }
+        }
+
+        class ChangeCellUndo: CellUndo
+        {
+            public CellItem bak;
+
+            public ChangeCellUndo(CellItem item) : base(item)
+            {
+                this.bak = item.Clone();
+            }
+        }
+
+        UndoRec undo_buf = null;
+
+        private void undo_Click(object sender, EventArgs e)
+        {
+            if (undo_buf == null)
+                return;
+
+            if (undo_buf is CellUndo) {
+                var item = (undo_buf as CellUndo).item;
+
+                if (undo_buf is DeleteCellUndo)
+                    sett.cell_list.Add(item);
+                else if (undo_buf is ChangeCellUndo) {
+                    grid.InvalidateCell(item.col, item.row);
+                    var bak = (undo_buf as ChangeCellUndo).bak;
+                    item.CopyFrom(bak);
+                } else if (undo_buf is NewCellUndo)
+                    sett.cell_list.Remove(item);
+
+                grid.InvalidateCell(item.col, item.row);
+            }
+
+            undo_buf = null;
         }
 
         private void propertyItem_Click(object sender, EventArgs e)
@@ -1727,30 +1808,19 @@ namespace DropThing3
             contextMenuStrip1.Show(grid, r.Left+10, r.Top+10);
         }
 
+
         void RemovalNotify(object sender, RemovalEventArgs e)
         {
-            if (e.Status == RemovalStatus.INSERTED) {
+            if (e.Status == RemovalStatus.INSERTED)
                 AppStatusText(STM.DEBUG, "inserted {0}:", e.DriveLetter);
-                sett.cell_list.ForEach((x) =>
-                {
-                    if (x.HasAttr('J')
-                     && x.path.StartsWith(e.DriveLetter+":")) {
-                        x.AddAttr('m');
-                        x.RemoveAttr('M');
-                    }
-                });
-            } else if (e.Status == RemovalStatus.EJECTED) {
+            else if (e.Status == RemovalStatus.EJECTED)
                 AppStatusText(STM.DEBUG, "ejected {0}:", e.DriveLetter);
-                sett.cell_list.ForEach((x) =>
-                {
-                    if (x.HasAttr('J')
-                     && x.path.StartsWith(e.DriveLetter+":")) {
-                        x.RemoveAttr('m');
-                        x.AddAttr('M');
-                    }
-                });
-            }
 
+            sett.cell_list.ForEach((item) =>
+            {
+                if (item.HasAttr('J') && item.path.StartsWith(e.DriveLetter+":"))
+                    item.ToggleAttr('M', e.Status != RemovalStatus.INSERTED);
+            });
             grid.Invalidate();
         }
 
@@ -1773,6 +1843,7 @@ namespace DropThing3
         }
 
         static string cache_path;
+
         static ConcurrentQueue<string> fetch_req = new ConcurrentQueue<string>();
         static WebClient wc = new WebClient();
 
@@ -1815,6 +1886,7 @@ namespace DropThing3
                         } catch (Exception ex) {
                             Console.WriteLine("fetch error: "+ex.Message);
                         }
+
                     } else
                         System.Threading.Thread.Sleep(100);
                 }

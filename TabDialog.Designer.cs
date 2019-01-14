@@ -103,7 +103,7 @@
             this.color0.BackColor = System.Drawing.Color.Lime;
             this.color0.Location = new System.Drawing.Point(100, 36);
             this.color0.Name = "color0";
-            this.color0.Size = new System.Drawing.Size(75, 23);
+            this.color0.Size = new System.Drawing.Size(100, 23);
             this.color0.TabIndex = 18;
             this.color0.UseVisualStyleBackColor = false;
             this.color0.Click += new System.EventHandler(this.color0_Click);
@@ -113,7 +113,7 @@
             this.color1.BackColor = System.Drawing.Color.Green;
             this.color1.Location = new System.Drawing.Point(100, 56);
             this.color1.Name = "color1";
-            this.color1.Size = new System.Drawing.Size(75, 23);
+            this.color1.Size = new System.Drawing.Size(100, 23);
             this.color1.TabIndex = 19;
             this.color1.UseVisualStyleBackColor = false;
             this.color1.Click += new System.EventHandler(this.color1_Click);
@@ -145,7 +145,7 @@
             this.caption.AutoSize = true;
             this.caption.Checked = true;
             this.caption.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.caption.Location = new System.Drawing.Point(273, 11);
+            this.caption.Location = new System.Drawing.Point(264, 177);
             this.caption.Name = "caption";
             this.caption.Size = new System.Drawing.Size(92, 19);
             this.caption.TabIndex = 22;
@@ -157,7 +157,7 @@
             this.transparent.AutoSize = true;
             this.transparent.Checked = true;
             this.transparent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.transparent.Location = new System.Drawing.Point(273, 83);
+            this.transparent.Location = new System.Drawing.Point(100, 202);
             this.transparent.Name = "transparent";
             this.transparent.Size = new System.Drawing.Size(86, 19);
             this.transparent.TabIndex = 23;
@@ -169,7 +169,7 @@
             this.border.AutoSize = true;
             this.border.Checked = true;
             this.border.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.border.Location = new System.Drawing.Point(273, 60);
+            this.border.Location = new System.Drawing.Point(264, 202);
             this.border.Name = "border";
             this.border.Size = new System.Drawing.Size(82, 19);
             this.border.TabIndex = 24;
@@ -198,7 +198,7 @@
             // 
             // randomButton
             // 
-            this.randomButton.Location = new System.Drawing.Point(181, 44);
+            this.randomButton.Location = new System.Drawing.Point(206, 36);
             this.randomButton.Name = "randomButton";
             this.randomButton.Size = new System.Drawing.Size(75, 23);
             this.randomButton.TabIndex = 27;
@@ -211,7 +211,7 @@
             this.titlebar.AutoSize = true;
             this.titlebar.Checked = true;
             this.titlebar.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.titlebar.Location = new System.Drawing.Point(272, 108);
+            this.titlebar.Location = new System.Drawing.Point(100, 177);
             this.titlebar.Name = "titlebar";
             this.titlebar.Size = new System.Drawing.Size(66, 19);
             this.titlebar.TabIndex = 28;
@@ -221,7 +221,7 @@
             // 
             // swap
             // 
-            this.swap.Location = new System.Drawing.Point(181, 73);
+            this.swap.Location = new System.Drawing.Point(206, 56);
             this.swap.Name = "swap";
             this.swap.Size = new System.Drawing.Size(75, 23);
             this.swap.TabIndex = 29;

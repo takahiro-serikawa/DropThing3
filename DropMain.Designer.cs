@@ -34,6 +34,7 @@
             this.about = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undo = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -66,6 +67,7 @@
             this.explorerItem,
             this.propertyItem,
             this.deleteItem,
+            this.undo,
             this.toolStripMenuItem1,
             this.eject,
             this.tabItem,
@@ -73,7 +75,7 @@
             this.quit,
             this.dummy});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 230);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 274);
             // 
             // about
             // 
@@ -109,6 +111,14 @@
             this.explorerItem.Text = "&Explorer ...";
             this.explorerItem.ToolTipText = "Open Explorer and select the file.";
             this.explorerItem.Click += new System.EventHandler(this.explorerItem_Click);
+            // 
+            // undo
+            // 
+            this.undo.Name = "undo";
+            this.undo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undo.Size = new System.Drawing.Size(202, 22);
+            this.undo.Text = "&Undo";
+            this.undo.Click += new System.EventHandler(this.undo_Click);
             // 
             // propertyItem
             // 
@@ -387,6 +397,7 @@
         private System.Windows.Forms.PictureBox hamburger;
         private System.Windows.Forms.ToolStripMenuItem dbgSave;
         private System.Windows.Forms.ToolStripMenuItem dummy;
+        private System.Windows.Forms.ToolStripMenuItem undo;
     }
 }
 
