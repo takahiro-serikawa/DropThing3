@@ -42,6 +42,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.apply = new System.Windows.Forms.Button();
+            this.suspend = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // select
@@ -177,12 +178,23 @@
             this.apply.UseVisualStyleBackColor = true;
             this.apply.Click += new System.EventHandler(this.apply_Click);
             // 
+            // suspend
+            // 
+            this.suspend.Location = new System.Drawing.Point(311, 129);
+            this.suspend.Name = "suspend";
+            this.suspend.Size = new System.Drawing.Size(75, 23);
+            this.suspend.TabIndex = 14;
+            this.suspend.Text = "suspend";
+            this.suspend.UseVisualStyleBackColor = true;
+            this.suspend.Click += new System.EventHandler(this.suspend_Click);
+            // 
             // ItemDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 201);
+            this.Controls.Add(this.suspend);
             this.Controls.Add(this.apply);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label5);
@@ -225,5 +237,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button apply;
+        private System.Windows.Forms.Button suspend;
     }
 }

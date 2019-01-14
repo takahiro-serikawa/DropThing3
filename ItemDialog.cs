@@ -115,5 +115,13 @@ namespace DropThing3
                 //    caption.Text = Path.GetFileName(path.Text);
             }
         }
+
+        [System.Runtime.InteropServices.DllImport("Powrprof.dll", SetLastError = true)]
+        public static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
+
+        private void suspend_Click(object sender, EventArgs e)
+        {
+            SetSuspendState(false, false, false);
+        }
     }
 }
