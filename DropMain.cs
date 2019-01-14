@@ -1056,9 +1056,12 @@ namespace DropThing3
             grid.InvalidateCell(col, row);
             Modified = true;
 
-            undo_buf = new NewCellUndo(CurrentItem);
-
             return item;
+        }
+
+        CellItem NewCellItem(string path, DataGridViewCell cell)
+        {
+            return NewCellItem(path, cell.ColumnIndex, cell.RowIndex);
         }
 
         /// <summary>
@@ -1294,13 +1297,15 @@ namespace DropThing3
                     } else {
                         // drop file to empty cell; register file to cell
                         int col = hit.ColumnIndex, row = hit.RowIndex;
+                        var items = new List<CellItem>();
                         foreach (var name in names)
                             if (FindEmptyCell(ref col, ref row))
-                                NewCellItem(name, col, row);
+                                items.Add(NewCellItem(name, col, row));
                             else {
                                 AppStatusText(STM.ERROR, "ERROR: give up too many files");
                                 break;
                             }
+                        undo_buf = new AddCellsUndo(items);
                     }
                 }
                 //AppStatusText(STM.NORMAL, "drop {0}, {1}: {2}", hit.ColumnIndex, hit.RowIndex, names[0]);
@@ -1623,44 +1628,51 @@ namespace DropThing3
             }
         }
 
-        //enum UNDO { None, DELETE_ITEM, MOVE_ITEM }
+
+        // UNDO
 
         abstract class UndoRec: Object
         {
             //public abstract object Undo();
         }
 
+        class AddCellsUndo: UndoRec
+        {
+            public List<CellItem> Items { get; protected set; }
+
+            public AddCellsUndo(List<CellItem> items)
+            {
+                this.Items = items;
+            }
+        }
+
         class CellUndo: UndoRec
         {
-            public CellItem item;
+            public CellItem Item { get; protected set; }
 
             public CellUndo(CellItem item)
             {
-                this.item = item;
+                this.Item = item;
             }
         }
 
         class NewCellUndo: CellUndo
         {
-            public NewCellUndo(CellItem item): base(item)
-            {
-            }
+            public NewCellUndo(CellItem item) : base(item) { }
         }
 
         class DeleteCellUndo: CellUndo
         {
-            public DeleteCellUndo(CellItem item) : base(item)
-            {
-            }
+            public DeleteCellUndo(CellItem item) : base(item) { }
         }
 
         class ChangeCellUndo: CellUndo
         {
-            public CellItem bak;
+            public CellItem Bak { get; protected set; }
 
             public ChangeCellUndo(CellItem item) : base(item)
             {
-                this.bak = item.Clone();
+                this.Bak = item.Clone();
             }
         }
 
@@ -1672,18 +1684,23 @@ namespace DropThing3
                 return;
 
             if (undo_buf is CellUndo) {
-                var item = (undo_buf as CellUndo).item;
+                var item = (undo_buf as CellUndo).Item;
 
                 if (undo_buf is DeleteCellUndo)
                     sett.cell_list.Add(item);
                 else if (undo_buf is ChangeCellUndo) {
                     grid.InvalidateCell(item.col, item.row);
-                    var bak = (undo_buf as ChangeCellUndo).bak;
+                    var bak = (undo_buf as ChangeCellUndo).Bak;
                     item.CopyFrom(bak);
                 } else if (undo_buf is NewCellUndo)
                     sett.cell_list.Remove(item);
 
                 grid.InvalidateCell(item.col, item.row);
+            } else if (undo_buf is AddCellsUndo) {
+                foreach (var item in (undo_buf as AddCellsUndo).Items) {
+                    sett.cell_list.Remove(item);
+                    grid.InvalidateCell(item.col, item.row);
+                }
             }
 
             undo_buf = null;
@@ -1711,10 +1728,13 @@ namespace DropThing3
             dlg.OnAccept += (_) =>
             {
                 CellItem item;
-                if (CurrentItem != null)
+                if (CurrentItem != null) {
                     item = CurrentItem;
-                else
-                    item = NewCellItem(dlg.FilePath, grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex);
+                    undo_buf = new ChangeCellUndo(item);
+                } else {
+                    item = NewCellItem(dlg.FilePath, grid.CurrentCell);
+                    undo_buf = new NewCellUndo(item);
+                }
                 item.caption = dlg.ItemCaption;
                 item.path = dlg.FilePath;
                 item.options = dlg.CommandOptions;
