@@ -1886,7 +1886,6 @@ namespace DropThing3
         {
             try {
                 Directory.CreateDirectory(cache_path);
-                //string tempname = Path.Combine(cache_path, "downloading.ico");
                 string tempname = Path.Combine(cache_path, "downloading.png");
 
                 for (; !faviconFetch.CancellationPending;) {
@@ -1900,10 +1899,9 @@ namespace DropThing3
                             string favicon = "/favicon.ico";
                             try {
                                 string html = wc.DownloadString(path);
-                                string regex = @"<link\srel=""shortcut icon""\shref=""(.*?)""";
+                                string regex = @"<link\srel=[""']shortcut icon[""']\shref=[""'](.*?)[""']";
                                 var m = Regex.Match(html, regex);
                                 if (m != null && m.Groups.Count > 1) {
-                                    Console.WriteLine("{0}", m.Groups[1]);
                                     favicon = m.Groups[1].ToString();
                                 }
                             } catch (Exception ex) {
@@ -1913,10 +1911,14 @@ namespace DropThing3
                             var u = new Uri(path);
                             if (!favicon.StartsWith("http"))
                                 favicon = u.GetLeftPart(UriPartial.Authority) + favicon;
-                            wc.DownloadFile(favicon, tempname);
+                            //wc.DownloadFile(favicon, tempname);
+                            byte[] data = wc.DownloadData(favicon);
+                            using (var ms = new MemoryStream(data))
+                            using (var icon = new Icon(ms))
+                            using (var bitmap = icon.ToBitmap())
+                                bitmap.Save(tempname);
 
                             File.Move(tempname, cachename);
-
                             faviconFetch.ReportProgress(fetch_req.Count);
                         } catch (Exception ex) {
                             Console.WriteLine("fetch error: "+ex.Message);
