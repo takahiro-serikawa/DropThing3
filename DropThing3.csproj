@@ -72,6 +72,7 @@
       <DependentUpon>DropMain.cs</DependentUpon>
     </Compile>
     <Compile Include="GetIconAPI.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ItemDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -512,7 +512,9 @@ namespace DropThing3
                     try {
                         var icon = Icon.ExtractAssociatedIcon(icon_file);
                         this.icon = icon.ToBitmap();
+#pragma warning disable CS0168 // 変数 'ex' は宣言されていますが、使用されていません。
                     } catch (Exception ex) {
+#pragma warning restore CS0168 // 変数 'ex' は宣言されていますが、使用されていません。
                         this.icon = null;
                     }
 
@@ -1014,7 +1016,9 @@ namespace DropThing3
 
         void RestoreTabs()
         {
+#pragma warning disable CS0219 // 変数 'x' は割り当てられていますが、その値は使用されていません。
             int x = 0;
+#pragma warning restore CS0219 // 変数 'x' は割り当てられていますが、その値は使用されていません。
             for (int i = 0; i < sett.tab_list.Count; i++) {
                 var tab = sett.tab_list[i];
                 TabPage tabpage;
@@ -1121,7 +1125,7 @@ namespace DropThing3
         /// </summary>
         TabLayer CurrentTab
         {
-            get
+            get 
             {
                 try {
                     return sett.tab_list.First(t => t.id == sett.current_tab);
@@ -1295,7 +1299,9 @@ namespace DropThing3
                 var item = GetItemAt(hit.ColumnIndex, hit.RowIndex);
                 if (item != null) {
                     if (item == drag_item)
+#pragma warning disable CS0642 // empty ステートメントが間違っている可能性があります
                         ;// AppStatusText(STM.DEBUG, "cancel self drop");
+#pragma warning restore CS0642 // empty ステートメントが間違っている可能性があります
                     else if (item.HasAttr('d')) {
                         // drop files to directory
                         foreach (string name in names)
@@ -1529,9 +1535,11 @@ namespace DropThing3
                     int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
                     if (sett.caption_visible)
                         iy -= 6;
-                    if (!item.HasAttr('M'))
+                    if (!item.HasAttr('M')) {
+                        if (w < 24)
+                            w = 24;
                         g.DrawImage(item.icon, ix, iy, w, w);
-                    else
+                    } else
                         ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";

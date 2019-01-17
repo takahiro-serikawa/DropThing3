@@ -227,7 +227,14 @@ namespace DropThing3
 
         private void TabDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
+            //this.Visible = false;
+            
+        }
+
+        private void TabDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
             this.Visible = false;
+            e.Cancel = true;
         }
     }
 }

@@ -296,6 +296,7 @@
             this.Name = "TabDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "tab property - DropThing";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TabDialog_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TabDialog_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();

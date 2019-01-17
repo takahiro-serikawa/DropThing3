@@ -285,8 +285,12 @@ namespace ParaParaView
 
             struct SHNOTIFYSTRUCT
             {
+#pragma warning disable CS0649 // フィールド 'Ejector.DummyForm.SHNOTIFYSTRUCT.dwItem1' は割り当てられません。常に既定値 0 を使用します。
                 public uint dwItem1;
+#pragma warning restore CS0649 // フィールド 'Ejector.DummyForm.SHNOTIFYSTRUCT.dwItem1' は割り当てられません。常に既定値 0 を使用します。
+#pragma warning disable CS0649 // フィールド 'Ejector.DummyForm.SHNOTIFYSTRUCT.dwItem2' は割り当てられません。常に既定値 0 を使用します。
                 public uint dwItem2;
+#pragma warning restore CS0649 // フィールド 'Ejector.DummyForm.SHNOTIFYSTRUCT.dwItem2' は割り当てられません。常に既定値 0 を使用します。
             }
 
             char GetDrive1(IntPtr WParam)
@@ -299,10 +303,18 @@ namespace ParaParaView
 
             struct DEV_BROADCAST_VOLUME
             {
+#pragma warning disable CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_size' は割り当てられません。常に既定値 0 を使用します。
                 public uint dbcv_size;
+#pragma warning restore CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_size' は割り当てられません。常に既定値 0 を使用します。
+#pragma warning disable CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_devicetype' は割り当てられません。常に既定値 0 を使用します。
                 public uint dbcv_devicetype;
+#pragma warning restore CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_devicetype' は割り当てられません。常に既定値 0 を使用します。
+#pragma warning disable CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_reserved' は割り当てられません。常に既定値 0 を使用します。
                 public uint dbcv_reserved;
+#pragma warning restore CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_reserved' は割り当てられません。常に既定値 0 を使用します。
+#pragma warning disable CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_unitmask' は割り当てられません。常に既定値 0 を使用します。
                 public uint dbcv_unitmask;
+#pragma warning restore CS0649 // フィールド 'Ejector.DummyForm.DEV_BROADCAST_VOLUME.dbcv_unitmask' は割り当てられません。常に既定値 0 を使用します。
             }
 
             char GetDrive2(IntPtr LParam)
