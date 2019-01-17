@@ -62,6 +62,7 @@
             this.cancel.TabIndex = 17;
             this.cancel.Text = "&Cancel";
             this.cancel.UseVisualStyleBackColor = true;
+            this.cancel.Click += new System.EventHandler(this.cancel_Click);
             // 
             // ok
             // 
@@ -295,6 +296,7 @@
             this.Name = "TabDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "tab property - DropThing";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TabDialog_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -133,13 +133,23 @@ namespace DropThing3
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool Popup()
+        /*public bool Popup()
         {
             if (OnOpen != null)
                 OnOpen(this, null);
 
             return this.ShowDialog() == DialogResult.OK
                && (OnAccept == null || OnAccept(this));
+        }*/
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ShowModeless()
+        {
+            if (OnOpen != null)
+                OnOpen(this, null);
+            Show();
         }
 
         private void color0_Click(object sender, EventArgs e)
@@ -179,15 +189,21 @@ namespace DropThing3
 
         private void random_Click(object sender, EventArgs e)
         {
-            Color0 = ColorUtl.RandomColor();
-            Color1 = ColorUtl.RandomColor();
-        } 
+            Color0 = ColorUtl.RandomNamedColor();
+            Color1 = ColorUtl.RandomNamedColor();
+
+            if (OnAccept != null)
+                OnAccept(this);
+        }
 
         private void swap_Click(object sender, EventArgs e)
         {
             Color temp = Color0;
             Color0 = Color1;
             Color1 = temp;
+
+            if (OnAccept != null)
+                OnAccept(this);
         }
 
         private void texture_DragEnter(object sender, DragEventArgs e)
@@ -202,6 +218,16 @@ namespace DropThing3
         {
             string[] names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             texture.Text = names[0];
+        }
+
+        private void cancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void TabDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Visible = false;
         }
     }
 }
