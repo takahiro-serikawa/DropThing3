@@ -25,8 +25,6 @@ using ParaParaView;
 // change tab order
 // item move to other tab
 // custom tab display
-// bug: too small icon (youtube ...)
-// modless settings dialog
 
 // hot key
 // cell drawing too slow
@@ -129,8 +127,8 @@ namespace DropThing3
             try {
                 faviconFetch.CancelAsync();
 
-                //if (Modified) // alt_infoを保尊するため常に　
-                SaveSettings();
+                //if (Modified) // alt_infoを保存するため常に　
+                SaveSettings(sett_filename);
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "FATAL", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -303,20 +301,20 @@ namespace DropThing3
 
         public class CellItem: object
         {
-            string _path;
+            Uri uri;
 
             [XmlElement("path")]
             public string path
             {
-                get { return _path; }
+                get { return uri.OriginalString; }
                 set
                 {
                     string ext = Path.GetExtension(value);
                     if (ext == ".lnk") {    // Windows shortcut
                         var shell = new IWshRuntimeLibrary.WshShell();
                         var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(value);
-                        //Console.WriteLine("{0}, {1}", shortcut.FullName, shortcut.Description);
-                        _path = shortcut.TargetPath.ToString();
+
+                        uri = new Uri(shortcut.TargetPath.ToString());
                         this.Caption = Path.GetFileNameWithoutExtension(value);
                         this.options = shortcut.Arguments;
                         this.dir = shortcut.WorkingDirectory;
@@ -331,20 +329,24 @@ namespace DropThing3
                             this.icon_file = null;
                     } else if (ext == ".url") { // InternetShortcut
                         string[] lines = File.ReadAllLines(value);
+                        string url = "";
                         foreach (string line in lines) {
                             if (line.StartsWith("URL="))
-                                _path = line.Substring(4);
+                                url = line.Substring(4);
                             if (line.StartsWith("IconFile="))
                                 this.icon_file = line.Substring(9);
                         }
+                        uri = new Uri(url);
                         this.Caption = Path.GetFileNameWithoutExtension(value);
                     } else {
-                        _path = value;
+                        uri = new Uri(value);
                         if (Caption == "")
                             Caption = DefCaption();
                     }
                 }
             }
+
+            public string LocalPath { get { return uri.LocalPath; } }
 
             public string icon_file;
             public string options;
@@ -367,19 +369,9 @@ namespace DropThing3
             {
             }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="source"></param>
-            public CellItem(string source)
-            {
-                this.path = source;
-                //this.UpdateIcon();
-            }
-
             public CellItem Clone()
             {
-                var item = new CellItem(this.path);
+                var item = new CellItem();
                 item.CopyFrom(this);
                 return item;
             }
@@ -477,7 +469,7 @@ namespace DropThing3
                         Console.WriteLine("UpdateIcon(); "+ex.Message);
                     }
 
-                var u = new Uri(path);
+                //var u = new Uri(path);
 
                 if (path.StartsWith(@"http://") || path.StartsWith(@"https://")) {
                     this.AddAttr('U');
@@ -485,10 +477,10 @@ namespace DropThing3
                     if (this.icon == null && this.icon_file == null)
                         fetch_req.Enqueue(path);
                 } else {
-                    if (u.IsUnc)
+                    if (uri.IsUnc)
                         AddAttr('V');
                     else if (path.StartsWith(@"file:///"))
-                        path = u.LocalPath;
+                        path = uri.LocalPath;
                     else
                         path = Path.GetFullPath(path);
 
@@ -512,9 +504,7 @@ namespace DropThing3
                     try {
                         var icon = Icon.ExtractAssociatedIcon(icon_file);
                         this.icon = icon.ToBitmap();
-#pragma warning disable CS0168 // 変数 'ex' は宣言されていますが、使用されていません。
-                    } catch (Exception ex) {
-#pragma warning restore CS0168 // 変数 'ex' は宣言されていますが、使用されていません。
+                    } catch (Exception) {
                         this.icon = null;
                     }
 
@@ -543,9 +533,9 @@ namespace DropThing3
             public DriveInfo GetDriveInfo()
             {
                 try {
-                    string fullpath = Path.GetFullPath(this.path);
+                    string fullpath = uri.LocalPath;
                     if (fullpath[1] == ':') {
-                        var d = new DriveInfo(fullpath.Substring(0, 1));
+                        var d = new DriveInfo(fullpath);
 
                         switch (d.DriveType) {
                         case DriveType.CDRom:
@@ -882,7 +872,7 @@ namespace DropThing3
         /// <summary>
         /// 
         /// </summary>
-        void SaveSettings()
+        void SaveSettings(string filename)
         {
             //if (sett == null)
             //    sett = new DropThingSettings();
@@ -893,7 +883,7 @@ namespace DropThing3
             sett.col_count = grid.ColumnCount;
             sett.row_count = grid.RowCount;
 
-            string tmpname = Path.ChangeExtension(sett_filename, ".$$$");
+            string tmpname = Path.ChangeExtension(filename, ".$$$");
             using (var sw = new StreamWriter(tmpname, false, Encoding.UTF8)) {
                 var serializer = new XmlSerializer(typeof(DropThingSettings));
                 serializer.Serialize(sw, sett);
@@ -901,15 +891,15 @@ namespace DropThing3
 
             if (dbg_makbak)
                 try {
-                    string bak = Path.ChangeExtension(sett_filename,
+                    string bak = Path.ChangeExtension(filename,
                        DateTime.Now.ToString("yyyyMMdd-HHmmss"))
                       + Path.GetExtension(sett_filename);
-                    FileSystem.MoveFile(sett_filename, bak, true);
+                    FileSystem.MoveFile(filename, bak, true);
                 } catch (Exception ex) {
                     Console.WriteLine("make .bak: " + ex.Message);
                 }
 
-            FileSystem.MoveFile(tmpname, sett_filename, true);
+            FileSystem.MoveFile(tmpname, filename, true);
         }
 
         bool dbg_makbak = false;
@@ -958,7 +948,7 @@ namespace DropThing3
                 // auto save
                 if (Modified && DateTime.Now > modified_time.AddSeconds(AUTO_SAVE_DELAY)) {
                     Modified = false;   // 
-                    SaveSettings();
+                    SaveSettings(sett_filename);
                     AppStatusText(STM.NORMAL, "auto save done.");
                 }
 
@@ -1073,7 +1063,8 @@ namespace DropThing3
         /// <returns></returns>
         CellItem NewCellItem(string path, int col, int row)
         {
-            var item = new CellItem(path);
+            var item = new CellItem();
+            item.path = path;
             item.col = col;
             item.row = row;
             item.tab = CurrentTab.id;
@@ -1531,15 +1522,17 @@ namespace DropThing3
                     int w = item.icon.Width;
                     if (w > 32)
                         w = 32;
+                    else if (w < 24)
+                        w = 32;
+
                     int ix = e.CellBounds.X + (e.CellBounds.Width - w)/2;
                     int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
                     if (sett.caption_visible)
                         iy -= 6;
-                    if (!item.HasAttr('M')) {
-                        if (w < 24)
-                            w = 24;
+
+                    if (!item.HasAttr('M'))
                         g.DrawImage(item.icon, ix, iy, w, w);
-                    } else
+                    else
                         ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
@@ -1587,7 +1580,13 @@ namespace DropThing3
 
         void DrawHoverCell(Graphics g, Rectangle r)
         {
-            using (var br = new SolidBrush(Color.FromArgb(25, ColorUtl.TextColor(color0)))) {
+            Color color;
+            if (ColorUtl.IsDark(color0))
+                color = Color.FromArgb(25, Color.White);
+            else
+                color = Color.FromArgb(15, Color.Black);
+
+            using (var br = new SolidBrush(color)) {
                 g.FillRectangle(br, r.X+3, r.Y+3, r.Width-6, r.Height-6);
             }
         }
@@ -1848,7 +1847,7 @@ namespace DropThing3
 
         private void dbgSave_Click(object sender, EventArgs e)
         {
-            SaveSettings();
+            SaveSettings(sett_filename);
             Modified = false;
             AppStatusText(STM.NORMAL, "debug: save done.");
         }
@@ -1889,7 +1888,7 @@ namespace DropThing3
 
             sett.cell_list.ForEach((item) =>
             {
-                if (item.HasAttr('J') && item.path.StartsWith(e.DriveLetter+":"))
+                if (item.HasAttr('J') && item.LocalPath.StartsWith(e.DriveLetter+":"))
                     item.ToggleAttr('M', e.Status != RemovalStatus.INSERTED);
             });
             grid.Invalidate();

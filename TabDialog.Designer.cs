@@ -73,6 +73,7 @@
             this.ok.TabIndex = 16;
             this.ok.Text = "&OK";
             this.ok.UseVisualStyleBackColor = true;
+            this.ok.Click += new System.EventHandler(this.ok_Click);
             // 
             // label2
             // 
@@ -294,6 +295,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(300, 170);
             this.Name = "TabDialog";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "tab property - DropThing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TabDialog_FormClosing);

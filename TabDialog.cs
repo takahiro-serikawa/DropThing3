@@ -220,6 +220,12 @@ namespace DropThing3
             texture.Text = names[0];
         }
 
+        private void ok_Click(object sender, EventArgs e)
+        {
+            apply_Click(null, null);
+            this.Close();
+        }
+
         private void cancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -236,5 +242,6 @@ namespace DropThing3
             this.Visible = false;
             e.Cancel = true;
         }
+
     }
 }

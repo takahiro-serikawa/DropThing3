@@ -34,9 +34,9 @@
             this.about = new System.Windows.Forms.ToolStripMenuItem();
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.undo = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.eject = new System.Windows.Forms.ToolStripMenuItem();
             this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,7 +75,7 @@
             this.quit,
             this.dummy});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 274);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 252);
             // 
             // about
             // 
@@ -112,14 +112,6 @@
             this.explorerItem.ToolTipText = "Open Explorer and select the file.";
             this.explorerItem.Click += new System.EventHandler(this.explorerItem_Click);
             // 
-            // undo
-            // 
-            this.undo.Name = "undo";
-            this.undo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undo.Size = new System.Drawing.Size(202, 22);
-            this.undo.Text = "&Undo";
-            this.undo.Click += new System.EventHandler(this.undo_Click);
-            // 
             // propertyItem
             // 
             this.propertyItem.Name = "propertyItem";
@@ -137,6 +129,14 @@
             this.deleteItem.Text = "&Delete";
             this.deleteItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
             this.deleteItem.Click += new System.EventHandler(this.deleteItem_Click);
+            // 
+            // undo
+            // 
+            this.undo.Name = "undo";
+            this.undo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undo.Size = new System.Drawing.Size(202, 22);
+            this.undo.Text = "&Undo";
+            this.undo.Click += new System.EventHandler(this.undo_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -214,7 +214,7 @@
             this.addTab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.addTab.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.addTab.ForeColor = System.Drawing.Color.White;
-            this.addTab.Location = new System.Drawing.Point(337, 1);
+            this.addTab.Location = new System.Drawing.Point(336, 1);
             this.addTab.Name = "addTab";
             this.addTab.Size = new System.Drawing.Size(25, 27);
             this.addTab.TabIndex = 5;
@@ -294,7 +294,7 @@
             this.hamburger.Cursor = System.Windows.Forms.Cursors.Hand;
             this.hamburger.ErrorImage = null;
             this.hamburger.Image = ((System.Drawing.Image)(resources.GetObject("hamburger.Image")));
-            this.hamburger.Location = new System.Drawing.Point(362, 0);
+            this.hamburger.Location = new System.Drawing.Point(362, 1);
             this.hamburger.Name = "hamburger";
             this.hamburger.Size = new System.Drawing.Size(16, 16);
             this.hamburger.TabIndex = 7;
@@ -327,7 +327,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(340, 25);
+            this.tabControl1.Size = new System.Drawing.Size(334, 25);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
             this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
