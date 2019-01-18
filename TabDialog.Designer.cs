@@ -29,7 +29,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.cancel = new System.Windows.Forms.Button();
-            this.ok = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.title = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -51,29 +50,19 @@
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.undo = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cancel
             // 
             this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel.Location = new System.Drawing.Point(281, 246);
+            this.cancel.Location = new System.Drawing.Point(103, 246);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 17;
-            this.cancel.Text = "&Cancel";
+            this.cancel.Text = "&Close";
             this.cancel.UseVisualStyleBackColor = true;
             this.cancel.Click += new System.EventHandler(this.cancel_Click);
-            // 
-            // ok
-            // 
-            this.ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok.Location = new System.Drawing.Point(200, 246);
-            this.ok.Name = "ok";
-            this.ok.Size = new System.Drawing.Size(75, 23);
-            this.ok.TabIndex = 16;
-            this.ok.Text = "&OK";
-            this.ok.UseVisualStyleBackColor = true;
-            this.ok.Click += new System.EventHandler(this.ok_Click);
             // 
             // label2
             // 
@@ -134,11 +123,11 @@
             // 
             // apply
             // 
-            this.apply.Location = new System.Drawing.Point(100, 246);
+            this.apply.Location = new System.Drawing.Point(24, 246);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 21;
-            this.apply.Text = "&Apply";
+            this.apply.Text = "&OK";
             this.apply.UseVisualStyleBackColor = true;
             this.apply.Click += new System.EventHandler(this.apply_Click);
             // 
@@ -180,17 +169,17 @@
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(377, 15);
+            this.addButton.Location = new System.Drawing.Point(377, 217);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 25;
-            this.addButton.Text = "Add &New Tab";
+            this.addButton.Text = "&New Tab";
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(377, 44);
+            this.deleteButton.Location = new System.Drawing.Point(377, 246);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 26;
@@ -234,7 +223,7 @@
             // texture
             // 
             this.texture.AllowDrop = true;
-            this.texture.Location = new System.Drawing.Point(100, 131);
+            this.texture.Location = new System.Drawing.Point(100, 85);
             this.texture.Name = "texture";
             this.texture.Size = new System.Drawing.Size(326, 23);
             this.texture.TabIndex = 30;
@@ -244,7 +233,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(53, 134);
+            this.label3.Location = new System.Drawing.Point(53, 88);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 15);
             this.label3.TabIndex = 31;
@@ -252,7 +241,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(428, 130);
+            this.button1.Location = new System.Drawing.Point(428, 84);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(24, 23);
             this.button1.TabIndex = 32;
@@ -263,12 +252,24 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // undo
+            // 
+            this.undo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.undo.Location = new System.Drawing.Point(196, 246);
+            this.undo.Name = "undo";
+            this.undo.Size = new System.Drawing.Size(75, 23);
+            this.undo.TabIndex = 33;
+            this.undo.Text = "&Undo";
+            this.undo.UseVisualStyleBackColor = true;
+            this.undo.Click += new System.EventHandler(this.undo_Click);
+            // 
             // TabDialog
             // 
-            this.AcceptButton = this.ok;
+            this.AcceptButton = this.apply;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 281);
+            this.Controls.Add(this.undo);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.texture);
@@ -285,7 +286,6 @@
             this.Controls.Add(this.color1);
             this.Controls.Add(this.color0);
             this.Controls.Add(this.cancel);
-            this.Controls.Add(this.ok);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.title);
             this.Controls.Add(this.label1);
@@ -300,6 +300,7 @@
             this.Text = "tab property - DropThing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TabDialog_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TabDialog_FormClosed);
+            this.Load += new System.EventHandler(this.TabDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -308,7 +309,6 @@
         #endregion
 
         private System.Windows.Forms.Button cancel;
-        private System.Windows.Forms.Button ok;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox title;
         private System.Windows.Forms.Label label1;
@@ -330,5 +330,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button undo;
     }
 }

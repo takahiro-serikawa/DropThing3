@@ -129,6 +129,15 @@ namespace DropThing3
                 OnAccept(this);
         }
 
+        //public event DialogEvent OnUndo;
+        public event EventHandler OnUndo;
+
+        private void undo_Click(object sender, EventArgs e)
+        {
+            if (OnUndo != null)
+                OnUndo(this, null);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -182,9 +191,6 @@ namespace DropThing3
         {
             if (OnDelete != null)
                 OnDelete(this, null);
-
-            // prevent changing different tab; 暫定
-            ok.Enabled = false;
         }
 
         private void random_Click(object sender, EventArgs e)
@@ -220,12 +226,6 @@ namespace DropThing3
             texture.Text = names[0];
         }
 
-        private void ok_Click(object sender, EventArgs e)
-        {
-            apply_Click(null, null);
-            this.Close();
-        }
-
         private void cancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -241,6 +241,11 @@ namespace DropThing3
         {
             this.Visible = false;
             e.Cancel = true;
+        }
+
+        private void TabDialog_Load(object sender, EventArgs e)
+        {
+
         }
 
     }

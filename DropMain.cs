@@ -301,20 +301,21 @@ namespace DropThing3
 
         public class CellItem: object
         {
-            Uri uri;
+            string _path;
 
             [XmlElement("path")]
             public string path
             {
-                get { return uri.OriginalString; }
+                get { return _path; }
                 set
                 {
+                    _path = value;
                     string ext = Path.GetExtension(value);
                     if (ext == ".lnk") {    // Windows shortcut
                         var shell = new IWshRuntimeLibrary.WshShell();
                         var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(value);
 
-                        uri = new Uri(shortcut.TargetPath.ToString());
+                        //var uri = new Uri(shortcut.TargetPath.ToString());
                         this.Caption = Path.GetFileNameWithoutExtension(value);
                         this.options = shortcut.Arguments;
                         this.dir = shortcut.WorkingDirectory;
@@ -336,17 +337,22 @@ namespace DropThing3
                             if (line.StartsWith("IconFile="))
                                 this.icon_file = line.Substring(9);
                         }
-                        uri = new Uri(url);
+                        //uri = new Uri(url);
                         this.Caption = Path.GetFileNameWithoutExtension(value);
-                    } else {
-                        uri = new Uri(value);
-                        if (Caption == "")
-                            Caption = DefCaption();
                     }
+
+                    if (Caption == "")
+                        Caption = DefCaption();
                 }
             }
 
-            public string LocalPath { get { return uri.LocalPath; } }
+            public string LocalPath {
+                get {
+                    if (path.StartsWith(@"file:///"))
+                        return path.Substring(8);
+                    return path;
+                }
+            }
 
             public string icon_file;
             public string options;
@@ -469,7 +475,12 @@ namespace DropThing3
                         Console.WriteLine("UpdateIcon(); "+ex.Message);
                     }
 
-                //var u = new Uri(path);
+                Uri uri = null;
+                try {
+                    uri = new Uri(path);
+                }catch (Exception) {
+
+                }
 
                 if (path.StartsWith(@"http://") || path.StartsWith(@"https://")) {
                     this.AddAttr('U');
@@ -477,7 +488,7 @@ namespace DropThing3
                     if (this.icon == null && this.icon_file == null)
                         fetch_req.Enqueue(path);
                 } else {
-                    if (uri.IsUnc)
+                    if (uri != null && uri.IsUnc)
                         AddAttr('V');
                     else if (path.StartsWith(@"file:///"))
                         path = uri.LocalPath;
@@ -533,6 +544,7 @@ namespace DropThing3
             public DriveInfo GetDriveInfo()
             {
                 try {
+                    var uri = new Uri(path);
                     string fullpath = uri.LocalPath;
                     if (fullpath[1] == ':') {
                         var d = new DriveInfo(fullpath);
@@ -714,6 +726,25 @@ namespace DropThing3
                 color0 = Color.Lime;
                 color1 = Color.Green;
                 draw_gradation = true;
+            }
+
+            public TabLayer Clone()
+            {
+                var tab = new TabLayer();
+                tab.CopyFrom(this);
+                return tab;
+            }
+
+            public void CopyFrom(TabLayer tab)
+            {
+                this.id = tab.id;
+                this.title = tab.title;
+                this.color0 = tab.color0;
+                this.color1 = tab.color1;
+                this.texture = tab.texture;
+                this.draw_gradation = tab.draw_gradation;
+                this.style = tab.style;
+                this.origin = tab.origin;
             }
 
             static string ConvertToString<T>(T value)
@@ -986,21 +1017,19 @@ namespace DropThing3
             CurrentTab = tab;
         }
 
-        void DeleteCurrentTab(object sender, EventArgs args)
+        void DeleteTab(TabLayer tab)
         {
             if (sett.tab_list.Count > 1) {
-                int index = sett.tab_list.IndexOf(CurrentTab);
+                int index = sett.tab_list.IndexOf(tab);
 
-                sett.cell_list.RemoveAll(cell => cell.tab == CurrentTab.id);
-                sett.tab_list.Remove(CurrentTab);
+                sett.cell_list.RemoveAll(cell => cell.tab == tab.id);
+                sett.tab_list.Remove(tab);
 
                 tabControl1.TabPages.RemoveAt(index);
 
                 if (index >= sett.tab_list.Count)
                     index--;
                 CurrentTab = sett.tab_list[index];
-
-                //grid.Invalidate();
             }
         }
 
@@ -1362,7 +1391,8 @@ namespace DropThing3
             string s = item.Caption;
 
             if (item.HasAttr('d')) {
-                if (/*item.caption == null || */item.Caption == "")
+                //if (/*item.caption == null || */item.Caption == "")
+                if (item.path.EndsWith(s))
                     s = item.path;
             } else if (s != item.path)
                 s += "; " + item.path;
@@ -1696,23 +1726,17 @@ namespace DropThing3
 
         class CellUndo: UndoRec
         {
-            public CellItem Item { get; protected set; }
+            public CellItem TargetItem { get; protected set; }
 
             public CellUndo(CellItem item)
             {
-                this.Item = item;
+                this.TargetItem = item;
             }
         }
 
-        class NewCellUndo: CellUndo
-        {
-            public NewCellUndo(CellItem item) : base(item) { }
-        }
+        class NewCellUndo: CellUndo { public NewCellUndo(CellItem item) : base(item) { } }
 
-        class DeleteCellUndo: CellUndo
-        {
-            public DeleteCellUndo(CellItem item) : base(item) { }
-        }
+        class DeleteCellUndo: CellUndo { public DeleteCellUndo(CellItem item) : base(item) { } }
 
         class ChangeCellUndo: CellUndo
         {
@@ -1724,34 +1748,73 @@ namespace DropThing3
             }
         }
 
+        class TabUndo: UndoRec
+        {
+            public TabLayer TargetTab { get; protected set; }
+
+            public TabUndo(TabLayer tab)
+            {
+                TargetTab = tab;
+            }
+        }
+
+        class NewTabUndo: TabUndo { public NewTabUndo(TabLayer tab) : base(tab) { } }
+
+        class DeleteTabUndo: TabUndo { public DeleteTabUndo(TabLayer tab) : base(tab) { } }
+
+        class ChangeTabUndo: TabUndo
+        {
+            public TabLayer Bak { get; protected set; }
+
+            public ChangeTabUndo(TabLayer tab) : base(tab)
+            {
+                this.Bak = tab.Clone();
+            }
+        }
+
         UndoRec undo_buf = null;
 
         private void undo_Click(object sender, EventArgs e)
         {
             if (undo_buf == null)
                 return;
+            var u = undo_buf;
+            undo_buf = null;
 
-            if (undo_buf is CellUndo) {
-                var item = (undo_buf as CellUndo).Item;
+            if (u is CellUndo) {
+                var item = (u as CellUndo).TargetItem;
 
-                if (undo_buf is DeleteCellUndo)
+                if (u is DeleteCellUndo)
                     sett.cell_list.Add(item);
-                else if (undo_buf is ChangeCellUndo) {
+                else if (u is ChangeCellUndo) {
                     grid.InvalidateCell(item.col, item.row);
-                    var bak = (undo_buf as ChangeCellUndo).Bak;
+                    var bak = (u as ChangeCellUndo).Bak;
                     item.CopyFrom(bak);
-                } else if (undo_buf is NewCellUndo)
+                } else if (u is NewCellUndo)
                     sett.cell_list.Remove(item);
 
                 grid.InvalidateCell(item.col, item.row);
-            } else if (undo_buf is AddCellsUndo) {
-                foreach (var item in (undo_buf as AddCellsUndo).Items) {
+            } else if (u is AddCellsUndo) {
+                foreach (var item in (u as AddCellsUndo).Items) {
                     sett.cell_list.Remove(item);
                     grid.InvalidateCell(item.col, item.row);
                 }
-            }
+            } else if (u is TabUndo) {
+                var tab = (u as TabUndo).TargetTab;
 
-            undo_buf = null;
+                if (u is NewTabUndo) {
+                    DeleteTab(tab);
+                } else if (u is DeleteTabUndo) {
+                    sett.tab_list.Add(tab);
+                    var tabpage = new TabPage(tab.title);
+                    tabpage.Tag = tab;
+                    tabControl1.TabPages.Add(tabpage);
+                } else if (u is ChangeTabUndo) {
+                    var bak = (u as ChangeTabUndo).Bak;
+                    tab.CopyFrom(bak);
+                }
+            } else
+                AppStatusText(STM.ERROR, "unknown undo");
         }
 
         private void propertyItem_Click(object sender, EventArgs e)
@@ -1820,6 +1883,8 @@ namespace DropThing3
 
             dlg.OnAccept += (_) =>
             {
+                undo_buf = new ChangeTabUndo(CurrentTab);
+
                 CurrentTab.title = dlg.TabTitle;
                 CurrentTab.color0 = dlg.Color0;
                 CurrentTab.color1 = dlg.Color1;
@@ -1837,9 +1902,17 @@ namespace DropThing3
                 return true;
             };
 
-            dlg.OnDelete += DeleteCurrentTab;
+            dlg.OnDelete += (_, __) => {
+                undo_buf = new DeleteTabUndo(CurrentTab);
+                DeleteTab(CurrentTab);
+            };
 
-            dlg.OnAddNew += AddNewTab;
+            dlg.OnAddNew += (_,__) => {
+                AddNewTab(_, __);
+                undo_buf = new NewTabUndo(CurrentTab);
+            };
+
+            dlg.OnUndo += undo_Click;
 
             //dlg.Popup();
             dlg.ShowModeless();
