@@ -316,6 +316,7 @@ namespace DropThing3
                         var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(value);
 
                         //var uri = new Uri(shortcut.TargetPath.ToString());
+                        _path = shortcut.TargetPath.ToString();
                         this.Caption = Path.GetFileNameWithoutExtension(value);
                         this.options = shortcut.Arguments;
                         this.dir = shortcut.WorkingDirectory;
@@ -885,7 +886,6 @@ namespace DropThing3
                 this.StartPosition = FormStartPosition.Manual;
                 this.Left = sett.left;
                 this.Top = sett.top;
-
             } else
                 sett = new DropThingSettings();
 
@@ -1140,6 +1140,8 @@ namespace DropThing3
             //set { }
         }
 
+        TabLayer curr_tab = null;
+
         /// <summary>
         /// 
         /// </summary>
@@ -1147,18 +1149,31 @@ namespace DropThing3
         {
             get 
             {
-                try {
-                    return sett.tab_list.First(t => t.id == sett.current_tab);
-                } catch (Exception) { }
-                return sett.tab_list[0];
+                if (curr_tab == null)
+                    try {
+                        curr_tab = sett.tab_list.First(t => t.id == sett.current_tab);
+                    } catch (InvalidOperationException) {
+                        curr_tab = sett.tab_list[0];
+                    }
+                return curr_tab;
+                //try {
+                //    return sett.tab_list.First(t => t.id == sett.current_tab);
+                //} catch (Exception ex) {
+                //    Console.WriteLine("CurrentTab; "+ex.Message);
+                //}
+                //return sett.tab_list[0];
             }
             set
             {
-                if (sett.current_tab != value.id) {
-                    sett.current_tab = value.id;
+                TabLayer tab = sett.tab_list.First(t => t.id == value.id);
+
+                if (sett.current_tab != tab.id) {
+                    curr_tab = tab;
+                    sett.current_tab = tab.id;
                     GridSize(grid.ColumnCount, grid.RowCount);
                     Modified = true;
 
+                    RefreshCellInfo();
                     if (dlg.Visible)
                         dlg.ShowModeless();
                 }
@@ -1422,26 +1437,33 @@ namespace DropThing3
 
         int last_col = -1, last_row = -1;
 
+        void RefreshCellInfo()
+        {
+            AppStatusText(STM.NORMAL, "[{0},{1}] {2}",
+                grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex, 
+                info_text(CurrentItem));
+
+            // update menu
+            deleteItem.Enabled = (CurrentItem != null);
+            openItem.Enabled = (CurrentItem != null);
+            eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
+            if (eject.Enabled) {
+                var drive = CurrentItem.GetDriveInfo();
+                if (drive.IsReady)
+                    eject.Text = "e&Ject " + drive.Name + " " + drive.VolumeLabel;
+                else
+                    eject.Enabled = false;
+            }
+            undo.Enabled = undo_buf != null;
+        }
+
         private void grid_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (last_col != e.ColumnIndex || last_row != e.RowIndex) {
                 last_col = e.ColumnIndex;
                 last_row = e.RowIndex;
 
-                AppStatusText(STM.NORMAL, "[{0},{1}] {2}", e.ColumnIndex, e.RowIndex, info_text(CurrentItem));
-
-                // update menu
-                deleteItem.Enabled = (CurrentItem != null);
-                openItem.Enabled = (CurrentItem != null);
-                eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
-                if (eject.Enabled) {
-                    var drive = CurrentItem.GetDriveInfo();
-                    if (drive.IsReady)
-                        eject.Text = "e&Ject " + drive.Name + " " + drive.VolumeLabel;
-                    else
-                        eject.Enabled = false;
-                }
-                undo.Enabled = undo_buf != null;
+                RefreshCellInfo();
             }
         }
 
@@ -1812,7 +1834,9 @@ namespace DropThing3
                 } else if (u is ChangeTabUndo) {
                     var bak = (u as ChangeTabUndo).Bak;
                     tab.CopyFrom(bak);
+                    GridSize(grid.ColumnCount, grid.RowCount);
                 }
+
             } else
                 AppStatusText(STM.ERROR, "unknown undo");
         }
