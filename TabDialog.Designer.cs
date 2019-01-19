@@ -51,6 +51,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.undo = new System.Windows.Forms.Button();
+            this.ok = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cancel
@@ -60,7 +61,7 @@
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 17;
-            this.cancel.Text = "&Close";
+            this.cancel.Text = "&Cancel";
             this.cancel.UseVisualStyleBackColor = true;
             this.cancel.Click += new System.EventHandler(this.cancel_Click);
             // 
@@ -79,6 +80,7 @@
             this.title.Name = "title";
             this.title.Size = new System.Drawing.Size(100, 23);
             this.title.TabIndex = 10;
+            this.title.TextChanged += new System.EventHandler(this.apply_Click);
             // 
             // label1
             // 
@@ -123,12 +125,13 @@
             // 
             // apply
             // 
-            this.apply.Location = new System.Drawing.Point(24, 246);
+            this.apply.Location = new System.Drawing.Point(19, 177);
             this.apply.Name = "apply";
             this.apply.Size = new System.Drawing.Size(75, 23);
             this.apply.TabIndex = 21;
-            this.apply.Text = "&OK";
+            this.apply.Text = "&Apply";
             this.apply.UseVisualStyleBackColor = true;
+            this.apply.Visible = false;
             this.apply.Click += new System.EventHandler(this.apply_Click);
             // 
             // caption
@@ -142,6 +145,7 @@
             this.caption.TabIndex = 22;
             this.caption.Text = "item caption";
             this.caption.UseVisualStyleBackColor = true;
+            this.caption.CheckStateChanged += new System.EventHandler(this.apply_Click);
             // 
             // transparent
             // 
@@ -154,6 +158,8 @@
             this.transparent.TabIndex = 23;
             this.transparent.Text = "transparent";
             this.transparent.UseVisualStyleBackColor = true;
+            this.transparent.TextChanged += new System.EventHandler(this.apply_Click);
+            this.transparent.Click += new System.EventHandler(this.apply_Click);
             // 
             // border
             // 
@@ -166,6 +172,7 @@
             this.border.TabIndex = 24;
             this.border.Text = "cell border";
             this.border.UseVisualStyleBackColor = true;
+            this.border.CheckStateChanged += new System.EventHandler(this.apply_Click);
             // 
             // addButton
             // 
@@ -209,6 +216,8 @@
             this.titlebar.Text = "title bar";
             this.titlebar.UseVisualStyleBackColor = true;
             this.titlebar.Visible = false;
+            this.titlebar.TextChanged += new System.EventHandler(this.apply_Click);
+            this.titlebar.Click += new System.EventHandler(this.apply_Click);
             // 
             // swap
             // 
@@ -227,6 +236,7 @@
             this.texture.Name = "texture";
             this.texture.Size = new System.Drawing.Size(326, 23);
             this.texture.TabIndex = 30;
+            this.texture.TextChanged += new System.EventHandler(this.apply_Click);
             this.texture.DragDrop += new System.Windows.Forms.DragEventHandler(this.texture_DragDrop);
             this.texture.DragEnter += new System.Windows.Forms.DragEventHandler(this.texture_DragEnter);
             // 
@@ -261,14 +271,26 @@
             this.undo.TabIndex = 33;
             this.undo.Text = "&Undo";
             this.undo.UseVisualStyleBackColor = true;
+            this.undo.Visible = false;
             this.undo.Click += new System.EventHandler(this.undo_Click);
+            // 
+            // ok
+            // 
+            this.ok.Location = new System.Drawing.Point(22, 246);
+            this.ok.Name = "ok";
+            this.ok.Size = new System.Drawing.Size(75, 23);
+            this.ok.TabIndex = 34;
+            this.ok.Text = "&OK";
+            this.ok.UseVisualStyleBackColor = true;
+            this.ok.Click += new System.EventHandler(this.ok_Click);
             // 
             // TabDialog
             // 
-            this.AcceptButton = this.apply;
+            this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 281);
+            this.Controls.Add(this.ok);
             this.Controls.Add(this.undo);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
@@ -299,8 +321,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "tab property - DropThing";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TabDialog_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TabDialog_FormClosed);
-            this.Load += new System.EventHandler(this.TabDialog_Load);
+            this.Shown += new System.EventHandler(this.TabDialog_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,5 +352,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button undo;
+        private System.Windows.Forms.Button ok;
     }
 }

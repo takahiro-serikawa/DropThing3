@@ -15,7 +15,16 @@ namespace DropThing3
         public TabDialog()
         {
             InitializeComponent();
+
+            //loading = false;
         }
+
+        private void TabDialog_Shown(object sender, EventArgs e)
+        {
+            loading = false;
+        }
+
+        bool loading = true;
 
         /// <summary>
         /// 
@@ -125,17 +134,35 @@ namespace DropThing3
 
         private void apply_Click(object sender, EventArgs e)
         {
-            if (OnAccept != null)
+            if (!loading && OnAccept != null)
                 OnAccept(this);
         }
 
-        //public event DialogEvent OnUndo;
+        private void ok_Click(object sender, EventArgs e)
+        {
+            apply_Click(null, null);
+            this.Close();
+        }
+
         public event EventHandler OnUndo;
 
         private void undo_Click(object sender, EventArgs e)
         {
             if (OnUndo != null)
                 OnUndo(this, null);
+        }
+
+        private void cancel_Click(object sender, EventArgs e)
+        {
+            if (OnUndo != null)
+                OnUndo(this, null);
+            this.Close();
+        }
+
+        private void TabDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Visible = false;
+            e.Cancel = true;
         }
 
         /// <summary>
@@ -198,8 +225,7 @@ namespace DropThing3
             Color0 = ColorUtl.RandomNamedColor();
             Color1 = ColorUtl.RandomNamedColor();
 
-            if (OnAccept != null)
-                OnAccept(this);
+            apply_Click(null, null);
         }
 
         private void swap_Click(object sender, EventArgs e)
@@ -208,8 +234,7 @@ namespace DropThing3
             Color0 = Color1;
             Color1 = temp;
 
-            if (OnAccept != null)
-                OnAccept(this);
+            apply_Click(null, null);
         }
 
         private void texture_DragEnter(object sender, DragEventArgs e)
@@ -224,28 +249,6 @@ namespace DropThing3
         {
             string[] names = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             texture.Text = names[0];
-        }
-
-        private void cancel_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void TabDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //this.Visible = false;
-            
-        }
-
-        private void TabDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            this.Visible = false;
-            e.Cancel = true;
-        }
-
-        private void TabDialog_Load(object sender, EventArgs e)
-        {
-
         }
 
     }
