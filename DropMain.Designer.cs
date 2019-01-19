@@ -53,6 +53,7 @@
             this.hamburger = new System.Windows.Forms.PictureBox();
             this.resize = new System.Windows.Forms.PictureBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.label1 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hamburger)).BeginInit();
@@ -265,7 +266,7 @@
             this.grid.DragDrop += new System.Windows.Forms.DragEventHandler(this.grid_DragDrop);
             this.grid.DragEnter += new System.Windows.Forms.DragEventHandler(this.grid_DragEnter);
             this.grid.DragOver += new System.Windows.Forms.DragEventHandler(this.grid_DragOver);
-            this.grid.DragLeave += new System.EventHandler(this.grid_MouseLeave);
+            this.grid.DragLeave += new System.EventHandler(this.grid_DragLeave);
             this.grid.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.grid_QueryContinueDrag);
             this.grid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.grid_KeyDown);
             this.grid.MouseLeave += new System.EventHandler(this.grid_MouseLeave);
@@ -332,6 +333,16 @@
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
             this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(200, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(38, 15);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "label1";
+            this.label1.Visible = false;
+            // 
             // DropMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -339,6 +350,7 @@
             this.ClientSize = new System.Drawing.Size(380, 114);
             this.ContextMenuStrip = this.contextMenuStrip1;
             this.ControlBox = false;
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.hamburger);
             this.Controls.Add(this.missing);
             this.Controls.Add(this.resize);
@@ -398,6 +410,7 @@
         private System.Windows.Forms.ToolStripMenuItem dbgSave;
         private System.Windows.Forms.ToolStripMenuItem dummy;
         private System.Windows.Forms.ToolStripMenuItem undo;
+        private System.Windows.Forms.Label label1;
     }
 }
 

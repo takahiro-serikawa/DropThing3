@@ -1392,6 +1392,12 @@ namespace DropThing3
             }
         }
 
+        private void grid_DragLeave(object sender, EventArgs e)
+        {
+            //hover_effect(-1, -1);
+            drag_item = null;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1481,7 +1487,15 @@ namespace DropThing3
             }
         }
 
-        CellItem drag_item = null;
+        CellItem _drag_item = null;
+        CellItem drag_item
+        {
+            get { return _drag_item; }
+            set {
+                _drag_item = value;
+                //label1.Text = (_drag_item != null) ? _drag_item.Caption : "null";
+            }
+        }
 
 #if DEBUG
         string estr(DataGridViewCellMouseEventArgs e)
@@ -1542,8 +1556,8 @@ namespace DropThing3
 
         private void grid_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
-            if (e.Action == DragAction.Cancel)
-                drag_item = null;
+            //if (e.Action == DragAction.Cancel)
+            //    drag_item = null;
         }
 
         private void grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
