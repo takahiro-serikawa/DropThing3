@@ -15,16 +15,9 @@ namespace DropThing3
         public TabDialog()
         {
             InitializeComponent();
-
-            //loading = false;
         }
 
-        private void TabDialog_Shown(object sender, EventArgs e)
-        {
-            loading = false;
-        }
-
-        bool loading = true;
+        bool loading = false;
 
         /// <summary>
         /// 
@@ -138,9 +131,15 @@ namespace DropThing3
                 OnAccept(this);
         }
 
+        void ApplyImm()
+        {
+            if (!loading && OnAccept != null)
+                OnAccept(this);
+        }
+
         private void ok_Click(object sender, EventArgs e)
         {
-            apply_Click(null, null);
+            ApplyImm();
             this.Close();
         }
 
@@ -183,9 +182,14 @@ namespace DropThing3
         /// </summary>
         public void ShowModeless()
         {
-            if (OnOpen != null)
+            if (OnOpen != null) {
+                loading = true;
                 OnOpen(this, null);
+                loading = false;
+            }
             Show();
+            BringToFront();
+            Focus();
         }
 
         private void color0_Click(object sender, EventArgs e)
@@ -193,6 +197,7 @@ namespace DropThing3
             colorDialog1.Color = Color0;
             if (colorDialog1.ShowDialog() == DialogResult.OK) {
                 Color0 = colorDialog1.Color;
+                ApplyImm();
             }
         }
 
@@ -201,6 +206,7 @@ namespace DropThing3
             colorDialog1.Color = Color1;
             if (colorDialog1.ShowDialog() == DialogResult.OK) {
                 Color1 = colorDialog1.Color;
+                ApplyImm();
             }
         }
 
@@ -225,7 +231,7 @@ namespace DropThing3
             Color0 = ColorUtl.RandomNamedColor();
             Color1 = ColorUtl.RandomNamedColor();
 
-            apply_Click(null, null);
+            ApplyImm();
         }
 
         private void swap_Click(object sender, EventArgs e)
@@ -234,7 +240,7 @@ namespace DropThing3
             Color0 = Color1;
             Color1 = temp;
 
-            apply_Click(null, null);
+            ApplyImm();
         }
 
         private void texture_DragEnter(object sender, DragEventArgs e)

@@ -1022,6 +1022,11 @@ namespace DropThing3
             if (sett.tab_list.Count > 1) {
                 int index = sett.tab_list.IndexOf(tab);
 
+                var items = sett.cell_list.Where(item => item.tab == tab.id);
+                var u = undo_buf as DeleteTabUndo;
+                if (u != null)
+                    u.ContainsItems = items.ToList();
+
                 sett.cell_list.RemoveAll(cell => cell.tab == tab.id);
                 sett.tab_list.Remove(tab);
 
@@ -1460,6 +1465,8 @@ namespace DropThing3
                 else
                     eject.Enabled = false;
             }
+            //explorerItem.Enabled = (CurrentItem == null) || !CurrentItem.HasAttr('U');
+
             undo.Enabled = undo_buf != null;
         }
 
@@ -1723,11 +1730,11 @@ namespace DropThing3
             if (CurrentItem == null) {
                 Process.Start("EXPLORER.EXE");
                 AppStatusText(STM.NORMAL, "explorer");
-            } else if (!CurrentItem.HasAttr('U')) {
+            } else if (CurrentItem.HasAttr('U')) {
+                Process.Start("https://www.google.com/search?q=" + CurrentItem.path);
+            } else {
                 Process.Start("EXPLORER.EXE", @"/select,""" + CurrentItem.path + @"""");
                 AppStatusText(STM.NORMAL, "explorer {0}", CurrentItem.path);
-            } else {
-                //
             }
         }
 
@@ -1796,7 +1803,10 @@ namespace DropThing3
 
         class NewTabUndo: TabUndo { public NewTabUndo(TabLayer tab) : base(tab) { } }
 
-        class DeleteTabUndo: TabUndo { public DeleteTabUndo(TabLayer tab) : base(tab) { } }
+        class DeleteTabUndo: TabUndo {
+            public DeleteTabUndo(TabLayer tab) : base(tab) { }
+            public List<CellItem> ContainsItems { get; set; }
+        }
 
         class ChangeTabUndo: TabUndo
         {
@@ -1842,6 +1852,7 @@ namespace DropThing3
                     DeleteTab(tab);
                 } else if (u is DeleteTabUndo) {
                     sett.tab_list.Add(tab);
+                    sett.cell_list.AddRange((u as DeleteTabUndo).ContainsItems);
                     var tabpage = new TabPage(tab.title);
                     tabpage.Tag = tab;
                     tabControl1.TabPages.Add(tabpage);
@@ -1905,7 +1916,6 @@ namespace DropThing3
 
         private void tabItem_Click(object sender, EventArgs e)
         {
-
             dlg.OnOpen += (_, __) =>
             {
                 dlg.TabTitle = CurrentTab.title;
