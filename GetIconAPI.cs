@@ -71,5 +71,47 @@ namespace DropThing3
         static extern IntPtr SHGetFileInfo(string pszPath,
            uint dwFileAttribs, out SHFILEINFO psfi, uint cbFileInfo, SHGFI uFlags);
 
+
+
+
+        //
+
+        const int SHGFI_ICON = 0x000000100;
+        const int SHIL_EXTRALARGE = 2;
+        static readonly Guid IID_IImageList = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950");
+
+        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
+        static extern IntPtr SHGetFileInfo(string pszPath, int dwFileAttributes, ref SHFILEINFO psfi, int cbFileInfo, int uFlags);
+        [DllImport("Shell32.dll", PreserveSig = false)]
+        static extern void SHGetImageList(int iImageList, [MarshalAs(UnmanagedType.LPStruct)] Guid riid, out IntPtr ppv);
+        [DllImport("Comctl32.dll")]
+        static extern IntPtr ImageList_GetIcon(IntPtr himl, int i, int flags);
+        [DllImport("Comctl32.dll")]
+        static extern bool ImageList_Destroy(IntPtr himl);
+        [DllImport("User32.dll", SetLastError = true)]
+        static extern bool DestroyIcon(IntPtr hIcon);
+
+        public static Bitmap GetIconImage(string fileName, int shil)
+        {
+            var fi = new SHFILEINFO();
+            var result = SHGetFileInfo(fileName, 0, ref fi, Marshal.SizeOf(typeof(SHFILEINFO)), SHGFI_ICON);
+            //Debug.Assert(result != IntPtr.Zero);
+
+            var himl = IntPtr.Zero;
+            var hicon = IntPtr.Zero;
+            try {
+                SHGetImageList(shil/*SHIL_EXTRALARGE*/, IID_IImageList, out himl);
+                hicon = ImageList_GetIcon(himl, fi.iIcon, 0);
+                //Debug.Assert(hicon != IntPtr.Zero);
+
+                return Icon.FromHandle(hicon).ToBitmap();
+            } finally {
+                if (hicon != IntPtr.Zero)
+                    DestroyIcon(hicon);
+                if (himl != IntPtr.Zero)
+                    ImageList_Destroy(himl);
+            }
+        }
+
     }
 }

@@ -52,6 +52,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.undo = new System.Windows.Forms.Button();
             this.ok = new System.Windows.Forms.Button();
+            this.medium = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cancel
@@ -139,7 +140,7 @@
             this.caption.AutoSize = true;
             this.caption.Checked = true;
             this.caption.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.caption.Location = new System.Drawing.Point(264, 177);
+            this.caption.Location = new System.Drawing.Point(264, 132);
             this.caption.Name = "caption";
             this.caption.Size = new System.Drawing.Size(92, 19);
             this.caption.TabIndex = 22;
@@ -152,7 +153,7 @@
             this.transparent.AutoSize = true;
             this.transparent.Checked = true;
             this.transparent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.transparent.Location = new System.Drawing.Point(100, 202);
+            this.transparent.Location = new System.Drawing.Point(100, 157);
             this.transparent.Name = "transparent";
             this.transparent.Size = new System.Drawing.Size(86, 19);
             this.transparent.TabIndex = 23;
@@ -166,7 +167,7 @@
             this.border.AutoSize = true;
             this.border.Checked = true;
             this.border.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.border.Location = new System.Drawing.Point(264, 202);
+            this.border.Location = new System.Drawing.Point(264, 157);
             this.border.Name = "border";
             this.border.Size = new System.Drawing.Size(82, 19);
             this.border.TabIndex = 24;
@@ -209,7 +210,7 @@
             this.titlebar.AutoSize = true;
             this.titlebar.Checked = true;
             this.titlebar.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.titlebar.Location = new System.Drawing.Point(100, 177);
+            this.titlebar.Location = new System.Drawing.Point(100, 132);
             this.titlebar.Name = "titlebar";
             this.titlebar.Size = new System.Drawing.Size(66, 19);
             this.titlebar.TabIndex = 28;
@@ -284,12 +285,26 @@
             this.ok.UseVisualStyleBackColor = true;
             this.ok.Click += new System.EventHandler(this.ok_Click);
             // 
+            // medium
+            // 
+            this.medium.AutoSize = true;
+            this.medium.Checked = true;
+            this.medium.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.medium.Location = new System.Drawing.Point(264, 182);
+            this.medium.Name = "medium";
+            this.medium.Size = new System.Drawing.Size(136, 19);
+            this.medium.TabIndex = 36;
+            this.medium.Text = "medium icon (48x48)";
+            this.medium.UseVisualStyleBackColor = true;
+            this.medium.CheckedChanged += new System.EventHandler(this.apply_Click);
+            // 
             // TabDialog
             // 
             this.AcceptButton = this.ok;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.cancel;
             this.ClientSize = new System.Drawing.Size(464, 281);
+            this.Controls.Add(this.medium);
             this.Controls.Add(this.ok);
             this.Controls.Add(this.undo);
             this.Controls.Add(this.button1);
@@ -352,5 +367,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button undo;
         private System.Windows.Forms.Button ok;
+        private System.Windows.Forms.CheckBox medium;
     }
 }

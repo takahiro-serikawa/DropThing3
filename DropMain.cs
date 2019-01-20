@@ -104,6 +104,7 @@ namespace DropThing3
 #if DEBUG
             dbg_makbak = true;
             dbgSave.Visible = true;
+            dbgRefreshAll.Visible = true;
 #endif
         }
 
@@ -190,8 +191,9 @@ namespace DropThing3
                 Modified |= true;
             }
 
-            CellWidth = sett.caption_visible ? 80 : M+32+M;
-            CellHeight = sett.caption_visible ? M+32+17+M : M+32+M;
+            int pxls = (sett.mediumIcon) ? pxls = 48 : 32;
+            CellWidth = sett.caption_visible ? 80 : M+pxls+M;
+            CellHeight = sett.caption_visible ? M+pxls+17+M : M+pxls+M;
 
             MinimumSize = new Size(CellWidth, grid.Top + CellHeight + status.Height);
 
@@ -512,19 +514,28 @@ namespace DropThing3
                 //   ? path : this.icon_file;
                 string icon_file = this.icon_file != null ? this.icon_file : path;
 
+                if (this.icon == null) {
+                    //var icon = GetIconAPI.Get(icon_file);
+                    //if (icon != null)
+                    //    this.icon = icon.ToBitmap();
+                    try {
+                        int shil = 0;
+                        this.icon = GetIconAPI.GetIconImage(icon_file, shil);
+                    } catch (Exception ex) {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+
                 if (this.icon == null)
                     try {
                         var icon = Icon.ExtractAssociatedIcon(icon_file);
+                        //if (sett.mediumIcon)
+                        //    icon = new Icon(icon, new Size(48, 48));
+                        
                         this.icon = icon.ToBitmap();
                     } catch (Exception) {
                         this.icon = null;
                     }
-
-                if (this.icon == null) {
-                    var icon = GetIconAPI.Get(icon_file);
-                    if (icon != null)
-                        this.icon = icon.ToBitmap();
-                }
 
                 // save icon cache
                 if ((HasAttr('J') || HasAttr('V'))
@@ -828,6 +839,7 @@ namespace DropThing3
             public bool cell_border;
             public bool transparent;
             public bool titlebar;
+            public bool mediumIcon;
 
             /// <summary>
             /// 
@@ -1593,10 +1605,12 @@ namespace DropThing3
 
                 if (item.icon != null) {
                     int w = item.icon.Width;
-                    if (w > 32)
-                        w = 32;
+                    int size = sett.mediumIcon ? 48 : 32;
+
+                    if (w > size)
+                        w = size;
                     else if (w < 24)
-                        w = 32;
+                        w = size;
 
                     int ix = e.CellBounds.X + (e.CellBounds.Width - w)/2;
                     int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
@@ -1679,7 +1693,8 @@ namespace DropThing3
         {
             var m = g.MeasureString(caption, this.Font);
             Color color = ColorUtl.TextColor(color1);
-            var rect = new RectangleF(bounds.Left, bounds.Top + 32 +6, bounds.Width, m.Height);
+            //var rect = new RectangleF(bounds.Left, bounds.Top + 32 +6, bounds.Width, m.Height);
+            var rect = new RectangleF(bounds.Left, bounds.Bottom - 17-2, bounds.Width, m.Height);
             var f = new StringFormat();
             f.Alignment = StringAlignment.Center;
             if (m.Width <= rect.Width) {
@@ -1927,6 +1942,7 @@ namespace DropThing3
                 dlg.CellBorder = sett.cell_border;
                 dlg.TrasnparentMode = sett.transparent;
                 dlg.TitleBar = sett.titlebar;
+                dlg.MediumIcon = sett.mediumIcon;
             };
 
             dlg.OnAccept += (_) =>
@@ -1942,6 +1958,7 @@ namespace DropThing3
                 sett.cell_border = dlg.CellBorder;
                 sett.transparent = dlg.TrasnparentMode;
                 sett.titlebar = dlg.TitleBar;
+                sett.mediumIcon = dlg.MediumIcon;
                 Modified = true;
 
                 tabControl1.Invalidate();
@@ -1971,6 +1988,12 @@ namespace DropThing3
             SaveSettings(sett_filename);
             Modified = false;
             AppStatusText(STM.NORMAL, "debug: save done.");
+        }
+
+        private void dbgRefreshAll_Click(object sender, EventArgs e)
+        {
+            sett.cell_list.ForEach((i) => { i.icon = null; });
+            grid.Invalidate();
         }
 
         private void quit_Click(object sender, EventArgs e)

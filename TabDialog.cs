@@ -99,6 +99,12 @@ namespace DropThing3
             set { titlebar.Checked = value; }
         }
 
+        public bool MediumIcon
+        {
+            get { return medium.Checked; }
+            set { medium.Checked = value; }
+        }
+
         /// <summary>
         /// 
         /// </summary>

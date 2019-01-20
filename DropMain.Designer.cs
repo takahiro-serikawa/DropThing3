@@ -41,6 +41,7 @@
             this.eject = new System.Windows.Forms.ToolStripMenuItem();
             this.tabItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dbgSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.dbgRefreshAll = new System.Windows.Forms.ToolStripMenuItem();
             this.quit = new System.Windows.Forms.ToolStripMenuItem();
             this.dummy = new System.Windows.Forms.ToolStripMenuItem();
             this.status = new System.Windows.Forms.Label();
@@ -73,10 +74,11 @@
             this.eject,
             this.tabItem,
             this.dbgSave,
+            this.dbgRefreshAll,
             this.quit,
             this.dummy});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 252);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 274);
             // 
             // about
             // 
@@ -170,6 +172,14 @@
             this.dbgSave.ToolTipText = "save settings now.";
             this.dbgSave.Visible = false;
             this.dbgSave.Click += new System.EventHandler(this.dbgSave_Click);
+            // 
+            // dbgRefreshAll
+            // 
+            this.dbgRefreshAll.Name = "dbgRefreshAll";
+            this.dbgRefreshAll.Size = new System.Drawing.Size(202, 22);
+            this.dbgRefreshAll.Text = "dbg: refresh all icons";
+            this.dbgRefreshAll.Visible = false;
+            this.dbgRefreshAll.Click += new System.EventHandler(this.dbgRefreshAll_Click);
             // 
             // quit
             // 
@@ -411,6 +421,7 @@
         private System.Windows.Forms.ToolStripMenuItem dummy;
         private System.Windows.Forms.ToolStripMenuItem undo;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem dbgRefreshAll;
     }
 }
 
