@@ -28,7 +28,6 @@ using ParaParaView;
 
 // hot key
 // cell drawing too slow
-// other icon size
 // multiple dock
 // double click item
 
@@ -464,7 +463,7 @@ namespace DropThing3
             /// <summary>
             /// 
             /// </summary>
-            public void UpdateIcon()
+            public void UpdateIcon(int shil)
             {
                 string path = this.path;
                 string cachename = MakeCacheName(path);
@@ -519,7 +518,6 @@ namespace DropThing3
                     //if (icon != null)
                     //    this.icon = icon.ToBitmap();
                     try {
-                        int shil = 0;
                         this.icon = GetIconAPI.GetIconImage(icon_file, shil);
                     } catch (Exception ex) {
                         Console.WriteLine(ex.Message);
@@ -1579,6 +1577,8 @@ namespace DropThing3
             //    drag_item = null;
         }
 
+        bool dbg_stretch_icon = false;
+
         private void grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             var g = e.Graphics;
@@ -1601,16 +1601,18 @@ namespace DropThing3
             var item = GetItemAt(e.ColumnIndex, e.RowIndex);
             if (item != null) {
                 if (item.icon == null)
-                    item.UpdateIcon();
+                    item.UpdateIcon(sett.mediumIcon ? 2 : 0);
 
                 if (item.icon != null) {
                     int w = item.icon.Width;
                     int size = sett.mediumIcon ? 48 : 32;
 
-                    if (w > size)
-                        w = size;
-                    else if (w < 24)
-                        w = size;
+                    if (dbg_stretch_icon) {
+                        if (w > size)
+                            w = size;
+                        else if (w < 3*size/4)
+                            w = size;
+                    }
 
                     int ix = e.CellBounds.X + (e.CellBounds.Width - w)/2;
                     int iy = e.CellBounds.Y + (e.CellBounds.Height - w)/2;
@@ -1796,6 +1798,11 @@ namespace DropThing3
 
         class DeleteCellUndo: CellUndo { public DeleteCellUndo(CellItem item) : base(item) { } }
 
+        //interface IUndoFromBak<T>
+        //{
+        //    T BackupData { get; set; }
+        //}
+
         class ChangeCellUndo: CellUndo
         {
             public CellItem Bak { get; protected set; }
@@ -1942,7 +1949,6 @@ namespace DropThing3
                 dlg.CellBorder = sett.cell_border;
                 dlg.TrasnparentMode = sett.transparent;
                 dlg.TitleBar = sett.titlebar;
-                dlg.MediumIcon = sett.mediumIcon;
             };
 
             dlg.OnAccept += (_) =>
@@ -1958,12 +1964,17 @@ namespace DropThing3
                 sett.cell_border = dlg.CellBorder;
                 sett.transparent = dlg.TrasnparentMode;
                 sett.titlebar = dlg.TitleBar;
-                sett.mediumIcon = dlg.MediumIcon;
-                Modified = true;
 
                 tabControl1.Invalidate();
                 GridSize(grid.ColumnCount, grid.RowCount);
                 FitToGrid();
+
+                if (sett.mediumIcon != dlg.MediumIcon) {
+                    sett.mediumIcon = dlg.MediumIcon;
+                    dbgRefreshAll_Click(null, null);
+                }
+                Modified = true;
+
                 return true;
             };
 

@@ -82,6 +82,7 @@
             // 
             // about
             // 
+            this.about.AutoSize = false;
             this.about.BackColor = System.Drawing.Color.MediumBlue;
             this.about.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.about.ForeColor = System.Drawing.Color.White;
@@ -166,6 +167,7 @@
             // 
             // dbgSave
             // 
+            this.dbgSave.ForeColor = System.Drawing.Color.Brown;
             this.dbgSave.Name = "dbgSave";
             this.dbgSave.Size = new System.Drawing.Size(202, 22);
             this.dbgSave.Text = "dbg: save now";
@@ -175,6 +177,7 @@
             // 
             // dbgRefreshAll
             // 
+            this.dbgRefreshAll.ForeColor = System.Drawing.Color.Brown;
             this.dbgRefreshAll.Name = "dbgRefreshAll";
             this.dbgRefreshAll.Size = new System.Drawing.Size(202, 22);
             this.dbgRefreshAll.Text = "dbg: refresh all icons";
@@ -193,6 +196,7 @@
             // dummy
             // 
             this.dummy.BackColor = System.Drawing.SystemColors.Control;
+            this.dummy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
             this.dummy.Enabled = false;
             this.dummy.Name = "dummy";
             this.dummy.Size = new System.Drawing.Size(202, 22);
