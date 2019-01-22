@@ -1577,7 +1577,7 @@ namespace DropThing3
             //    drag_item = null;
         }
 
-        bool dbg_stretch_icon = false;
+        bool dbg_stretch_icon = true;
 
         private void grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
@@ -1766,7 +1766,6 @@ namespace DropThing3
             }
         }
 
-
         // UNDO
 
         abstract class UndoRec: Object
@@ -1797,11 +1796,6 @@ namespace DropThing3
         class NewCellUndo: CellUndo { public NewCellUndo(CellItem item) : base(item) { } }
 
         class DeleteCellUndo: CellUndo { public DeleteCellUndo(CellItem item) : base(item) { } }
-
-        //interface IUndoFromBak<T>
-        //{
-        //    T BackupData { get; set; }
-        //}
 
         class ChangeCellUndo: CellUndo
         {
@@ -2015,6 +2009,8 @@ namespace DropThing3
         private void about_Click(object sender, EventArgs e)
         {
             MessageBox.Show("YET");
+            //var form = new GhostForm();
+            //form.Show();
         }
 
         private void eject_Click(object sender, EventArgs e)
