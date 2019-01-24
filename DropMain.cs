@@ -1946,6 +1946,7 @@ namespace DropThing3
                 dlg.CellBorder = sett.cell_border;
                 dlg.TrasnparentMode = sett.transparent;
                 dlg.TitleBar = sett.titlebar;
+                dlg.MediumIcon = sett.mediumIcon;
             };
 
             dlg.OnAccept += (_) =>
@@ -1961,15 +1962,15 @@ namespace DropThing3
                 sett.cell_border = dlg.CellBorder;
                 sett.transparent = dlg.TrasnparentMode;
                 sett.titlebar = dlg.TitleBar;
+                if (sett.mediumIcon != dlg.MediumIcon) {
+                    sett.mediumIcon = dlg.MediumIcon;
+                    dbgRefreshAll_Click(null, null);
+                }
 
                 tabControl1.Invalidate();
                 GridSize(grid.ColumnCount, grid.RowCount);
                 FitToGrid();
 
-                if (sett.mediumIcon != dlg.MediumIcon) {
-                    sett.mediumIcon = dlg.MediumIcon;
-                    dbgRefreshAll_Click(null, null);
-                }
                 Modified = true;
 
                 return true;
