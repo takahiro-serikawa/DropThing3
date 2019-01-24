@@ -1822,6 +1822,7 @@ namespace DropThing3
         class DeleteTabUndo: TabUndo {
             public DeleteTabUndo(TabLayer tab) : base(tab) { }
             public List<CellItem> ContainsItems { get; set; }
+            public int index;
         }
 
         class ChangeTabUndo: TabUndo

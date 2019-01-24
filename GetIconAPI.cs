@@ -77,7 +77,12 @@ namespace DropThing3
         //
 
         const int SHGFI_ICON = 0x000000100;
+        const int SHGFI_USEFILEATTRIBUTES = 0x00000010;
+        const int SHIL_LARGE = 0;
+        const int SHIL_SMALL = 1;
         const int SHIL_EXTRALARGE = 2;
+        const int SHIL_SYSSMALL = 3;
+        const int SHIL_JUMBO = 4;
         static readonly Guid IID_IImageList = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950");
 
         [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
@@ -95,12 +100,14 @@ namespace DropThing3
         {
             var fi = new SHFILEINFO();
             var result = SHGetFileInfo(fileName, 0, ref fi, Marshal.SizeOf(typeof(SHFILEINFO)), SHGFI_ICON);
-            //Debug.Assert(result != IntPtr.Zero);
+         
+            if (fi.iIcon == 0)
+                return null;
 
             var himl = IntPtr.Zero;
             var hicon = IntPtr.Zero;
             try {
-                SHGetImageList(shil/*SHIL_EXTRALARGE*/, IID_IImageList, out himl);
+                SHGetImageList(shil, IID_IImageList, out himl);
                 hicon = ImageList_GetIcon(himl, fi.iIcon, 0);
                 //Debug.Assert(hicon != IntPtr.Zero);
 
