@@ -1486,6 +1486,8 @@ namespace DropThing3
                 last_col = e.ColumnIndex;
                 last_row = e.RowIndex;
 
+                hover_effect(last_col, last_row);
+
                 RefreshCellInfo();
             }
         }
