@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO; // FileSystem.
 using System.Reflection;
 using ParaParaView;
+using System.Drawing.Imaging;
 
 // TODO
 // change tab order
@@ -1623,8 +1624,22 @@ namespace DropThing3
 
                     if (!item.HasAttr('M'))
                         g.DrawImage(item.icon, ix, iy, w, w);
-                    else
-                        ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
+                    else {
+                        var cm = new ColorMatrix(
+                            new float[][] {
+                                new float[]{0.299f, 0.299f, 0.299f, 0, 0},
+                                new float[]{0.587f, 0.587f, 0.587f, 0, 0},
+                                new float[]{0.114f, 0.114f, 0.114f, 0, 0},
+                                new float[]{0,      0,      0,      1, 0},
+                                new float[]{0,      0,      0,      0, 1}
+                            });
+                        var ia = new ImageAttributes();
+                        ia.SetColorMatrix(cm);
+                        g.DrawImage(item.icon, new Rectangle(ix, iy, w, w),
+                           0, 0, item.icon.Width, item.icon.Height, GraphicsUnit.Pixel, ia);
+                        ia.Dispose();
+                        //ControlPaint.DrawImageDisabled(g, item.icon, ix, iy, color1);
+                    }
                 } else {
                     string alt = item.HasAttr('U') ? "URL" : "?";
                     var f = new StringFormat();
