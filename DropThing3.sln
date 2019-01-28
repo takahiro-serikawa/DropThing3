@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropThing3", "DropThing3.csproj", "{EF2D2173-BC06-45E8-A2DA-49567C166B92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropTabTEST", "..\DropTabTEST\DropTabTEST.csproj", "{4D9FCE09-D536-47C1-A9C3-D22412DF8B83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EF2D2173-BC06-45E8-A2DA-49567C166B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF2D2173-BC06-45E8-A2DA-49567C166B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF2D2173-BC06-45E8-A2DA-49567C166B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D9FCE09-D536-47C1-A9C3-D22412DF8B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D9FCE09-D536-47C1-A9C3-D22412DF8B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D9FCE09-D536-47C1-A9C3-D22412DF8B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D9FCE09-D536-47C1-A9C3-D22412DF8B83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
