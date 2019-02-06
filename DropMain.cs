@@ -108,6 +108,10 @@ namespace DropThing3
 #endif
         }
 
+#if DEBUG
+        StreamWriter log = new StreamWriter("log.txt", true, Encoding.UTF8);
+#endif
+
         private void DropForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -125,6 +129,10 @@ namespace DropThing3
 
         private void DropForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+#if DEBUG
+            log.WriteLine(string.Format("{0}: FormClosed(, {1})", 
+               DateTime.Now.ToString(), e.CloseReason.ToString()));
+#endif
             try {
                 faviconFetch.CancelAsync();
 

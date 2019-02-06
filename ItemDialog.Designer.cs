@@ -78,7 +78,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.path.Location = new System.Drawing.Point(100, 37);
             this.path.Name = "path";
-            this.path.Size = new System.Drawing.Size(356, 23);
+            this.path.Size = new System.Drawing.Size(336, 23);
             this.path.TabIndex = 3;
             // 
             // label2
