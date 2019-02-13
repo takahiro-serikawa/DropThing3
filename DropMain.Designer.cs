@@ -41,7 +41,7 @@
             this.openItem = new System.Windows.Forms.ToolStripMenuItem();
             this.explorerItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertyItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.eject = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +74,7 @@
             this.openItem,
             this.explorerItem,
             this.propertyItem,
-            this.deleteItem,
+            this.removeItem,
             this.undo,
             this.toolStripMenuItem1,
             this.eject,
@@ -84,7 +84,7 @@
             this.quit,
             this.dummy});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 274);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 296);
             // 
             // about
             // 
@@ -131,14 +131,14 @@
             this.propertyItem.ToolTipText = "Open form of CELL settings";
             this.propertyItem.Click += new System.EventHandler(this.propertyItem_Click);
             // 
-            // deleteItem
+            // removeItem
             // 
-            this.deleteItem.Name = "deleteItem";
-            this.deleteItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.deleteItem.Size = new System.Drawing.Size(202, 22);
-            this.deleteItem.Text = "&Delete";
-            this.deleteItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
-            this.deleteItem.Click += new System.EventHandler(this.deleteItem_Click);
+            this.removeItem.Name = "removeItem";
+            this.removeItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
+            this.removeItem.Size = new System.Drawing.Size(202, 22);
+            this.removeItem.Text = "&Remove";
+            this.removeItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
+            this.removeItem.Click += new System.EventHandler(this.deleteItem_Click);
             // 
             // undo
             // 
@@ -414,7 +414,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button addTab;
         private System.Windows.Forms.ToolStripMenuItem openItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteItem;
+        private System.Windows.Forms.ToolStripMenuItem removeItem;
         private System.Windows.Forms.ToolStripMenuItem explorerItem;
         private System.Windows.Forms.ToolStripMenuItem propertyItem;
         private System.Windows.Forms.DataGridView grid;

@@ -1474,7 +1474,7 @@ namespace DropThing3
                 info_text(CurrentItem));
 
             // update menu
-            deleteItem.Enabled = (CurrentItem != null);
+            removeItem.Enabled = (CurrentItem != null);
             openItem.Enabled = (CurrentItem != null);
             eject.Enabled = (CurrentItem != null) && CurrentItem.HasAttr('J');
             if (eject.Enabled) {
