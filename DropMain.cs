@@ -352,8 +352,41 @@ namespace DropThing3
                         this.Caption = Path.GetFileNameWithoutExtension(value);
                     }
 
+                    string p = path;
+                    Uri uri = null;
+                    try {
+                        uri = new Uri(p);
+                    } catch (Exception) {
+
+                    }
+
+                    if (p.StartsWith(@"http://") || p.StartsWith(@"https://")) {
+                        this.AddAttr('U');
+                        // 2. from web (URL)
+                        //if (this.icon == null && this.icon_file == null)
+                        //    fetch_req.Enqueue(path);
+                    } else {
+                        if (uri != null && uri.IsUnc)
+                            AddAttr('V');
+                        else if (p.StartsWith(@"file:///"))
+                            p = uri.LocalPath;
+                        else
+                            p = Path.GetFullPath(p);
+
+                        GetDriveInfo();
+
+                        if (Directory.Exists(p))
+                            this.AddAttr('d');
+                        else if (File.Exists(p)) {
+                            this.AddAttr('f');
+                            ext = Path.GetExtension(p);
+                            if (executables.IndexOf(ext) >= 0)
+                                this.AddAttr('x');
+                        }
+                    }
+
                     if (Caption == "")
-                        Caption = DefCaption();
+                        Caption = DefaultCaption();
                 }
             }
 
@@ -474,58 +507,24 @@ namespace DropThing3
             /// </summary>
             public void UpdateIcon(int shil)
             {
-                string path = this.path;
                 string cachename = MakeCacheName(path);
 
                 // 1. get from cache if exists
                 if (this.icon == null && File.Exists(cachename))
                     try {
                         this.icon = (Bitmap)Image.FromFile(cachename);
+                        return;
                     } catch (Exception ex) {
-                        this.icon = null;
                         Console.WriteLine("UpdateIcon(); "+ex.Message);
                     }
 
-                Uri uri = null;
-                try {
-                    uri = new Uri(path);
-                }catch (Exception) {
+                // 2. from web
+                if (HasAttr('U') && this.icon == null && this.icon_file == null)
+                    fetch_req.Enqueue(path);
 
-                }
-
-                if (path.StartsWith(@"http://") || path.StartsWith(@"https://")) {
-                    this.AddAttr('U');
-                    // 2. from web (URL)
-                    if (this.icon == null && this.icon_file == null)
-                        fetch_req.Enqueue(path);
-                } else {
-                    if (uri != null && uri.IsUnc)
-                        AddAttr('V');
-                    else if (path.StartsWith(@"file:///"))
-                        path = uri.LocalPath;
-                    else
-                        path = Path.GetFullPath(path);
-
-                    GetDriveInfo();
-
-                    if (Directory.Exists(path))
-                        this.AddAttr('d');
-                    else if (File.Exists(path)) {
-                        this.AddAttr('f');
-                        string ext = Path.GetExtension(path);
-                        if (executables.IndexOf(ext) >= 0)
-                            this.AddAttr('x');
-                    }
-                }
-
-                //string icon_file = (this.icon_file == null && !this.HasAttr('U'))
-                //   ? path : this.icon_file;
-                string icon_file = this.icon_file != null ? this.icon_file : path;
-
+                // 3. from local file
+                string icon_file = this.icon_file != null ? this.icon_file : LocalPath;
                 if (this.icon == null) {
-                    //var icon = GetIconAPI.Get(icon_file);
-                    //if (icon != null)
-                    //    this.icon = icon.ToBitmap();
                     try {
                         this.icon = GetIconAPI.GetIconImage(icon_file, shil);
                     } catch (Exception ex) {
@@ -647,7 +646,7 @@ namespace DropThing3
             [XmlElement("caption")]
             public string Caption { get { return caption; } set { caption = value; } }
 
-            string DefCaption()
+            string DefaultCaption()
             { 
                 // return default caption if not specified
                 if (this.HasAttr('U')) {
@@ -657,8 +656,13 @@ namespace DropThing3
                         int l = ll.Length-1;
                         if (l > 0 && ll[l] == "index.html")
                             l--;
-                        if (l >= 0)
-                            return ll[l];
+                        if (l >= 0) {
+                            string s = ll[l];
+                            int k = s.IndexOf('?');
+                            if (k > 0)
+                                return s.Substring(0, k);
+                            return s;
+                        }
 
                         IPAddress addr = IPAddress.Any;
                         if (IPAddress.TryParse(u.Host, out addr))
@@ -1780,7 +1784,7 @@ namespace DropThing3
             }
         }
 
-        private void deleteItem_Click(object sender, EventArgs e)
+        private void removeItem_Click(object sender, EventArgs e)
         {
             if (CurrentItem != null) {
                 undo_buf = new DeleteCellUndo(CurrentItem);
@@ -1788,6 +1792,8 @@ namespace DropThing3
                 sett.cell_list.Remove(CurrentItem);
                 grid.InvalidateCell(grid.CurrentCell);
                 Modified = true;
+
+                RefreshCellInfo();
             }
         }
 
@@ -1906,6 +1912,8 @@ namespace DropThing3
 
             } else
                 AppStatusText(STM.ERROR, "unknown undo");
+
+            RefreshCellInfo();
         }
 
         private void propertyItem_Click(object sender, EventArgs e)
@@ -1943,6 +1951,8 @@ namespace DropThing3
                 item.dir = dlg.WorkingDirectory;
                 Modified = true;
                 grid.InvalidateCell(grid.CurrentCell);
+
+                RefreshCellInfo();
                 return true;
             };
 

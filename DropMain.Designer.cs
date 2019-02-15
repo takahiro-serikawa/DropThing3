@@ -138,7 +138,7 @@
             this.removeItem.Size = new System.Drawing.Size(202, 22);
             this.removeItem.Text = "&Remove";
             this.removeItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
-            this.removeItem.Click += new System.EventHandler(this.deleteItem_Click);
+            this.removeItem.Click += new System.EventHandler(this.removeItem_Click);
             // 
             // undo
             // 
