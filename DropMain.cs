@@ -340,13 +340,17 @@ namespace DropThing3
                         if (this.icon_file.Length == 0)
                             this.icon_file = null;
                     } else if (ext == ".url") { // InternetShortcut
-                        string[] lines = File.ReadAllLines(value);
-                        string url = "";
-                        foreach (string line in lines) {
-                            if (line.StartsWith("URL="))
-                                url = line.Substring(4);
-                            if (line.StartsWith("IconFile="))
-                                this.icon_file = line.Substring(9);
+                        try {
+                            string[] lines = File.ReadAllLines(value);
+                            string url = "";
+                            foreach (string line in lines) {
+                                if (line.StartsWith("URL="))
+                                    url = line.Substring(4);
+                                if (line.StartsWith("IconFile="))
+                                    this.icon_file = line.Substring(9);
+                            }
+                        } catch (Exception ex) {
+                            // igonre missing .url
                         }
                         //uri = new Uri(url);
                         this.Caption = Path.GetFileNameWithoutExtension(value);
