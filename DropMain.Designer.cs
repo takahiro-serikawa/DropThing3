@@ -69,6 +69,7 @@
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.about,
             this.openItem,
@@ -84,7 +85,7 @@
             this.quit,
             this.dummy});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 296);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(361, 472);
             // 
             // about
             // 
@@ -108,7 +109,7 @@
             this.openItem.Name = "openItem";
             this.openItem.ShortcutKeyDisplayString = "ENTER";
             this.openItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openItem.Size = new System.Drawing.Size(202, 22);
+            this.openItem.Size = new System.Drawing.Size(360, 40);
             this.openItem.Text = "&Open ...";
             this.openItem.ToolTipText = "Open the file of this cell.";
             this.openItem.Click += new System.EventHandler(this.openItem_Click);
@@ -117,7 +118,7 @@
             // 
             this.explorerItem.Name = "explorerItem";
             this.explorerItem.ShortcutKeyDisplayString = "Shift+ENTER";
-            this.explorerItem.Size = new System.Drawing.Size(202, 22);
+            this.explorerItem.Size = new System.Drawing.Size(360, 40);
             this.explorerItem.Text = "&Explorer ...";
             this.explorerItem.ToolTipText = "Open Explorer and select the file.";
             this.explorerItem.Click += new System.EventHandler(this.explorerItem_Click);
@@ -126,7 +127,7 @@
             // 
             this.propertyItem.Name = "propertyItem";
             this.propertyItem.ShortcutKeyDisplayString = "Ctrl+ENTER";
-            this.propertyItem.Size = new System.Drawing.Size(202, 22);
+            this.propertyItem.Size = new System.Drawing.Size(360, 40);
             this.propertyItem.Text = "&Property ...";
             this.propertyItem.ToolTipText = "Open form of CELL settings";
             this.propertyItem.Click += new System.EventHandler(this.propertyItem_Click);
@@ -135,7 +136,7 @@
             // 
             this.removeItem.Name = "removeItem";
             this.removeItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Delete)));
-            this.removeItem.Size = new System.Drawing.Size(202, 22);
+            this.removeItem.Size = new System.Drawing.Size(360, 40);
             this.removeItem.Text = "&Remove";
             this.removeItem.ToolTipText = "Unregister the file of cell.  File is not deleted.";
             this.removeItem.Click += new System.EventHandler(this.removeItem_Click);
@@ -144,21 +145,21 @@
             // 
             this.undo.Name = "undo";
             this.undo.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undo.Size = new System.Drawing.Size(202, 22);
+            this.undo.Size = new System.Drawing.Size(360, 40);
             this.undo.Text = "&Undo";
             this.undo.Click += new System.EventHandler(this.undo_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(199, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(357, 6);
             // 
             // eject
             // 
             this.eject.Image = global::DropThing3.Properties.Resources.eject;
             this.eject.Name = "eject";
             this.eject.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.J)));
-            this.eject.Size = new System.Drawing.Size(202, 22);
+            this.eject.Size = new System.Drawing.Size(360, 40);
             this.eject.Text = "e&Ject";
             this.eject.ToolTipText = "Try to eject removal media.";
             this.eject.Click += new System.EventHandler(this.eject_Click);
@@ -166,7 +167,7 @@
             // tabItem
             // 
             this.tabItem.Name = "tabItem";
-            this.tabItem.Size = new System.Drawing.Size(202, 22);
+            this.tabItem.Size = new System.Drawing.Size(360, 40);
             this.tabItem.Text = "&Tab options ...";
             this.tabItem.ToolTipText = "Open form of TAB settings.";
             this.tabItem.Click += new System.EventHandler(this.tabItem_Click);
@@ -175,7 +176,7 @@
             // 
             this.dbgSave.ForeColor = System.Drawing.Color.Brown;
             this.dbgSave.Name = "dbgSave";
-            this.dbgSave.Size = new System.Drawing.Size(202, 22);
+            this.dbgSave.Size = new System.Drawing.Size(360, 40);
             this.dbgSave.Text = "dbg: save now";
             this.dbgSave.ToolTipText = "save settings now.";
             this.dbgSave.Visible = false;
@@ -185,7 +186,7 @@
             // 
             this.dbgRefreshAll.ForeColor = System.Drawing.Color.Brown;
             this.dbgRefreshAll.Name = "dbgRefreshAll";
-            this.dbgRefreshAll.Size = new System.Drawing.Size(202, 22);
+            this.dbgRefreshAll.Size = new System.Drawing.Size(360, 40);
             this.dbgRefreshAll.Text = "dbg: refresh all icons";
             this.dbgRefreshAll.Visible = false;
             this.dbgRefreshAll.Click += new System.EventHandler(this.dbgRefreshAll_Click);
@@ -194,7 +195,7 @@
             // 
             this.quit.Name = "quit";
             this.quit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quit.Size = new System.Drawing.Size(202, 22);
+            this.quit.Size = new System.Drawing.Size(360, 40);
             this.quit.Text = "e&Xit";
             this.quit.ToolTipText = "Quit DropThing3.";
             this.quit.Click += new System.EventHandler(this.quit_Click);
@@ -205,7 +206,7 @@
             this.dummy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.None;
             this.dummy.Enabled = false;
             this.dummy.Name = "dummy";
-            this.dummy.Size = new System.Drawing.Size(202, 22);
+            this.dummy.Size = new System.Drawing.Size(360, 40);
             // 
             // status
             // 
@@ -235,9 +236,9 @@
             this.addTab.Cursor = System.Windows.Forms.Cursors.Hand;
             this.addTab.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.addTab.ForeColor = System.Drawing.Color.White;
-            this.addTab.Location = new System.Drawing.Point(336, 1);
+            this.addTab.Location = new System.Drawing.Point(321, 1);
             this.addTab.Name = "addTab";
-            this.addTab.Size = new System.Drawing.Size(25, 27);
+            this.addTab.Size = new System.Drawing.Size(40, 42);
             this.addTab.TabIndex = 5;
             this.addTab.Text = "+";
             this.addTab.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -273,6 +274,7 @@
             this.grid.MultiSelect = false;
             this.grid.Name = "grid";
             this.grid.RowHeadersVisible = false;
+            this.grid.RowHeadersWidth = 82;
             this.grid.RowTemplate.Height = 21;
             this.grid.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.grid.Size = new System.Drawing.Size(380, 78);
@@ -297,7 +299,7 @@
             this.missing.Font = new System.Drawing.Font("Arial", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.missing.Location = new System.Drawing.Point(307, 20);
             this.missing.Name = "missing";
-            this.missing.Size = new System.Drawing.Size(17, 17);
+            this.missing.Size = new System.Drawing.Size(33, 34);
             this.missing.TabIndex = 8;
             this.missing.Text = "?";
             this.missing.Visible = false;
@@ -358,7 +360,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(200, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 15);
+            this.label1.Size = new System.Drawing.Size(78, 32);
             this.label1.TabIndex = 9;
             this.label1.Text = "label1";
             this.label1.Visible = false;
@@ -389,6 +391,7 @@
             this.Text = "DropThing3";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DropForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DropForm_FormClosed);
+            this.Shown += new System.EventHandler(this.DropMain_Shown);
             this.ResizeBegin += new System.EventHandler(this.DropMain_ResizeBegin);
             this.ResizeEnd += new System.EventHandler(this.DropMain_ResizeEnd);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DropForm_MouseDown);

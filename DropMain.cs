@@ -112,6 +112,22 @@ namespace DropThing3
         StreamWriter log = new StreamWriter("log.txt", true, Encoding.UTF8);
 #endif
 
+        private void DropMain_Shown(object sender, EventArgs e)
+        {
+            int x = this.Left;
+            int y = this.Top;
+            int width = this.Width;
+            int height = this.Height;
+
+            var bounds = Screen.FromControl(this).Bounds;
+
+            if (x < bounds.Left || x + width > bounds.Right
+             || y < bounds.Top || y + height > bounds.Bottom) {
+                this.Left = Math.Max(bounds.Left, Math.Min(x, bounds.Right - width));
+                this.Top = Math.Max(bounds.Top, Math.Min(y, bounds.Bottom - height));
+            }
+        }
+
         private void DropForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
